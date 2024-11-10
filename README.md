@@ -1,6 +1,10 @@
 # fd2p
 Repository dedicated to coursework development
 
+## How to run
+Of course insert your path here but I run it using:
+shiny::runApp("/Users/antanaszilinskas/Documents/GitHub/fd2p")
+
 Shiny components available:
 https://shiny.posit.co/r/components/
 Useful resources for shiny extensions:
