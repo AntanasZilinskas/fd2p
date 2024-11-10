@@ -1,17 +1,15 @@
-# ui.R
 source("global.R")
 
 ui <- navbarPage(
-  "HARMONLY",
+  title = "HARMONLY",
   id = "mainNav",
   position = "static-top",
-  
-  # Convert navbarPage to a side navigation layout
-  header = tags$head(
+
+  tags$head(
     tags$link(rel = "stylesheet", type = "text/css", href = "custom.css")
   ),
   
-  # Welcome Page
+  # Welcome Page Tab
   tabPanel("Welcome",
     div(class = "content-wrapper",
       div(class = "container-fluid",
@@ -20,16 +18,19 @@ ui <- navbarPage(
           p(class = "subtitle", "Discover music that matches your unique style"),
           br(),
           div(class = "input-container",
-            textAreaInput("songInput", "Enter song names (one per line):", 
-                         rows = 5, width = "500px"),
+            textAreaInput("songInput", "Enter song names (one per line):",
+              rows = 5, width = "500px"
+            ),
             br(),
             div(class = "button-container",
-              actionButton("analyzeBtn", "Analyze Songs", 
-                          class = "option-button"),
+              actionButton("analyzeBtn", "Analyze Songs",
+                class = "option-button"
+              ),
               br(),
               br(),
-              actionButton("spotifyBtn", "Connect Spotify", 
-                          class = "option-button")
+              actionButton("spotifyBtn", "Connect Spotify",
+                class = "option-button"
+              )
             )
           )
         )
@@ -37,44 +38,44 @@ ui <- navbarPage(
     )
   ),
   
-  # MDNA Page
+  # MDNA Page Tab
   tabPanel("Your MDNA",
-    fluidRow(
-      # Score Display
-      column(4,
-        div(class = "score-box text-center",
-          h3("Your Music Score"),
-          h2("85%"),
-          p("Based on energy and rhythm analysis")
+    div(class = "content-wrapper",
+      # Score Bar
+      fluidRow(
+        column(12,
+          div(class = "score-bar text-center",
+            span(class = "score-label", "Score: "),
+            span(class = "score-value", "85%"),
+            span(class = "score-description", "This score indicates how common the music you listen is through analysis of popularity. Your music taste sits in the 85th percentile for uniqueness")
+          )
         )
       ),
-      # Best Matches
-      column(8,
-        h3("Best Matches", class = "text-center"),
-        uiOutput("matchesList")
-      )
-    ),
-    
-    # Energy Plot
-    fluidRow(
-      column(12,
-        div(class = "plot-container",
-          plotlyOutput("energyPlot", height = "300px")
+      # Main Content
+      fluidRow(
+        # Energy Plot
+        column(8,
+          div(class = "plot-container",
+            plotlyOutput("energyPlot", height = "400px")
+          )
+        ),
+        # Best Matches
+        column(4,
+          div(class = "matches-container",
+            h3("Best Matches", class = "text-center"),
+            uiOutput("matchesList")
+          )
         )
-      )
-    ),
-    
-    # Chord Progression
-    fluidRow(
-      column(12,
-        div(class = "chord-box text-center",
-          h3("Chord Progression"),
-          verbatimTextOutput("chordProgression")
+      ),
+      # Chord Progression
+      fluidRow(
+        column(12,
+          div(class = "chord-box text-center",
+            h3("Your Chord Progression ID"),
+            verbatimTextOutput("chordProgression")
+          )
         )
       )
     )
-  ),
-  
-  # Modal for song details
-  uiOutput("songModal")
+  )
 )
