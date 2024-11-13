@@ -12,3 +12,5 @@ https://github.com/nanxstats/awesome-shiny-extensions?tab=readme-ov-file#special
 
 Dataset links:
 https://zenodo.org/records/14004826
+http://millionsongdataset.com/pages/getting-dataset/
+https://colinraffel.com/projects/lmd/
