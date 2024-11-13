@@ -1,7 +1,7 @@
 # fd2p
 Repository dedicated to coursework development
 
-## How to run
+## How to run (assuming vs code)
 Of course insert your path here but I run it using:
 shiny::runApp("/Users/antanaszilinskas/Documents/GitHub/fd2p")
 
