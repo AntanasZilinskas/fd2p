@@ -1,0 +1,6 @@
+*.csv
+*.faiss
+*.rds
+PDMX data
+fd2p
+*.tar.gz
