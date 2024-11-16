@@ -1,7 +1,7 @@
 library(reticulate)
 library(tidyverse)
-library(readr)
 library(jsonlite)
+library(RcppCNPy)  # For saving and loading .npy files
 
 # Use your pyenv Python
 use_python("/Users/antanaszilinskas/.pyenv/versions/3.10.13/bin/python", required = TRUE)
@@ -10,65 +10,51 @@ use_python("/Users/antanaszilinskas/.pyenv/versions/3.10.13/bin/python", require
 print("Python Configuration:")
 py_config()
 
-# Import Python modules
-np <- import("numpy")
-faiss <- import("faiss")
-sentence_transformers <- import("sentence_transformers")
-
 create_and_save_embeddings <- function(csv_path, output_dir = "data/") {
   # Create output directory if it doesn't exist
   dir.create(output_dir, showWarnings = FALSE)
   
   # Read CSV
   message("Reading CSV...")
-  songs_df <- read_csv(csv_path) %>%
+  songs_df <- read_csv(csv_path, col_types = cols()) %>%
     distinct() %>%  # Remove any duplicates
-    mutate(id = row_number())  # Add an ID column
+    mutate(id = row_number())  # Add an ID column starting from 1
   
-  # Initialize the model in Python global namespace
-  py_run_string("
-from sentence_transformers import SentenceTransformer
-model = SentenceTransformer('all-MiniLM-L6-v2')
-embeddings_list = []
-  ")
+  # Assign song_titles to the Python session
+  song_titles <- songs_df$title %>% as.list()
+  py$song_titles <- song_titles
   
-  # Create embeddings in batches
-  message("Creating embeddings...")
-  batch_size <- 1000
-  n_batches <- ceiling(nrow(songs_df) / batch_size)
+  # Define paths
+  embeddings_path <- file.path(output_dir, "song_embeddings.npy")
+  songs_df_path <- file.path(output_dir, "songs_with_ids.csv")
   
-  for(i in 1:n_batches) {
-    start_idx <- ((i-1) * batch_size) + 1
-    end_idx <- min(i * batch_size, nrow(songs_df))
-    
-    batch <- songs_df$title[start_idx:end_idx]
-    
-    # Convert batch to Python list directly
-    py$current_batch <- as.list(batch)
-    py_run_string("
-batch_embeddings = model.encode(current_batch)
-embeddings_list.append(batch_embeddings)
-    ")
-    
-    message(sprintf("Processed batch %d of %d", i, n_batches))
-  }
-  
-  # Combine embeddings in Python
-  py_run_string("
+  # Prepare Python code as a string
+  py_code <- sprintf("
 import numpy as np
-embeddings = np.vstack(embeddings_list)
-embeddings = np.ascontiguousarray(embeddings.astype(np.float32))
-  ")
+from sentence_transformers import SentenceTransformer
+
+print('Loading SentenceTransformer model...')
+model = SentenceTransformer('all-MiniLM-L6-v2')
+
+print('Encoding song titles...')
+embeddings = model.encode(song_titles, batch_size=64, show_progress_bar=True)
+embeddings = np.ascontiguousarray(embeddings.astype('float32'))
+
+print('Saving embeddings to %s')
+np.save(r'%s', embeddings)
+", embeddings_path, embeddings_path)
   
-  # Create FAISS index
-  dimension <- py_eval("embeddings.shape[1]")
-  index <- faiss$IndexFlatIP(as.integer(dimension))
-  index$add(py$embeddings)
+  # Execute the Python code
+  message("Executing Python code...")
+  py_run_string(py_code)
   
-  # Save everything
-  message("Saving files...")
-  faiss$write_index(index, file.path(output_dir, "songs.faiss"))
-  saveRDS(songs_df, file = file.path(output_dir, "processed_songs.rds"))
+  # Save song data with IDs
+  message("Saving song data to ", songs_df_path)
+  write_csv(songs_df, songs_df_path)
   
-  message("Done!")
-} 
+  message("Embeddings and song data have been saved successfully!")
+}
+
+# Example usage:
+# create_and_save_embeddings("data/processed_songs.csv")
+  

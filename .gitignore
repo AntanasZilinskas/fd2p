@@ -1,3 +1,4 @@
 *.csv
 *.faiss
 *.rds
+*.npy
