@@ -82,3 +82,8 @@ data = {
     # Add other features here
 }
 ```
+
+
+
+## Current Progress:
+[.] View scores and snippets
