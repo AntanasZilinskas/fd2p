@@ -84,11 +84,10 @@ data = {
 ```
 
 
-
 ## Current Progress:
-[x] View scores and snippets
-[x] Playback scores using MIDI
-[x] Find most common chords in a track
-[x] Search for a given chord progression in the dataset
-[] Complexity score
-[] Get Medodic, harmonic, rhythmic, structural features from data
+- [x] View scores and snippets
+- [x] Playback scores using MIDI
+- [x] Find most common chords in a track
+- [x] Search for a given chord progression in the dataset
+- [ ] Complexity score
+- [ ] Get Melodic, harmonic, rhythmic, structural features from data
