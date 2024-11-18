@@ -1,70 +1,104 @@
 # server.R
+library(shiny)
+library(methods)
+# Ensure global.R is sourced
 source("global.R")
 
 server <- function(input, output, session) {
+  # Store selected songs
+  selected_songs <- reactiveVal(character(0))
   
-  # Navigation handlers
-  observeEvent(input$analyzeBtn, {
-    updateTabsetPanel(session, "mainNav", selected = "Your MDNA")
+  # Debounced reactive for search term
+  debounced_search_term <- debounce(reactive(input$searchTerm), 500)
+  
+  # Handle search using the debounced search term
+  observeEvent(debounced_search_term(), ignoreNULL = FALSE, {
+    query <- debounced_search_term()
+    message("Query value: ", query)
+    
+    # Check if 'query' is not NULL and is a non-empty string
+    if (!is.null(query) && nzchar(query) && nchar(query) >= 2) {
+      results <- quick_search_songs(query, max_results = 10L)
+      
+      if (length(results) > 0) {
+        # Format results as a list of lists with a 'title' field
+        choices_list <- lapply(results, function(title) list(title = title))
+        
+        # Send a custom message to update the Selectize options
+        session$sendCustomMessage('updateSelectizeOptions', list(
+          inputId = 'songInput',
+          options = choices_list
+        ))
+      } else {
+        # Clear choices if no results
+        session$sendCustomMessage('updateSelectizeOptions', list(
+          inputId = 'songInput',
+          options = list()
+        ))
+      }
+    } else {
+      # Clear choices if query is too short or invalid
+      session$sendCustomMessage('updateSelectizeOptions', list(
+        inputId = 'songInput',
+        options = list()
+      ))
+    }
   })
   
-  observeEvent(input$spotifyBtn, {
-    updateTabsetPanel(session, "mainNav", selected = "Your MDNA")
+  # Handle song selection
+  observeEvent(input$songInput, {
+    song <- input$songInput
+    if (!is.null(song) && nzchar(song)) {
+      songs <- selected_songs()
+      if (!(song %in% songs)) {
+        selected_songs(c(songs, song))
+        
+        # Log the selected song into the R console
+        message("Song selected: ", song)
+      }
+      # Clear the selectize input via custom message
+      session$sendCustomMessage('clearSelectizeInput', list(
+        inputId = 'songInput'
+      ))
+    }
   })
   
-  # Best matches list with clickable songs
-  output$matchesList <- renderUI({
-    tags$div(
-      class = "matches-container",
-      lapply(1:nrow(dummy_songs), function(i) {
-        actionLink(
-          paste0("song_", i),
-          paste(dummy_songs$name[i], "-", dummy_songs$artist[i], 
-                sprintf("(Match: %d%%)", dummy_songs$matches[i])),
-          style = "display: block; margin: 10px 0; padding: 10px; 
-                  background-color: #f8f9fa; border-radius: 5px;"
+  # Display selected songs
+  output$selectedSongs <- renderUI({
+    songs <- selected_songs()
+    if (length(songs) == 0) {
+      return(NULL)
+    }
+    
+    tagList(
+      lapply(seq_along(songs), function(i) {
+        div(class = "song-item",
+          span(songs[i]),
+          span(
+            class = "remove-song",
+            onclick = sprintf("Shiny.setInputValue('remove_song', %d, {priority: 'event'});", i),
+            "×"
+          )
         )
       })
     )
   })
   
-  # Energy plot
-  output$energyPlot <- renderPlotly({
-    plot_ly(dummy_energy_data, x = ~time, y = ~energy, type = "scatter", mode = "lines+markers") %>%
-      layout(
-        title = "Music Energy Over Time",
-        xaxis = list(title = "Time"),
-        yaxis = list(title = "Energy Level")
-      )
+  # Handle song removal
+  observeEvent(input$remove_song, {
+    songs <- selected_songs()
+    index_to_remove <- as.integer(input$remove_song)
+    if (!is.na(index_to_remove) && index_to_remove <= length(songs)) {
+      selected_songs(songs[-index_to_remove])
+    }
   })
   
-  # Chord progression display
-  output$chordProgression <- renderText({
-    "Current Progression: Am → F → C → G"
+  # Handle analyze button
+  observeEvent(input$analyzeBtn, {
+    req(length(selected_songs()) > 0)
+    updateNavbarPage(session, "mainNav", selected = "Your MDNA")
   })
   
-  # Modal dialog for song details
-  lapply(1:nrow(dummy_songs), function(i) {
-    observeEvent(input[[paste0("song_", i)]], {
-      showModal(modalDialog(
-        title = dummy_songs$name[i],
-        div(
-          h4(paste("Artist:", dummy_songs$artist[i])),
-          h4(paste("Energy Score:", dummy_songs$energy[i])),
-          h4("Chord Progression:"),
-          p(dummy_songs$chord_progression[i]),
-          br(),
-          plotlyOutput(paste0("songEnergy_", i))
-        ),
-        footer = modalButton("Close")
-      ))
-      
-      # Individual song energy plot in modal
-      output[[paste0("songEnergy_", i)]] <- renderPlotly({
-        plot_ly(y = rnorm(50, mean = dummy_songs$energy[i], sd = 0.1), 
-                type = "box") %>%
-          layout(title = "Song Energy Distribution")
-      })
-    })
-  })
+  # Keep your existing MDNA outputs or add new ones
+  # ... your existing MDNA server code ...
 }
