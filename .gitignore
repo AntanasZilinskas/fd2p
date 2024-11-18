@@ -1,0 +1,5 @@
+data/processed_songs.rds
+data/song_embeddings.npy
+data/songs_with_ids.csv
+data/songs.faiss
+data/titles.csv
