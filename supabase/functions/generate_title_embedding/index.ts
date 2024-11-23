@@ -5,7 +5,8 @@ import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 
 // Initialize Supabase client
 const supabaseUrl = Deno.env.get('SUPABASE_URL') ?? '';
-const supabaseServiceRoleKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '';
+const supabaseServiceRoleKey =
+  Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '';
 
 const supabase = createClient(supabaseUrl, supabaseServiceRoleKey);
 
@@ -17,72 +18,97 @@ Deno.serve(async (req) => {
     const { initialize, record } = await req.json();
 
     if (initialize) {
-      // Process all records without embeddings
-      const { data, error } = await supabase
-        .from('music_features')
-        .select('id, title')
-        .is('title_embedding', null);
+      const batchSize = 100; // Process 100 titles at a time
 
-      if (error) {
-        console.error('Error fetching records without embeddings:', error);
-        return new Response('Error fetching records without embeddings', {
-          status: 500,
-        });
-      }
-
-      if (data.length === 0) {
-        return new Response('All titles already have embeddings', {
-          status: 200,
-        });
-      }
-
-      for (const record of data) {
-        const embedding = (await model.run(record.title, {
-          mean_pool: true,
-          normalize: true,
-        })) as number[];
-
-        const { error: updateError } = await supabase
+      async function processBatch() {
+        // Get a batch of titles without embeddings
+        const { data: titles, error } = await supabase
           .from('music_features')
-          .update({ title_embedding: embedding })
-          .eq('id', record.id);
+          .select('id, title')
+          .is('title_embedding', null)
+          .limit(batchSize);
 
-        if (updateError) {
-          console.error(
-            `Error updating embedding for ID ${record.id}:`,
-            updateError
-          );
+        if (error) {
+          console.error('Error fetching titles without embeddings:', error);
+          throw error;
         }
+
+        if (!titles || titles.length === 0) return;
+
+        // Generate embeddings for the batch
+        const embeddings = await Promise.all(
+          titles.map(async ({ id, title }) => {
+            try {
+              const embedding = await model.run(title, {
+                mean_pool: true,
+                normalize: true,
+              });
+              return { id, title_embedding: embedding };
+            } catch (err) {
+              console.error(`Error generating embedding for ID ${id}:`, err);
+              return null; // Handle failed embeddings
+            }
+          })
+        );
+
+        // Filter out any null embeddings due to errors
+        const validEmbeddings = embeddings.filter((e) => e !== null);
+
+        if (validEmbeddings.length > 0) {
+          // Update embeddings in the database
+          const { error: updateError } = await supabase
+            .from('music_features')
+            .upsert(validEmbeddings);
+
+          if (updateError) {
+            console.error('Error updating embeddings:', updateError);
+            throw updateError;
+          }
+        }
+
+        // Recursively process the next batch
+        await processBatch();
       }
 
-      return new Response('Embeddings generated for missing records', {
-        status: 200,
-      });
+      await processBatch(); // Start the recursive process
+
+      return new Response(
+        'Embeddings generated for all missing records',
+        { status: 200 }
+      );
     }
 
+    // Single record processing
     if (!record || !record.title) {
       return new Response('Invalid request data', { status: 400 });
     }
 
-    const embedding = (await model.run(record.title, {
-      mean_pool: true,
-      normalize: true,
-    })) as number[];
+    try {
+      const embedding = await model.run(record.title, {
+        mean_pool: true,
+        normalize: true,
+      });
 
-    const { error } = await supabase
-      .from('music_features')
-      .update({ title_embedding: embedding })
-      .eq('id', record.id);
+      const { error } = await supabase
+        .from('music_features')
+        .update({ title_embedding: embedding })
+        .eq('id', record.id);
 
-    if (error) {
-      console.error('Error updating title embedding:', error);
-      return new Response('Error updating title embedding', { status: 500 });
+      if (error) {
+        console.error('Error updating title embedding:', error);
+        return new Response('Error updating title embedding', {
+          status: 500,
+        });
+      }
+
+      return new Response(
+        'Title embedding generated and stored successfully',
+        { status: 200 }
+      );
+    } catch (err) {
+      console.error('Error generating embedding:', err);
+      return new Response('Error generating embedding', { status: 500 });
     }
-
-    return new Response(
-      'Title embedding generated and stored successfully',
-      { status: 200 }
-    );
   } catch (error) {
     console.error('Error processing request:', error);
     return new Response('Error processing request', { status: 500 });
