@@ -3,7 +3,7 @@ name: Deploy Supabase Functions
 on:
   push:
     branches:
-      - main  # or your desired branch
+      - main
 
 jobs:
   deploy:
@@ -14,10 +14,16 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '16'  # or your project's Node.js version
+          node-version: '18'
+          cache: 'npm'
 
       - name: Install Supabase CLI
-        run: npm install -g supabase
+        run: |
+          curl -fsSL https://cli.supabase.com/install | sh
+          echo "$HOME/.supabase/bin" >> $GITHUB_PATH
+
+      - name: Verify Supabase CLI Installation
+        run: supabase --version
 
       - name: Deploy Functions
         env:
