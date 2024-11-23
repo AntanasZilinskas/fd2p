@@ -1,0 +1,25 @@
+name: Deploy Supabase Functions
+
+on:
+  push:
+    branches:
+      - main  # or your desired branch
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '16'  # or your project's Node.js version
+
+      - name: Install Supabase CLI
+        run: npm install -g supabase
+
+      - name: Deploy Functions
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+        run: supabase functions deploy --project-ref dvplamwokfwyvuaskgyk --all
