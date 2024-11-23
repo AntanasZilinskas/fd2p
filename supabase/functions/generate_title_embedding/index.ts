@@ -18,7 +18,7 @@ Deno.serve(async (req) => {
     const { initialize, record } = await req.json();
 
     if (initialize) {
-      const batchSize = 5; // Process 100 titles at a time
+      const batchSize = 2; // Process 25 titles at a time
 
       async function processBatch() {
         // Get a batch of titles without embeddings
@@ -33,7 +33,10 @@ Deno.serve(async (req) => {
           throw error;
         }
 
-        if (!titles || titles.length === 0) return;
+        if (!titles || titles.length === 0) {
+          console.log('No more titles without embeddings.');
+          return;
+        }
 
         // Generate embeddings for the batch
         const embeddings = await Promise.all(
@@ -66,11 +69,26 @@ Deno.serve(async (req) => {
           }
         }
 
-        // Recursively process the next batch
-        await processBatch();
+        // If the batch size equals batchSize, there may be more records
+        if (titles.length === batchSize) {
+          console.log('Processing next batch...');
+          try {
+            await processBatch();
+          } catch (err) {
+            console.error('Error processing next batch:', err);
+            throw err;
+          }
+        } else {
+          console.log('All batches processed.');
+        }
       }
 
-      await processBatch(); // Start the recursive process
+      try {
+        await processBatch(); // Start the recursive process
+      } catch (err) {
+        console.error('Error during batch processing:', err);
+        return new Response('Error during batch processing', { status: 500 });
+      }
 
       return new Response(
         'Embeddings generated for all missing records',
