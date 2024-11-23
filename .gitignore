@@ -7,3 +7,4 @@ data/song_embeddings.npy
 data/songs_with_ids.csv
 data/songs.faiss
 data/titles.csv
+node_modules/
