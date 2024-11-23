@@ -1,5 +1,5 @@
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
-import { createClient } from 'https://deno.land/x/supabase_functions@1.2.1/mod.ts';
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 import { Session } from 'https://esm.sh/@supabase/functions-js@0.0.3';
 
 const supabase = createClient(
