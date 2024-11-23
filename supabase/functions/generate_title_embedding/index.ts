@@ -18,7 +18,7 @@ Deno.serve(async (req) => {
     const { initialize, record } = await req.json();
 
     if (initialize) {
-      const batchSize = 100; // Process 100 titles at a time
+      const batchSize = 5; // Process 100 titles at a time
 
       async function processBatch() {
         // Get a batch of titles without embeddings
