@@ -23,19 +23,22 @@ Deno.serve(async (req) => {
       normalize: true,
     });
 
-    const { data, error } = await supabase.rpc('match_similar_songs', {
-      input_vector: queryEmbedding,
+    const { data, error } = await supabase.rpc('match_similar_titles', {
+      input_embedding: queryEmbedding,
       top_n,
     });
 
     if (error) {
-      console.error('Error fetching similar songs:', error);
-      return new Response('Error fetching similar songs', { status: 500 });
+      console.error('Error fetching similar titles:', error);
+      return new Response(`Error fetching similar titles: ${error.message}`, { status: 500 });
     }
 
-    return new Response(JSON.stringify(data), { status: 200 });
+    return new Response(JSON.stringify(data), {
+      headers: { 'Content-Type': 'application/json' },
+      status: 200,
+    });
   } catch (error) {
     console.error('Error processing request:', error);
-    return new Response('Error processing request', { status: 500 });
+    return new Response(`Error processing request: ${error.message}`, { status: 500 });
   }
 });
