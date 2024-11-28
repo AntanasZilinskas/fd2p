@@ -36,6 +36,11 @@ quick_search_songs <- function(query, max_results = 10L) {
     add_headers(Authorization = paste("Bearer", supabase_key))
   )
   
+  # Print the response content to the console immediately
+  cat("Received response from Supabase:\n")
+  cat(content(response, "text", encoding = "UTF-8"), "\n")
+  flush.console()
+  
   # Check if the request was successful
   if (response$status_code != 200) {
     message("Error: Failed to retrieve results from Supabase Edge Function.")
