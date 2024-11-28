@@ -106,7 +106,7 @@ def generate_title_embedding(title):
 def write_to_supabase(features, vector, title_embedding):
     """Write features and vector to Supabase."""
     data = {
-        "title": features.get("title", "Unknown Title"),
+        "title": features['title'],
         "creators": features.get("creators", []),
         "pitch_class_histogram": normalize_histogram(features.get("pitch_class_histogram", {}), bins=12),
         "interval_histogram": normalize_histogram(Counter(features.get("interval_histogram", [])), bins=12),
@@ -132,9 +132,9 @@ def write_to_supabase(features, vector, title_embedding):
 
     # Check the response
     if response.data:
-        print(f"Data for '{features.get('title', 'Unknown Title')}' successfully inserted into Supabase.")
+        print(f"Data for '{features['title']}' successfully inserted into Supabase.")
     else:
-        print(f"Error inserting data: {response.error}")
+        print(f"Error inserting data for '{features['title']}': {response.error}")
 
 def extract_features_and_save(file_path):
     try:
@@ -142,12 +142,40 @@ def extract_features_and_save(file_path):
             data = json.load(file)
         
         features = {}
-        features['title'] = data.get('metadata', {}).get('title', 'Unknown Title')
-        features['creators'] = data.get('metadata', {}).get('creators', ['Unknown Creator'])
-        notes = data.get('tracks', [])[0].get('notes', [])
+        features['title'] = data.get('metadata', {}).get('title')
+        features['creators'] = data.get('metadata', {}).get('creators')
+
+        # **Check if the title is usable**
+        if not features['title'] or not features['title'].strip():
+            print(f"Title is missing or invalid in file {file_path}. Skipping.")
+            return
+
+        # Check for necessary entries
+        tracks = data.get('tracks')
+        if not tracks:
+            print(f"No 'tracks' found in file {file_path}. Skipping.")
+            return
+
+        first_track = tracks[0]
+        notes = first_track.get('notes')
+        if not notes:
+            print(f"No 'notes' found in first track of file {file_path}. Skipping.")
+            return
+
+        if not all('pitch' in note for note in notes):
+            print(f"Some notes missing 'pitch' in file {file_path}. Skipping.")
+            return
+
+        # Proceed with processing since necessary data is present
         pitch_classes = [note['pitch'] % 12 for note in notes]
 
+        if len(pitch_classes) < 2:
+            print(f"Not enough pitch data to calculate intervals in file {file_path}. Skipping.")
+            return
+
         raw_intervals = [(j - i) % 12 for i, j in zip(pitch_classes[:-1], pitch_classes[1:])]
+
+        # Continue extracting features
         interval_histogram = raw_intervals
         melodic_contour = [
             "up" if interval > 0 else "down" if interval < 0 else "same"
@@ -156,24 +184,60 @@ def extract_features_and_save(file_path):
         features['pitch_class_histogram'] = dict(Counter(pitch_classes))
         features['interval_histogram'] = interval_histogram
         features['melodic_contour'] = melodic_contour
-        chords = data.get('tracks', [])[0].get('chords', [])
+
+        # Check for chords
+        chords = first_track.get('chords', [])
         features['chord_progressions'] = ['-'.join(chord.get('pitches_str', [])) for chord in chords]
-        key_signature_data = data.get('key_signatures', [{}])[0]
-        features['key_signature'] = key_signature_data.get('root_str', 'Unknown')
-        features['mode'] = key_signature_data.get('mode', 'Unknown')
+
+        # Check for key signatures
+        key_signatures = data.get('key_signatures')
+        if not key_signatures:
+            print(f"No 'key_signatures' found in file {file_path}. Skipping.")
+            return
+
+        key_signature_data = key_signatures[0]
+        features['key_signature'] = key_signature_data.get('root_str')
+        features['mode'] = key_signature_data.get('mode')
+
+        if not features['key_signature'] or not features['mode']:
+            print(f"Key signature or mode missing in file {file_path}. Skipping.")
+            return
+
+        # Check for note durations
         note_durations = [note['duration'] for note in notes if 'duration' in note]
+        if not note_durations:
+            print(f"No note durations found in file {file_path}. Skipping.")
+            return
+
+        # Proceed with the rest of the processing
         bin_edges = [0, 100, 200, 300, 400, 500, 600, 700, 800, 900, 1000]
         binned_durations = np.digitize(note_durations, bins=bin_edges, right=True)
         duration_histogram = Counter(binned_durations)
         features['note_duration_histogram'] = [
-            duration_histogram.get(i, 0) / len(note_durations) if note_durations else 0 for i in range(1, len(bin_edges) + 1)
+            duration_histogram.get(i, 0) / len(note_durations) for i in range(1, len(bin_edges) + 1)
         ]
-        features['average_duration'] = sum(note_durations) / len(note_durations) if note_durations else 0
-        tempo_data = data.get('tempos', [{}])[0]
+        features['average_duration'] = sum(note_durations) / len(note_durations)
+
+        # Check for tempos
+        tempos = data.get('tempos')
+        if not tempos:
+            print(f"No 'tempos' found in file {file_path}. Skipping.")
+            return
+
+        tempo_data = tempos[0]
         features['tempo'] = tempo_data.get('qpm', 0)
-        time_signatures = data.get('time_signatures', [])
-        features['number_of_measures'] = len(data.get('barlines', []))
-        features['time_signatures'] = [f"{ts.get('numerator')}/{ts.get('denominator')}" for ts in time_signatures]
+
+        # Check for time signatures and barlines
+        time_signatures = data.get('time_signatures')
+        barlines = data.get('barlines')
+        if not time_signatures or not barlines:
+            print(f"Time signatures or barlines missing in file {file_path}. Skipping.")
+            return
+
+        features['number_of_measures'] = len(barlines)
+        features['time_signatures'] = [
+            f"{ts.get('numerator', 'Unknown')}/{ts.get('denominator', 'Unknown')}" for ts in time_signatures
+        ]
 
         # Generate the title embedding
         title_embedding = generate_title_embedding(features['title'])
