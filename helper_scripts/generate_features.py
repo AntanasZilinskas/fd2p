@@ -4,11 +4,21 @@ import os
 import multiprocessing
 from collections import Counter
 from supabase import create_client, Client
+from transformers import AutoTokenizer, AutoModel
+import torch
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
 
 # Supabase configuration
-SUPABASE_URL = "https://dvplamwokfwyvuaskgyk.supabase.co"
-SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImR2cGxhbXdva2Z3eXZ1YXNrZ3lrIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTczMjI5NjE0NiwiZXhwIjoyMDQ3ODcyMTQ2fQ.Gsu1OOTI2qfkeXCywm1Q5CLD3Igd5jOuUCYUoW_KYZo"
+SUPABASE_URL = os.environ.get("SUPABASE_URL")
+SUPABASE_KEY = os.environ.get("SUPABASE_KEY")
 supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
+
+# Load the gte-small model
+tokenizer = AutoTokenizer.from_pretrained("thenlper/gte-small")
+model = AutoModel.from_pretrained("thenlper/gte-small")
 
 # Fixed chord vocabulary for roots and types
 CHORD_ROOTS = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B']
@@ -84,7 +94,16 @@ def encode_song_features(features, vector_size=128):
         vector = vector[:vector_size]
     return np.array(vector)
 
-def write_to_supabase(features, vector):
+def generate_title_embedding(title):
+    """Generate embedding for the song title using gte-small model."""
+    inputs = tokenizer(title, return_tensors="pt", truncation=True, max_length=128)
+    with torch.no_grad():
+        outputs = model(**inputs)
+    # Mean pooling
+    embeddings = outputs.last_hidden_state.mean(dim=1).squeeze().numpy()
+    return embeddings
+
+def write_to_supabase(features, vector, title_embedding):
     """Write features and vector to Supabase."""
     data = {
         "title": features.get("title", "Unknown Title"),
@@ -105,8 +124,13 @@ def write_to_supabase(features, vector):
         "measures": features.get("number_of_measures", 0),
         "time_signatures": features.get("time_signatures", []),
         "feature_vector": vector.tolist(),
+        "title_embedding": json.dumps(title_embedding.tolist()),
     }
+
+    # Perform the insertion
     response = supabase.table("music_features").insert(data).execute()
+
+    # Check the response
     if response.data:
         print(f"Data for '{features.get('title', 'Unknown Title')}' successfully inserted into Supabase.")
     else:
@@ -150,8 +174,15 @@ def extract_features_and_save(file_path):
         time_signatures = data.get('time_signatures', [])
         features['number_of_measures'] = len(data.get('barlines', []))
         features['time_signatures'] = [f"{ts.get('numerator')}/{ts.get('denominator')}" for ts in time_signatures]
+
+        # Generate the title embedding
+        title_embedding = generate_title_embedding(features['title'])
+
+        # Encode song features
         vector = encode_song_features(features)
-        write_to_supabase(features, vector)
+
+        # Write to Supabase
+        write_to_supabase(features, vector, title_embedding)
     except Exception as e:
         print(f"Error processing file {file_path}: {e}")
 
