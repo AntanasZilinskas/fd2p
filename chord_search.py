@@ -161,15 +161,14 @@ def display_track(song, part_to_display=None):
     treble_track = tracks[0] if tracks else None
     bass_tracks = tracks[1:] if len(tracks) > 1 else []
 
-    # Function to add notes to a part
+    # Function to sanitize and add notes to a part
     def add_notes_to_part(part, track):
         track_notes = track.get('notes', [])
         song_events = create_events(track_notes)
-        data = song_events
 
-        for item in data:
+        for item in song_events:
             notes_list = item['notes']
-            if len(notes_list) > 1:
+            if len(notes_list) > 1:  # Handle chords
                 pitches = []
                 for n in notes_list:
                     midi_pitch = n['pitch']
@@ -177,17 +176,35 @@ def display_track(song, part_to_display=None):
                     m21_pitch.pitch.midi = midi_pitch
                     pitches.append(m21_pitch.pitch)
                 dur = notes_list[0]['duration']
-                chord_notes = chord.Chord(pitches)
-                chord_notes.duration = duration.Duration(dur / TICKS_PER_QUARTER)
-                part.append(chord_notes)
-            else:
+
+                try:
+                    chord_notes = chord.Chord(pitches)
+                    chord_notes.duration = duration.Duration(dur / TICKS_PER_QUARTER)
+                    if chord_notes.duration.quarterLength < 0.015625:  # Threshold for "2048th" or invalid duration
+                        raise ValueError("Chord duration too short.")
+                    part.append(chord_notes)
+                except Exception as e:
+                    print(f"Invalid chord duration found ({dur}). Replacing with half note.")
+                    chord_notes = chord.Chord(pitches)
+                    chord_notes.duration = duration.Duration(1.0)  # Default to quarter note
+                    part.append(chord_notes)
+            else:  # Handle single notes
                 n = notes_list[0]
                 midi_pitch = n['pitch']
                 dur = n['duration']
-                m21_note = note.Note()
-                m21_note.pitch.midi = midi_pitch
-                m21_note.duration = duration.Duration(dur / TICKS_PER_QUARTER)
-                part.append(m21_note)
+                try:
+                    m21_note = note.Note()
+                    m21_note.pitch.midi = midi_pitch
+                    m21_note.duration = duration.Duration(dur / TICKS_PER_QUARTER)
+                    if m21_note.duration.quarterLength < 0.015625:  # Threshold for "2048th" or invalid duration
+                        raise ValueError("Note duration too short.")
+                    part.append(m21_note)
+                except Exception as e:
+                    print(f"Invalid note duration found ({dur}). Replacing with half note.")
+                    m21_note = note.Note()
+                    m21_note.pitch.midi = midi_pitch
+                    m21_note.duration = duration.Duration(1.0)  # Default to quarter note
+                    part.append(m21_note)
 
     # Handle single track input or specific part display
     if part_to_display == "treble":
@@ -221,7 +238,10 @@ def display_track(song, part_to_display=None):
     score.append(bass_part)
 
     # Display the score
-    score.show()
+    try:
+        score.show()
+    except Exception as e:
+        print(f"Error displaying the score: {e}")
 
 def main():
 
