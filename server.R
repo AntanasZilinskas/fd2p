@@ -17,6 +17,9 @@ server <- function(input, output, session) {
   # Reactive value to track search progress
   search_in_progress <- reactiveVal(FALSE)
   
+  # Reactive value to control visibility of search results
+  show_search_results <- reactiveVal(FALSE)
+  
   # Function to perform the search
   perform_search <- function(query) {
     message("Search query: ", query)
@@ -56,41 +59,73 @@ server <- function(input, output, session) {
     
     # Hide the spinner
     session$sendCustomMessage("show_spinner", FALSE)
+    
+    # Set show_search_results to TRUE after search completes
+    show_search_results(TRUE)
   }
   
-  # Handle search when the input changes (e.g., on Enter key press)
+  # Observe search input changes
   observeEvent(input$searchInput, {
-    # Get the query from the input field
     query <- input$searchInput
     if (!is.null(query) && query != "") {
       perform_search(query)
+    } else {
+      # If input is empty, hide search results
+      show_search_results(FALSE)
+      search_results(data.frame(title = character(0), stringsAsFactors = FALSE))
     }
   }, ignoreInit = TRUE)
   
-  # Render search results
+  # Render search results as a dropdown
   output$searchResults <- renderUI({
+    if (!show_search_results()) return(NULL)
+    
     results <- search_results()
     if (nrow(results) == 0) {
       return(NULL)
     }
     
-    tagList(
+    tags$div(
+      class = "search-results-dropdown",
       lapply(seq_len(nrow(results)), function(i) {
         song_title <- results$title[i]
-        button_id <- paste0("select_song_", i)
-        
         tags$div(
-          class = "song-result",
-          span(song_title),
-          actionButton(
-            inputId = button_id,
-            label = "Add",
-            class = "select-song-button"
-          )
+          class = "search-result-item",
+          `data-value` = song_title,
+          song_title
         )
       })
     )
   })
+  
+  # Handle clicking on search result items
+  observe({
+    # Send a custom message to set up the click handler
+    session$sendCustomMessage("setupSearchResultClick", TRUE)
+  })
+  
+  # Receive clicked song title
+  observeEvent(input$searchResultClicked, {
+    song_title <- input$searchResultClicked
+    songs <- selected_songs()
+    if (!(song_title %in% songs)) {
+      selected_songs(c(songs, song_title))
+    }
+    # Remove selected song from search results
+    results <- search_results()
+    updated_results <- results[results$title != song_title, , drop = FALSE]
+    search_results(updated_results)
+    
+    # Hide search results if empty
+    if (nrow(updated_results) == 0) {
+      show_search_results(FALSE)
+    }
+  })
+  
+  # Hide search results when clicking outside
+  observeEvent(input$hide_search_results, {
+    show_search_results(FALSE)
+  }, ignoreInit = TRUE)
   
   # Observers for song selection
   observe({

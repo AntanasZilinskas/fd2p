@@ -90,6 +90,31 @@ ui <- navbarPage(
           spinner.style.display = 'none';
         }
       });
+    ")),
+    # Add JavaScript to dismiss search results when clicking outside
+    tags$script(HTML("
+      $(document).on('click', function(event) {
+        var $target = $(event.target);
+        if (!$target.closest('.search-container').length && !$target.closest('.search-results-dropdown').length) {
+          Shiny.setInputValue('hide_search_results', Math.random());
+        }
+      });
+    ")),
+    # Add JavaScript for handling clicks on search result items
+    tags$script(HTML("
+      $(document).on('click', function(event) {
+        var $target = $(event.target);
+        if (!$target.closest('.search-container').length && !$target.closest('.search-results-dropdown').length) {
+          Shiny.setInputValue('hide_search_results', Math.random());
+        }
+      });
+
+      Shiny.addCustomMessageHandler('setupSearchResultClick', function(message) {
+        $(document).off('click', '.search-result-item').on('click', '.search-result-item', function() {
+          var songTitle = $(this).attr('data-value');
+          Shiny.setInputValue('searchResultClicked', songTitle, {priority: 'event'});
+        });
+      });
     "))
   ),
 
@@ -127,17 +152,18 @@ ui <- navbarPage(
                 id = "searchInput",
                 type = "text",
                 placeholder = "Type a song name...",
-                class = "search-input"
+                class = "search-input",
+                autocomplete = "off"
               ),
               # Placeholder for the loading animation
               tags$div(id = "search-spinner", class = "search-spinner", style = "display: none;")
-            )
+            ),
+            # Search results dropdown (move uiOutput here)
+            uiOutput("searchResults")
           ),
           # Analyze button
           actionButton("analyzeBtn", "Analyze", class = "analyze-button")
         ),
-        # Search results output
-        uiOutput("searchResults"),
         # Selected songs list
         div(
           class = "matches-container",
