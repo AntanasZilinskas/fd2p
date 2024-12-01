@@ -42,24 +42,63 @@ customCSS <- HTML("
     max-height: 200px;
     overflow-y: auto;
   }
+  /* Add menu icon styling */
+  .menu-icon {
+    width: 24px;
+    height: 24px;
+    vertical-align: left;
+    margin-right: 8px;
+  }
+
+  /* Adjust the menu tab to align items properly */
+  .menu-tab {
+    display: flex;
+    align-items: left;
+  }
+
+  /* Ensure the tab links use flex alignment */
+  .navbar-nav > li > a {
+    display: flex;
+    align-items: left;
+    justify-content: left;
+  }
 ")
 
 ui <- navbarPage(
-  title = "HARMONLY",
   id = "mainNav",
-  theme = "custom.css",
-  
-  # Remove custom JavaScript handlers since they're no longer needed
-  tags$head(
-    tags$style(customCSS)
+  inverse = TRUE,
+
+  # Include the Google Fonts link and custom CSS
+  header = tags$head(
+    # Link to the Poppins font
+    tags$link(
+      href = "https://fonts.googleapis.com/css2?family=Poppins:wght@400&display=swap",
+      rel = "stylesheet"
+    ),
+    # Link to your custom CSS
+    tags$link(
+      href = "custom.css",
+      rel = "stylesheet"
+    )
   ),
-  
+
+  # Logo and Title Container
+  title = div(
+    class = "logo-title-container",
+    img(src = "assets/logo.svg", class = "logo", alt = "Logo"),
+    span("HARMONLY", class = "title-text")
+  ),
+
   # Welcome Page
   tabPanel(
-    title = "Welcome",
+    title = tags$div(
+      class = "menu-tab",
+      tags$img(src = "assets/search.svg", class = "menu-icon"),
+      span("Search songs")
+    ),
     div(class = "content-wrapper",
       div(class = "welcome-box",
-        h1(class = "main-title", "Welcome to Harmonly!"),
+        h1(class = "main-title", "Find out about your Music DNA!"),
         p(class = "subtitle", "Tell us about the songs you like, and we'll help you discover more music you'll love."),
         
         div(class = "input-container",
@@ -90,7 +129,11 @@ ui <- navbarPage(
   
   # MDNA Page
   tabPanel(
-    title = "Your MDNA",
+    title = tags$div(
+      class = "menu-tab",
+      tags$img(src = "assets/pulse.svg", class = "menu-icon"),
+      span("Analyze MDNA")
+    ),
     div(class = "content-wrapper",
       uiOutput("recommendedSongs")
     )
