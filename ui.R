@@ -79,7 +79,18 @@ ui <- navbarPage(
     tags$link(
       href = "custom.css",
       rel = "stylesheet"
-    )
+    ),
+    # Add JavaScript to handle showing/hiding the spinner
+    tags$script(HTML("
+      Shiny.addCustomMessageHandler('show_spinner', function(show) {
+        var spinner = document.getElementById('search-spinner');
+        if (show) {
+          spinner.style.display = 'block';
+        } else {
+          spinner.style.display = 'none';
+        }
+      });
+    "))
   ),
 
   # Logo and Title Container
@@ -96,37 +107,47 @@ ui <- navbarPage(
       tags$img(src = "assets/search.svg", class = "menu-icon"),
       span("Search songs")
     ),
-    div(class = "content-wrapper",
-      div(class = "welcome-box",
+    div(
+      class = "content-wrapper",
+      div(
+        class = "welcome-box",
         h1(class = "main-title", "Find out about your Music DNA!"),
-        p(class = "subtitle", "Tell us about the songs you like, and we'll help you discover more music you'll love."),
-        
-        div(class = "input-container",
-          # Search input field
-          textInput("searchInput", "Enter song name:", placeholder = "Type a song name..."),
-          
-          # Search button
-          actionButton("searchBtn", "Search", class = "search-button"),
-          
-          # Search results output
-          uiOutput("searchResults"),
-          
-          # Selected songs list
-          div(class = "matches-container",
-            h3("Selected Songs"),
-            uiOutput("selectedSongs")
+        p(
+          class = "subtitle",
+          "Tell us about the songs you like, and we'll help you discover more music you'll love."
+        ),
+        # Adjusted search container
+        div(
+          class = "search-container",
+          div(
+            class = "search-input-wrapper",
+            div(
+              class = "input-with-spinner",
+              tags$input(
+                id = "searchInput",
+                type = "text",
+                placeholder = "Type a song name...",
+                class = "search-input"
+              ),
+              # Placeholder for the loading animation
+              tags$div(id = "search-spinner", class = "search-spinner", style = "display: none;")
+            )
           ),
-          
-          # Analysis button
-          div(class = "button-container",
-            actionButton("analyzeBtn", "Analyze My Music Taste", 
-                        class = "option-button")
-          )
+          # Analyze button
+          actionButton("analyzeBtn", "Analyze", class = "analyze-button")
+        ),
+        # Search results output
+        uiOutput("searchResults"),
+        # Selected songs list
+        div(
+          class = "matches-container",
+          h3("Selected Songs"),
+          uiOutput("selectedSongs")
         )
       )
     )
   ),
-  
+
   # MDNA Page
   tabPanel(
     title = tags$div(
@@ -134,7 +155,8 @@ ui <- navbarPage(
       tags$img(src = "assets/pulse.svg", class = "menu-icon"),
       span("Analyze MDNA")
     ),
-    div(class = "content-wrapper",
+    div(
+      class = "content-wrapper",
       uiOutput("recommendedSongs")
     )
   )

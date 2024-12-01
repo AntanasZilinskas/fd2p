@@ -624,3 +624,117 @@
   .navbar-nav > li.active > a {
     border: none;
   }
+  
+  /* Styles for the search container */
+  .search-container {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    margin-top: 20px;
+  }
+  
+  /* Styles for the search input wrapper */
+  .search-input-wrapper {
+    position: relative;
+    width: 504px;
+    height: 60px;
+  }
+  
+  .input-with-spinner {
+    position: relative;
+    width: 100%;
+    height: 100%;
+  }
+  
+  .search-input {
+    width: 100%;
+    height: 100%;
+    padding: 0 60px 0 20px; /* Adjust padding to accommodate the spinner */
+    font-size: 16px;
+    border: none;
+    border-radius: 10px;
+    background: var(--White-White, #FFF);
+    box-shadow: 0px 4px 12px rgba(13, 10, 44, 0.06);
+  }
+  
+  .search-input:focus {
+    outline: none;
+  }
+  
+  /* Styles for the loading spinner */
+  .search-spinner {
+    position: absolute;
+    top: 50%;
+    right: 20px; /* Adjust as needed */
+    transform: translateY(-50%);
+    width: 24px;
+    height: 24px;
+    border: 3px solid rgba(0, 0, 0, 0.1);
+    border-top-color: #000;
+    border-radius: 50%;
+    animation: spinner 1s linear infinite;
+    z-index: 10;
+  }
+  
+  /* Spinner animation */
+  @keyframes spinner {
+    to { transform: translateY(-50%) rotate(360deg); }
+  }
+  
+  /* Styles for the search button */
+  .search-button {
+    background: none;
+    border: none;
+    padding: 0 20px;
+    height: 100%;
+    cursor: pointer;
+    border-radius: 0 10px 10px 0;
+  }
+  
+  .search-button:focus {
+    outline: none;
+  }
+  
+  .search-button:hover {
+    background-color: #f0f0f0;
+  }
+  
+  .search-button:active {
+    background-color: #d9d9d9;
+  }
+  
+  /* Adjust the icon size */
+  .search-button .glyphicon,
+  .search-button .fa {
+    font-size: 24px;
+    color: #000;
+  }
+  
+  /* Remove any border or outline around the button */
+  .search-button .btn {
+    border: none;
+    box-shadow: none;
+    background: none;
+  }
+  
+  /* Styles for the Analyze button */
+  .analyze-button {
+    display: flex;
+    width: 126px;
+    height: 60px;
+    padding: 0;
+    justify-content: center;
+    align-items: center;
+    gap: var(--sds-size-space-200);
+    border-radius: var(--sds-size-radius-200, 10px);
+    border: 0px solid var(--sds-color-border-brand-default);
+    background: var(--fd2p-3, #F56C37);
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+  }
+  
+  /* Optional: Adjust hover effect for the Analyze button */
+  .analyze-button:hover {
+    opacity: 0.9;
+  }

@@ -14,15 +14,29 @@ server <- function(input, output, session) {
   # Reactive value to store recommended songs
   recommended_songs <- reactiveVal(data.frame())
   
-  # Handle search when the search button is clicked
-  observeEvent(input$searchBtn, {
-    query <- input$searchInput
+  # Reactive value to track search progress
+  search_in_progress <- reactiveVal(FALSE)
+  
+  # Function to perform the search
+  perform_search <- function(query) {
     message("Search query: ", query)
     
-    # Check if 'query' is not NULL and is a non-empty string
+    # Set search_in_progress to TRUE
+    search_in_progress(TRUE)
+    
+    # Show the spinner
+    session$sendCustomMessage("show_spinner", TRUE)
+    
+    # Perform the search asynchronously to avoid blocking the UI
+    # For simplicity, we'll proceed synchronously here
+    # You may consider enhancing this with promises for better performance
+    
+    # Simulate a delay for demonstration purposes (remove in production)
+    # Sys.sleep(1)
+    
+    # Check if 'query' is valid
     if (!is.null(query) && nzchar(query) && nchar(query) >= 2) {
       results <- quick_search_songs(query, max_results = 10L)
-      
       if (length(results) > 0) {
         # Update search results
         search_results(data.frame(title = results, stringsAsFactors = FALSE))
@@ -36,9 +50,24 @@ server <- function(input, output, session) {
       search_results(data.frame(title = character(0), stringsAsFactors = FALSE))
       showNotification("Please enter at least 2 characters to search.", type = "warning")
     }
-  })
+    
+    # Set search_in_progress to FALSE after search completes
+    search_in_progress(FALSE)
+    
+    # Hide the spinner
+    session$sendCustomMessage("show_spinner", FALSE)
+  }
   
-  # Render search results using actionButtons
+  # Handle search when the input changes (e.g., on Enter key press)
+  observeEvent(input$searchInput, {
+    # Get the query from the input field
+    query <- input$searchInput
+    if (!is.null(query) && query != "") {
+      perform_search(query)
+    }
+  }, ignoreInit = TRUE)
+  
+  # Render search results
   output$searchResults <- renderUI({
     results <- search_results()
     if (nrow(results) == 0) {
@@ -46,45 +75,37 @@ server <- function(input, output, session) {
     }
     
     tagList(
-      h3("Search Results"),
       lapply(seq_len(nrow(results)), function(i) {
         song_title <- results$title[i]
-        actionButton(
-          inputId = paste0("select_song_", i),
-          label = song_title,
+        button_id <- paste0("select_song_", i)
+        
+        tags$div(
           class = "song-result",
-          style = "width: 100%; text-align: left;"
+          span(song_title),
+          actionButton(
+            inputId = button_id,
+            label = "Add",
+            class = "select-song-button"
+          )
         )
       })
     )
   })
   
-  # Remove previous observers before creating new ones
-  observeEvent(search_results(), {
-    # Remove previous observers
-    observers <- ls(envir = .GlobalEnv, pattern = "^song_observer_")
-    for (obs_name in observers) {
-      observer <- get(obs_name, envir = .GlobalEnv)
-      observer$destroy()
-      rm(list = obs_name, envir = .GlobalEnv)
-    }
-    
+  # Observers for song selection
+  observe({
     results <- search_results()
     lapply(seq_len(nrow(results)), function(i) {
       song_title <- results$title[i]
       button_id <- paste0("select_song_", i)
       
-      # Create a new observer and assign it to a variable in the global environment
-      observer <- observeEvent(input[[button_id]], {
+      observeEvent(input[[button_id]], {
         songs <- selected_songs()
         if (!(song_title %in% songs)) {
           selected_songs(c(songs, song_title))
           message("Song selected: ", song_title)
         }
       }, ignoreInit = TRUE)
-      
-      # Assign the observer to a variable for later removal
-      assign(paste0("song_observer_", i), observer, envir = .GlobalEnv)
     })
   })
   
@@ -97,43 +118,13 @@ server <- function(input, output, session) {
     
     tagList(
       lapply(seq_along(songs), function(i) {
-        div(class = "song-item",
-          span(songs[i]),
-          span(
-            class = "remove-song",
-            onclick = sprintf("Shiny.setInputValue('remove_song', %d, {priority: 'event'});", i),
-            "×"
-          )
+        song <- songs[i]
+        tags$div(
+          class = "selected-song-item",
+          span(song)
         )
       })
     )
-  })
-  
-  # Handle song removal
-  observeEvent(input$remove_song, {
-    songs <- selected_songs()
-    index_to_remove <- as.integer(input$remove_song)
-    if (!is.na(index_to_remove) && index_to_remove <= length(songs)) {
-      selected_songs(songs[-index_to_remove])
-    }
-  })
-  
-  # Handle analyze button
-  observeEvent(input$analyzeBtn, {
-    req(length(selected_songs()) > 0)
-    # Call the function to find similar songs
-    recommendations <- find_similar_songs(selected_songs(), top_n = 10L)
-    
-    if (nrow(recommendations) == 0) {
-      showNotification("No recommendations found.", type = "warning")
-    } else {
-      # Store recommendations
-      recommended_songs(recommendations)
-      message("Recommendations retrieved.")
-      
-      # Navigate to the MDNA page
-      updateNavbarPage(session, "mainNav", selected = "Your MDNA")
-    }
   })
   
   # Render recommended songs on the MDNA page
@@ -169,6 +160,8 @@ server <- function(input, output, session) {
     )
   })
   
-  # Keep your existing MDNA outputs or add new ones
-  # ... your existing MDNA server code ...
+  # Add a session listener for custom messages
+  session$onFlushed(function() {
+    session$sendCustomMessage("initialize_spinner", TRUE)
+  })
 }
