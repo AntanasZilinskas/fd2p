@@ -194,4 +194,28 @@ server <- function(input, output, session) {
   session$onFlushed(function() {
     session$sendCustomMessage("initialize_spinner", TRUE)
   })
+  
+  # Observe Analyze button click
+  observeEvent(input$analyzeBtn, {
+    # Check if any songs are selected
+    selected_songs_list <- selected_songs()
+    if(length(selected_songs_list) == 0) {
+      showNotification("Please select at least one song before analyzing.", type = "warning")
+    } else {
+      # Send message to start processing
+      session$sendCustomMessage('analyzeButtonProcessing', list(status = 'start'))
+
+      # Perform the processing (e.g., find similar songs)
+      # You should replace this with your actual processing function
+      # For example:
+      recommended_songs_data <- find_similar_songs(selected_songs_list, top_n = 5L)
+      recommended_songs(recommended_songs_data)
+
+      # Simulate processing time if necessary (e.g., Sys.sleep)
+      # Sys.sleep(2) # Optional: Remove or adjust as needed
+
+      # Send message to end processing and redirect
+      session$sendCustomMessage('analyzeButtonProcessing', list(status = 'end'))
+    }
+  })
 }

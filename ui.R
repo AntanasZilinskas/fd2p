@@ -122,6 +122,23 @@ ui <- navbarPage(
         var songTitle = $(this).attr('data-song-title');
         Shiny.setInputValue('remove_song', songTitle, {priority: 'event'});
       });
+    ")),
+    # JavaScript to handle Analyze button processing state and redirection
+    tags$script(HTML("
+      Shiny.addCustomMessageHandler('analyzeButtonProcessing', function(message) {
+        var btn = document.getElementById('analyzeBtn');
+        if(message.status === 'start') {
+          btn.classList.add('processing');
+          btn.disabled = true;
+          btn.innerHTML = 'Analyze <div class=\"spinner\"></div>';
+        } else if(message.status === 'end') {
+          btn.classList.remove('processing');
+          btn.disabled = false;
+          btn.innerHTML = 'Analyze';
+          // Redirect to 'Analyze MDNA' page
+          $('a[data-value=\"Analyze MDNA\"]').tab('show');
+        }
+      });
     "))
   ),
 
@@ -187,6 +204,7 @@ ui <- navbarPage(
       tags$img(src = "assets/pulse.svg", class = "menu-icon"),
       span("Analyze MDNA")
     ),
+    value = "Analyze MDNA",
     div(
       class = "content-wrapper",
       uiOutput("recommendedSongs")

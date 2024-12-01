@@ -727,16 +727,44 @@
     align-items: center;
     gap: var(--sds-size-space-200);
     border-radius: var(--sds-size-radius-200, 10px);
-    border: 0px solid var(--sds-color-border-brand-default);
+    border: none;
     background: var(--fd2p-3, #F56C37);
-    color: white;
-    font-size: 16px;
+    color: var(--sds-color-text-brand-on-brand);
     cursor: pointer;
+
+    /* Subheading */
+    font-family: var(--sds-typography-subheading-font-family, 'Poppins', sans-serif);
+    font-size: var(--sds-typography-subheading-size-medium, 20px);
+    font-style: normal;
+    font-weight: var(--sds-typography-subheading-font-weight, 500);
+    line-height: 120%;
   }
-  
-  /* Optional: Adjust hover effect for the Analyze button */
-  .analyze-button:hover {
-    opacity: 0.9;
+
+  /* Change color when clicked (processing state) */
+  .analyze-button.processing {
+    background-color: #232323 !important;
+    color: var(--sds-color-text-brand-on-brand);
+  }
+
+  /* Disable the button when processing */
+  .analyze-button:disabled {
+    cursor: not-allowed;
+  }
+
+  /* Style for the spinner inside the Analyze button */
+  .analyze-button .spinner {
+    margin-left: 8px;
+    border: 3px solid #ffffff; /* Light grey */
+    border-top: 3px solid #cccccc; /* Darker grey */
+    border-radius: 50%;
+    width: 16px;
+    height: 16px;
+    animation: spin 1s linear infinite;
+  }
+
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
   }
   
   /* Styles for the search results dropdown */
