@@ -30,28 +30,27 @@ server <- function(input, output, session) {
     # Show the spinner
     session$sendCustomMessage("show_spinner", TRUE)
     
-    # Perform the search asynchronously to avoid blocking the UI
-    # For simplicity, we'll proceed synchronously here
-    # You may consider enhancing this with promises for better performance
-    
-    # Simulate a delay for demonstration purposes (remove in production)
-    # Sys.sleep(1)
-    
     # Check if 'query' is valid
     if (!is.null(query) && nzchar(query) && nchar(query) >= 2) {
       results <- quick_search_songs(query, max_results = 10L)
       if (length(results) > 0) {
         # Update search results
         search_results(data.frame(title = results, stringsAsFactors = FALSE))
+        # Show search results
+        show_search_results(TRUE)
       } else {
         # No results found
         search_results(data.frame(title = character(0), stringsAsFactors = FALSE))
         showNotification("No songs found for your search.", type = "warning")
+        # Hide search results
+        show_search_results(FALSE)
       }
     } else {
       # Query is too short or invalid
       search_results(data.frame(title = character(0), stringsAsFactors = FALSE))
       showNotification("Please enter at least 2 characters to search.", type = "warning")
+      # Hide search results
+      show_search_results(FALSE)
     }
     
     # Set search_in_progress to FALSE after search completes
@@ -59,9 +58,6 @@ server <- function(input, output, session) {
     
     # Hide the spinner
     session$sendCustomMessage("show_spinner", FALSE)
-    
-    # Set show_search_results to TRUE after search completes
-    show_search_results(TRUE)
   }
   
   # Observe search input changes
@@ -127,39 +123,38 @@ server <- function(input, output, session) {
     show_search_results(FALSE)
   }, ignoreInit = TRUE)
   
-  # Observers for song selection
-  observe({
-    results <- search_results()
-    lapply(seq_len(nrow(results)), function(i) {
-      song_title <- results$title[i]
-      button_id <- paste0("select_song_", i)
-      
-      observeEvent(input[[button_id]], {
-        songs <- selected_songs()
-        if (!(song_title %in% songs)) {
-          selected_songs(c(songs, song_title))
-          message("Song selected: ", song_title)
-        }
-      }, ignoreInit = TRUE)
-    })
-  })
-  
   # Display selected songs
   output$selectedSongs <- renderUI({
     songs <- selected_songs()
     if (length(songs) == 0) {
-      return(NULL)
+      # No songs selected, display the title styled like placeholder text
+      return(tags$h3("Selected Songs", class = "placeholder-text"))
     }
     
+    # Songs selected, display the song items
     tagList(
       lapply(seq_along(songs), function(i) {
         song <- songs[i]
         tags$div(
           class = "selected-song-item",
-          span(song)
+          tags$span(class = "song-title", song),
+          tags$span(
+            class = "remove-song",
+            `data-song-index` = i,
+            `data-song-title` = song,
+            "✕"
+          )
         )
       })
     )
+  })
+  
+  # Observe remove song button clicks
+  observeEvent(input$remove_song, {
+    song_to_remove <- input$remove_song
+    songs <- selected_songs()
+    updated_songs <- songs[songs != song_to_remove]
+    selected_songs(updated_songs)
   })
   
   # Render recommended songs on the MDNA page

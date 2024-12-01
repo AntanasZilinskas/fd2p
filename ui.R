@@ -115,6 +115,13 @@ ui <- navbarPage(
           Shiny.setInputValue('searchResultClicked', songTitle, {priority: 'event'});
         });
       });
+    ")),
+    # JavaScript to handle clicks on remove buttons
+    tags$script(HTML("
+      $(document).on('click', '.remove-song', function() {
+        var songTitle = $(this).attr('data-song-title');
+        Shiny.setInputValue('remove_song', songTitle, {priority: 'event'});
+      });
     "))
   ),
 
@@ -167,7 +174,6 @@ ui <- navbarPage(
         # Selected songs list
         div(
           class = "matches-container",
-          h3("Selected Songs"),
           uiOutput("selectedSongs")
         )
       )

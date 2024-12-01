@@ -765,3 +765,70 @@
   .search-result-item:hover {
     background-color: #f0f0f0;
   }
+  
+  /* Styles for the Selected Songs container */
+  .matches-container {
+    display: flex;
+    flex-direction: column; /* Stack items vertically */
+    width: 654px;
+    padding: 8px;
+    gap: 8px;
+    border-radius: 10px;
+    background: var(--White-White, #FFF);
+
+    /* Shadow */
+    box-shadow: 0px 4px 12px 0px rgba(13, 10, 44, 0.06);
+
+    /* Spacing from the search bar */
+    margin-top: 24px;
+  }
+  
+  .selected-song-item {
+    display: flex;
+    align-items: center;
+    padding: 8px 12px;
+    border-radius: 8px;
+    background-color: #f8f8f8;
+    margin: 5px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    position: relative; /* For absolute positioning of remove button */
+  }
+  
+  /* Change background color on hover - turns grey */
+  .selected-song-item:hover {
+    background-color: #e0e0e0;
+  }
+  
+  /* Song title styling */
+  .selected-song-item .song-title {
+    font-size: 16px;
+    color: #333;
+    flex-grow: 1;
+    padding-right: 30px; /* Space for the remove button */
+  }
+  
+  /* Remove button styling */
+  .selected-song-item .remove-song {
+    font-size: 18px;
+    color: #F56C37; /* Orange color */
+    cursor: pointer;
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+  
+  /* Optional: Change remove button color on hover */
+  .selected-song-item .remove-song:hover {
+    color: #FF8800; /* Slightly lighter orange */
+  }
+  
+  /* Style for placeholder text to match the search bar placeholder */
+  .placeholder-text {
+    color: #999999; /* Adjust to match your placeholder color */
+    font-style: thin;
+    font-size: 16px; /* Adjust to match your placeholder font size */
+    margin: 5px; /* Reset margin */
+    padding: 7px; /* Reset padding */
+  }
