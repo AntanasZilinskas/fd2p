@@ -31,7 +31,7 @@ def find_similar_songs(input_titles, top_n=5):
     return response.data
 
 # Example usage
-input_titles = ["idontwannabeyouanymore"]
+input_titles = ["Christmas"]
 similar_songs = find_similar_songs(input_titles, top_n=5)
 for song in similar_songs:
     print(song)

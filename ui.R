@@ -49,42 +49,9 @@ ui <- navbarPage(
   id = "mainNav",
   theme = "custom.css",
   
-  # Include JavaScript code to handle custom messages
+  # Remove custom JavaScript handlers since they're no longer needed
   tags$head(
-    tags$script(HTML("
-      Shiny.addCustomMessageHandler('updateSelectizeOptions', function(message) {
-        var inputId = message.inputId;
-        var options = message.options;
-        var selectize = $('#' + inputId).selectize()[0].selectize;
-
-        // Clear existing options
-        selectize.clearOptions();
-
-        // Add new options
-        selectize.addOption(options);
-
-        // Refresh options list
-        selectize.refreshOptions(false);
-
-        // Open the dropdown if there are options
-        if (options.length > 0) {
-          selectize.open();
-        } else {
-          selectize.close();
-        }
-      });
-
-      Shiny.addCustomMessageHandler('clearSelectizeInput', function(message) {
-        var inputId = message.inputId;
-        var selectize = $('#' + inputId).selectize()[0].selectize;
-
-        // Clear the selected value
-        selectize.clear();
-
-        // Close the dropdown
-        selectize.close();
-      });
-    "))
+    tags$style(customCSS)
   ),
   
   # Welcome Page
@@ -96,40 +63,18 @@ ui <- navbarPage(
         p(class = "subtitle", "Tell us about the songs you like, and we'll help you discover more music you'll love."),
         
         div(class = "input-container",
-          # Song search input
-          selectizeInput(
-            "songInput", 
-            "Search and add songs you like:",
-            choices = NULL,
-            multiple = FALSE,
-            options = list(
-              placeholder = 'Start typing a song name...',
-              maxItems = 1,
-              valueField = 'title',
-              labelField = 'title',
-              searchField = 'title',
-              create = FALSE,
-              render = I("
-                {
-                  option: function(item, escape) {
-                    return '<div>' + escape(item.title) + '</div>';
-                  }
-                }
-              "),
-              onType = I("
-                function(query) {
-                  if (query.length >= 2) {
-                    Shiny.setInputValue('searchTerm', query, {priority: 'event'});
-                  } else {
-                    Shiny.setInputValue('searchTerm', null);
-                  }
-                }
-              ")
-            )
-          ),
+          # Search input field
+          textInput("searchInput", "Enter song name:", placeholder = "Type a song name..."),
+          
+          # Search button
+          actionButton("searchBtn", "Search", class = "search-button"),
+          
+          # Search results output
+          uiOutput("searchResults"),
           
           # Selected songs list
           div(class = "matches-container",
+            h3("Selected Songs"),
             uiOutput("selectedSongs")
           ),
           
@@ -147,8 +92,7 @@ ui <- navbarPage(
   tabPanel(
     title = "Your MDNA",
     div(class = "content-wrapper",
-      # Existing MDNA content here
-      # Leaving this empty for now, focusing on the search functionality
+      uiOutput("recommendedSongs")
     )
   )
 )

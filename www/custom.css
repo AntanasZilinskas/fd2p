@@ -381,3 +381,62 @@
     margin: 0;
     padding: 1em;
   }
+  
+  /* Add styles for the search button */
+  .search-button,
+  .search-button:focus {
+    background-color: var(--accent);
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    margin-top: 10px;
+    font-size: 1em;
+    cursor: pointer;
+  }
+  
+  .search-button:hover {
+    background-color: #e05a2e; /* Slightly darker shade */
+  }
+  
+  /* Style for search results */
+  .song-result {
+    display: block;
+    padding: 10px 15px;
+    margin: 5px 0;
+    background-color: #f8f9fa;
+    color: var(--primary-dark);
+    text-decoration: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+  }
+  
+  .song-result:hover {
+    background-color: #e2e6ea;
+  }
+  
+  /* Styles for recommendation items */
+  .recommendation-item {
+    background-color: white;
+    padding: 15px;
+    margin: 10px 0;
+    border-radius: 10px;
+    border: 1px solid var(--neutral);
+  }
+  
+  .recommendation-item h4 {
+    margin-top: 0;
+  }
+  
+  .recommendation-item p {
+    margin: 5px 0;
+  }
+  
+  .recommendation-item a {
+    color: var(--accent);
+    text-decoration: none;
+  }
+  
+  .recommendation-item a:hover {
+    text-decoration: underline;
+  }
