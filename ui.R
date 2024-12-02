@@ -68,6 +68,81 @@ customCSS <- HTML("
   .mdna-page .subtitle {
     text-align: center;
   }
+
+  /* MDNA Container */
+  .mdna-container {
+    position: relative;
+    width: 654px;
+    height: 440px;
+    margin: 0 auto;
+    border-radius: 10px;
+    background: #FFF;
+    box-shadow: 0px 4px 12px 0px rgba(13, 10, 44, 0.06);
+    overflow: hidden;
+  }
+
+  /* Center Icon and Label */
+  .center-icon {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+  }
+
+  .center-icon .mdna-label {
+    display: block;
+    margin-bottom: 10px;
+    font-size: 16px;
+    color: #333;
+  }
+
+  .center-icon .your-mdna-icon {
+    width: 57px;
+    height: 57px;
+  }
+
+  /* Suggested Song Icons */
+  .suggested-song {
+    position: absolute;
+    transform: translate(-50%, -50%);
+  }
+
+  .suggested-song-icon {
+    width: 25px;
+    height: 25px;
+    cursor: pointer;
+  }
+
+  /* Tooltip Styling */
+  .suggested-song[title]:hover::after {
+    content: attr(title);
+    position: absolute;
+    top: -60px;
+    left: 50%;
+    transform: translateX(-50%);
+    white-space: pre-line;
+    background-color: rgba(0, 0, 0, 0.8);
+    color: #FFF;
+    padding: 8px 12px;
+    border-radius: 5px;
+    z-index: 999;
+    width: max-content;
+    max-width: 200px;
+    text-align: left;
+  }
+
+  .suggested-song[title]:hover::before {
+    content: '';
+    position: absolute;
+    top: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    border-width: 5px;
+    border-style: solid;
+    border-color: transparent transparent rgba(0, 0, 0, 0.8) transparent;
+    z-index: 999;
+  }
 ")
 
 ui <- navbarPage(
@@ -221,11 +296,8 @@ ui <- navbarPage(
           class = "subtitle",
           "Here are the songs that are most similar to your current taste."
         ),
-        # Display recommended songs
-        div(
-          class = "recommendations-container",
-          uiOutput("recommendedSongs")
-        )
+        # Placeholder for the MDNA visualization or message
+        uiOutput("mdnaContent")
       )
     )
   )

@@ -20,6 +20,9 @@ server <- function(input, output, session) {
   # Reactive value to control visibility of search results
   show_search_results <- reactiveVal(FALSE)
   
+  # Reactive value to store the ID of the selected song
+  selected_song_id <- reactiveVal(NULL)
+  
   # Function to perform the search
   perform_search <- function(query) {
     message("Search query: ", query)
@@ -204,17 +207,156 @@ server <- function(input, output, session) {
       # Send message to start processing
       session$sendCustomMessage('analyzeButtonProcessing', list(status = 'start'))
 
-      # Perform the processing (e.g., find similar songs)
-      # You should replace this with your actual processing function
-      # For example:
+      # Perform the processing
       recommended_songs_data <- find_similar_songs(selected_songs_list, top_n = 5L)
-      recommended_songs(recommended_songs_data)
 
-      # Simulate processing time if necessary (e.g., Sys.sleep)
-      # Sys.sleep(2) # Optional: Remove or adjust as needed
+      # Debugging: Print the recommended songs data
+      print("Recommended Songs Data:")
+      print(recommended_songs_data)
+
+      recommended_songs(recommended_songs_data)
 
       # Send message to end processing and redirect
       session$sendCustomMessage('analyzeButtonProcessing', list(status = 'end'))
     }
+  })
+  
+  # Render recommended songs visualization on the MDNA page
+  output$recommendedSongsVisualization <- renderUI({
+    recommendations <- recommended_songs()
+    
+    if (nrow(recommendations) == 0) {
+      return(NULL)
+    }
+
+    max_distance <- 150  # Adjust based on container size
+    center_x <- 0
+    center_y <- 0
+
+    # Ensure similarity scores are available
+    similarity_scores <- as.numeric(recommendations$similarity)
+    min_score <- min(similarity_scores)
+    max_score <- max(similarity_scores)
+    normalized_scores <- (similarity_scores - min_score) / (max_score - min_score + 0.0001)  # Prevent division by zero
+
+    num_songs <- nrow(recommendations)
+    angle_increment <- 360 / num_songs
+
+    # Generate UI elements for each song
+    song_elements <- lapply(1:num_songs, function(i) {
+      song <- recommendations[i, ]
+      angle_deg <- angle_increment * (i - 1)
+      angle_rad <- angle_deg * (pi / 180)
+      distance <- (1 - normalized_scores[i]) * max_distance  # Closer distance for higher similarity
+
+      # Calculate position relative to center
+      x_pos <- center_x + distance * cos(angle_rad)
+      y_pos <- center_y + distance * sin(angle_rad)
+
+      # Create inline CSS for positioning
+      position_style <- sprintf(
+        "left: calc(50%% + %.2fpx); top: calc(50%% + %.2fpx);",
+        x_pos,
+        y_pos
+      )
+
+      # Determine icon based on selection
+      selected_id <- selected_song_id()
+      if (!is.null(selected_id) && song$id == selected_id) {
+        icon_src <- "assets/selected-song.svg"
+      } else {
+        icon_src <- "assets/suggested-songs.svg"
+      }
+
+      # Create a div for the song icon with onclick event
+      tags$div(
+        class = "suggested-song",
+        style = position_style,
+        `data-song-id` = song$id,  # For JavaScript access
+        # Tooltip with song details
+        title = paste(
+          "Title:", song$title, "\n",
+          "Artists:", song$creators, "\n",
+          "Similarity Score:", sprintf("%.2f", song$similarity)
+        ),
+        img(
+          src = icon_src,
+          class = "suggested-song-icon",
+          onclick = sprintf("event.stopPropagation(); Shiny.setInputValue('song_clicked', %d, {priority: 'event'});", song$id)
+        )
+      )
+    })
+
+    # Return the list of song elements
+    do.call(tagList, song_elements)
+  })
+
+  # Observe the song click event
+  observeEvent(input$song_clicked, {
+    selected_song_id(input$song_clicked)
+  })
+
+  output$mdnaContent <- renderUI({
+    recommendations <- recommended_songs()
+    
+    if (nrow(recommendations) == 0) {
+      # No recommendations yet; display a message or keep it empty
+      return(NULL)
+    } else {
+      # Main container holding both the MDNA visualization and the song details
+      div(
+        class = "mdna-main-container",
+        # Left-side MDNA visualization container
+        div(
+          class = "mdna-visualization-container-custom",
+          onclick = "Shiny.setInputValue('container_clicked', Math.random());",
+          # Center icon with title
+          div(
+            class = "center-icon",
+            img(src = "assets/your-mdna.svg", class = "your-mdna-icon"),
+            span(class = "mdna-label", "Your MDNA")
+          ),
+          # Visualization of recommended songs
+          uiOutput("recommendedSongsVisualization")
+        ),
+        # Right-side song details container
+        div(
+          class = "song-details-container-custom",
+          uiOutput("songDetails")
+        )
+      )
+    }
+  })
+
+  output$songDetails <- renderUI({
+    song_id <- selected_song_id()
+    if (is.null(song_id)) {
+      return(
+        div(
+          class = "song-details-placeholder",
+          "Click on a song to see details."
+        )
+      )
+    }
+
+    recommendations <- recommended_songs()
+    song <- recommendations[recommendations$id == song_id, ]
+
+    if (nrow(song) == 0) {
+      return(NULL)
+    }
+
+    # Display song details
+    div(
+      class = "song-details",
+      h3(class = "song-title", song$title),
+      p(class = "song-artist", paste("Artist:", song$creators)),
+      p(class = "song-similarity", paste("Similarity Score:", sprintf("%.2f", song$similarity)))
+    )
+  })
+
+  # Observe container clicks to deselect song
+  observeEvent(input$container_clicked, {
+    selected_song_id(NULL)
   })
 }

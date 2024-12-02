@@ -90,6 +90,11 @@ find_similar_songs <- function(input_titles, top_n = 5L) {
     )
   )
   
+  # Print the response content to the console immediately
+  cat("Received response from Supabase:\n")
+  cat(content(response, "text", encoding = "UTF-8"), "\n")
+  flush.console()
+  
   # Check if the request was successful
   if (response$status_code != 200) {
     message("Error: Failed to retrieve similar songs from Supabase RPC function.")
@@ -138,6 +143,9 @@ find_similar_songs <- function(input_titles, top_n = 5L) {
   
   # Reset row names
   rownames(recommended_songs) <- NULL
+  
+  # Ensure that the 'similarity' column is numeric and available
+  recommended_songs$similarity <- as.numeric(recommended_songs$similarity)
   
   return(recommended_songs)
 }
