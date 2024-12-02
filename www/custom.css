@@ -910,6 +910,7 @@
   .suggested-song {
     position: absolute;
     transform: translate(-50%, -50%);
+    z-index: 2;
   }
   
   .suggested-song-icon {
@@ -918,11 +919,11 @@
     cursor: pointer;
   }
   
-  /* Tooltip Styling */
+  /* Tooltip Styling on Hover */
   .suggested-song[title]:hover::after {
     content: attr(title);
     position: absolute;
-    top: -60px;
+    bottom: calc(100% + 10px); /* Position above the circle */
     left: 50%;
     transform: translateX(-50%);
     white-space: pre-line;
@@ -930,22 +931,26 @@
     color: #FFF;
     padding: 8px 12px;
     border-radius: 5px;
-    z-index: 999;
+    z-index: 1000;             /* Ensure it appears above other elements */
     width: max-content;
     max-width: 200px;
     text-align: left;
+    opacity: 1;                /* Make visible */
+    transition: opacity 0.2s ease-in-out 0.3s; /* Fade in with delay */
   }
   
   .suggested-song[title]:hover::before {
     content: '';
     position: absolute;
-    top: -10px;
+    bottom: 100%; /* Position the arrow correctly */
     left: 50%;
     transform: translateX(-50%);
     border-width: 5px;
     border-style: solid;
-    border-color: transparent transparent rgba(0, 0, 0, 0.8) transparent;
-    z-index: 999;
+    border-color: rgba(0, 0, 0, 0.8) transparent transparent transparent;
+    z-index: 1000;             /* Ensure it appears above other elements */
+    opacity: 1;                /* Make visible */
+    transition: opacity 0.2s ease-in-out 0.3s; /* Fade in with delay */
   }
   
   /* Custom CSS for MDNA page modifications */
@@ -1016,4 +1021,19 @@
     font-style: normal;
     font-weight: 400;
     line-height: normal;
+  }
+  
+  /* Tooltip Styling */
+  .suggested-song[title]:hover::after,
+  .suggested-song[title]:hover::before {
+    z-index: 1; /* Set tooltip z-index lower than the circle */
+  }
+  
+  /* Base styles for pseudo-elements */
+  .suggested-song[title]::after,
+  .suggested-song[title]::before {
+    content: '';
+    position: absolute;
+    opacity: 0;            /* Make invisible */
+    pointer-events: none;  /* Ignore mouse events */
   }
