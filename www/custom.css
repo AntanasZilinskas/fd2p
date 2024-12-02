@@ -740,10 +740,16 @@
     line-height: 120%;
   }
 
-  /* Change color when clicked (processing state) */
+  /* Add hover effect */
+  .analyze-button:hover {
+    background-color: #232323;
+    color: white;
+  }
+
+  /* Processing state */
   .analyze-button.processing {
     background-color: #232323 !important;
-    color: var(--sds-color-text-brand-on-brand);
+    color: white !important;
   }
 
   /* Disable the button when processing */
@@ -754,8 +760,8 @@
   /* Style for the spinner inside the Analyze button */
   .analyze-button .spinner {
     margin-left: 8px;
-    border: 3px solid #ffffff; /* Light grey */
-    border-top: 3px solid #cccccc; /* Darker grey */
+    border: 3px solid rgba(255, 255, 255, 0.3);
+    border-top: 3px solid white;
     border-radius: 50%;
     width: 16px;
     height: 16px;
@@ -859,4 +865,10 @@
     font-size: 16px; /* Adjust to match your placeholder font size */
     margin: 5px; /* Reset margin */
     padding: 7px; /* Reset padding */
+  }
+  
+  /* Center the title and subtitle on the Analyze MDNA page */
+  .mdna-page .main-title,
+  .mdna-page .subtitle {
+    text-align: center;
   }

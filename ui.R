@@ -62,6 +62,12 @@ customCSS <- HTML("
     align-items: left;
     justify-content: left;
   }
+
+  /* Center the title and subtitle on the Analyze MDNA page */
+  .mdna-page .main-title,
+  .mdna-page .subtitle {
+    text-align: center;
+  }
 ")
 
 ui <- navbarPage(
@@ -156,6 +162,7 @@ ui <- navbarPage(
       tags$img(src = "assets/search.svg", class = "menu-icon"),
       span("Search songs")
     ),
+    value = "Search songs",
     div(
       class = "content-wrapper",
       div(
@@ -207,7 +214,19 @@ ui <- navbarPage(
     value = "Analyze MDNA",
     div(
       class = "content-wrapper",
-      uiOutput("recommendedSongs")
+      div(
+        class = "welcome-box mdna-page",
+        h1(class = "main-title", "Your Music DNA!"),
+        p(
+          class = "subtitle",
+          "Here are the songs that are most similar to your current taste."
+        ),
+        # Display recommended songs
+        div(
+          class = "recommendations-container",
+          uiOutput("recommendedSongs")
+        )
+      )
     )
   )
 )

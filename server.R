@@ -161,11 +161,10 @@ server <- function(input, output, session) {
   output$recommendedSongs <- renderUI({
     recommendations <- recommended_songs()
     if (nrow(recommendations) == 0) {
-      return(tags$p("No recommendations to display."))
+      return(tags$p("No recommendations to display, please select some songs first."))
     }
     
     tagList(
-      h2("Your Recommended Songs"),
       lapply(seq_len(nrow(recommendations)), function(i) {
         song <- recommendations[i, ]
         
