@@ -988,3 +988,32 @@
     background: var(--White-White, #FFF);
     box-shadow: 0px 4px 12px 0px rgba(13, 10, 44, 0.06);
   }
+
+  /* Spotify Link Button Styling */
+  .spotify-link-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 164px;
+    height: 35px;
+    flex-shrink: 0;
+    border-radius: 10px;
+    background: var(--fd2p-5, #232323);
+    text-decoration: none;
+    margin-top: 10px; /* Adjust spacing as needed */
+  }
+
+  .spotify-link-button .spotify-icon {
+    width: 20px; /* Adjust size as needed */
+    height: 20px;
+    margin-right: 8px;
+  }
+
+  .spotify-link-button span {
+    color: #FFF;
+    font-family: 'Poppins', sans-serif;
+    font-size: 13px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
+  }

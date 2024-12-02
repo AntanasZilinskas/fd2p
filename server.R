@@ -346,12 +346,27 @@ server <- function(input, output, session) {
       return(NULL)
     }
 
-    # Display song details
+    # Display song details with Spotify link
     div(
-      class = "song-details",
-      h3(class = "song-title", song$title),
-      p(class = "song-artist", paste("Artist:", song$creators)),
-      p(class = "song-similarity", paste("Similarity Score:", sprintf("%.2f", song$similarity)))
+      class = "song-details-custom",
+      h3(class = "song-title-custom", song$title),
+      p(class = "song-artist-custom", paste("Artist:", song$creators)),
+      p(
+        class = "song-similarity-custom", 
+        paste("Similarity Score:", sprintf("%.2f", song$similarity))
+      ),
+      # Add the Spotify link button
+      if (!is.na(song$spotify_url)) {
+        a(
+          href = song$spotify_url,
+          target = "_blank",
+          class = "spotify-link-button",
+          img(src = "assets/spotify.svg", class = "spotify-icon"),
+          span("Listen on Spotify!")
+        )
+      } else {
+        NULL
+      }
     )
   })
 
