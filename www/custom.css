@@ -4,8 +4,9 @@
     --primary-light: #E3E3E2;
     --accent: #F56C37;
     --neutral: #CFCFCF;
+    --orange: #F56C37;
     --dark: #232323;
-  }
+}
   
   /* General styling */
   body {
@@ -18,16 +19,128 @@
   
   /* Navigation base styling */
   .navbar {
-    width: 250px !important;
-    height: 100vh !important;
+    width: 307px !important;
     position: fixed !important;
-    left: 0;
-    top: 0;
+    left: 50px;
+    top: 50px;
+    bottom: 50px;
     background-color: var(--primary-dark) !important;
-    border-right: 2px solid var(--accent);
     border-bottom: none !important;
     padding: 0;
     z-index: 1000;
+    flex-shrink: 0;
+    border-radius: 15px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  /* Center the logo and title vertically within the navbar */
+  .navbar {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  /* Logo and Title Container */
+  .logo-title-container {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    flex-shrink: 0;
+    margin-top: auto;
+    margin-bottom: auto;
+  }
+  
+  /* Logo Styling */
+  .logo {
+    width: 38px;
+    height: 66.148px;
+    flex-shrink: 0;
+    margin-right: 10px;
+  }
+  
+  /* Title Text Styling */
+  .title-text {
+    color: var(--accent);
+    font-family: 'Poppins', sans-serif;
+    font-size: 36px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 1;
+  }
+  
+  /* Navbar navigation */
+  .navbar-nav {
+    width: 100%;
+    padding: 0;
+    margin: 0 0 20px 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  /* Navbar items */
+  .navbar-nav > li {
+    width: 100%;
+    margin: 8px 0;
+    display: flex;
+    justify-content: center;
+  }
+  
+  /* Navbar links */
+  .navbar-nav > li > a {
+    width: 269px;
+    height: 35px;
+    flex-shrink: 0;
+    background: none; /* No background when not selected */
+    color: var(--primary-light) !important;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    padding: 0;
+    line-height: 35px;
+    transition: background-color 0.3s ease;
+    border-radius: 10px; /* Rounded corners */
+  }
+  
+  /* Hover effect */
+  .navbar-nav > li > a:hover {
+    background-color: #2E2E2E; /* Slightly lighter than #232323 */
+  }
+  
+  /* Active (selected) menu item */
+  .navbar-nav > li.active > a {
+    background-color: #232323; /* Solid background for selected menu item */
+    border-radius: 10px; /* Ensure rounded corners */
+    box-shadow: none; /* Remove any orange glow */
+    border-left: none; /* Remove any left border */
+  }
+  
+  /* Remove borders and outlines */
+  .navbar-nav > li > a,
+  .navbar-nav > li > a:hover,
+  .navbar-nav > li.active > a {
+    border: none;
+  }
+  
+  /* Optional: Remove orange accents from other elements, if any */
+  /* For example, buttons or links using --accent can be updated similarly */
+  
+  /* NavbarBrand Adjustments */
+  .navbar-brand {
+    width: 100%;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+  
+  /* Adjust corners for inner elements */
+  .navbar .navbar-brand,
+  .navbar .navbar-nav > li > a {
+    border-radius: 0;
   }
   
   /* NavbarPage specific adjustments */
@@ -46,7 +159,7 @@
     height: auto !important;
     padding: 30px 15px !important;
     font-size: 28px !important;
-    color: var(--accent) !important;
+    /* color: var(--accent) !important; */
     border-bottom: 1px solid var(--accent);
     margin: 0 !important;
     letter-spacing: 2px;
@@ -75,6 +188,7 @@
     display: block;
     width: 100%;
     margin: 8px 0;
+    border-radius: 10px;
   }
   
   .navbar-nav > li > a {
@@ -85,26 +199,30 @@
     transition: all 0.3s ease;
     color: var(--primary-light) !important;
     display: block;
+    border-radius: 10px;
   }
   
   .navbar-nav > li > a:hover {
-    background-color: rgba(245, 108, 55, 0.1);
-    border-left: 4px solid var(--accent);
+    background-color: #2E2E2E;
     padding-left: 35px !important;
+    border-radius: 10px;
   }
   
+
   .navbar-nav > li.active > a {
-    background-color: rgba(245, 108, 55, 0.1) !important;
-    border-left: 4px solid var(--accent) !important;
+    background-color: #232323;
     font-weight: 500;
+    border-radius: 10px;
   }
   
   /* Content layout */
   .content-wrapper {
-    margin-left: 250px !important;
+    margin-left: calc(50px + 307px) !important;
     padding: 30px;
-    width: calc(100% - 250px) !important;
-    min-height: 100vh;
+    width: calc(100% - 50px - 307px - 50px) !important;
+    margin-top: 50px;
+    margin-bottom: 50px;
+    min-height: calc(100vh - 100px);
   }
   
   /* NavbarPage container adjustments */
@@ -126,7 +244,7 @@
   /* Welcome box styling */
   .welcome-box {
     background-color: var(--primary-light);
-    border-radius: 10px;
+    border-radius: 15px;
     /* box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); */
     padding: 40px;
     width: 80%;
@@ -203,7 +321,7 @@
     color: var(--primary-dark);
     border: 1px solid var(--accent);
     padding: 20px;
-    border-radius: 10px;
+    border-radius: 15px;
     margin-bottom: 20px;
     height: 100%;
     margin: 10px 0;
@@ -213,7 +331,7 @@
   .plot-container {
     background-color: white;
     padding: 20px;
-    border-radius: 10px;
+    border-radius: 15px;
     margin: 20px 0;
     height: 100%;
     margin-right: 15px;
@@ -246,7 +364,7 @@
     color: var(--primary-dark);
     border: 1px solid var(--neutral);
     padding: 20px;
-    border-radius: 10px;
+    border-radius: 15px;
     margin: 20px 0;
     height: 100%;
     margin: 10px 0;
@@ -266,11 +384,14 @@
   @media (max-width: 768px) {
     .navbar {
       width: 200px !important;
+      left: 20px;
     }
     
     .content-wrapper {
-      margin-left: 200px !important;
-      width: calc(100% - 200px) !important;
+      margin-left: calc(20px + 200px) !important;
+      width: calc(100% - 20px - 200px - 20px) !important;
+      margin-top: 20px;
+      margin-bottom: 20px;
     }
     
     .modal {
@@ -317,7 +438,7 @@
   .plot-container {
     background-color: white;
     padding: 20px;
-    border-radius: 10px;
+    border-radius: 15px;
     height: 100%;
     border: 1px solid var(--neutral);
   }
@@ -334,7 +455,7 @@
   .chord-box {
     background-color: white;
     padding: 20px;
-    border-radius: 10px;
+    border-radius: 15px;
     margin-top: 20px;
     border: 1px solid var(--neutral);
   }
@@ -420,7 +541,7 @@
     background-color: white;
     padding: 15px;
     margin: 10px 0;
-    border-radius: 10px;
+    border-radius: 15px;
     border: 1px solid var(--neutral);
   }
   
@@ -439,4 +560,480 @@
   
   .recommendation-item a:hover {
     text-decoration: underline;
+  }
+  
+  /* Optional: Rounded corners for content boxes */
+  .welcome-box,
+  .score-box,
+  .plot-container,
+  .matches-container,
+  .chord-box,
+  .recommendation-item {
+    border-radius: 15px;
+  }
+  
+  /* Navbar navigation */
+  .navbar-nav {
+    width: 100%;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  /* Navbar items */
+  .navbar-nav > li {
+    width: 100%;
+    margin: 8px 0;
+    display: flex;
+    justify-content: center;
+  }
+  
+  /* Navbar links */
+  .navbar-nav > li > a {
+    width: 269px;
+    height: 35px;
+    flex-shrink: 0;
+    border-radius: 10px;
+    background: none;
+    color: var(--primary-light) !important;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    padding: 0;
+    line-height: 35px;
+    transition: background 0.3s ease;
+  }
+  
+  /* Hover effect */
+  .navbar-nav > li > a:hover {
+    background-color: #2E2E2E;
+  }
+  
+  /* Active (selected) menu item */
+  .navbar-nav > li.active > a {
+    background-color: #232323;
+    border-left: none;
+  }
+  
+  /* Remove borders and outlines */
+  .navbar-nav > li > a,
+  .navbar-nav > li > a:hover,
+  .navbar-nav > li.active > a {
+    border: none;
+  }
+  
+  /* Styles for the search container */
+  .search-container {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    margin-top: 20px;
+  }
+  
+  /* Styles for the search input wrapper */
+  .search-input-wrapper {
+    position: relative;
+    width: 504px;
+    height: 60px;
+  }
+  
+  .input-with-spinner {
+    position: relative;
+    width: 100%;
+    height: 100%;
+  }
+  
+  .search-input {
+    width: 100%;
+    height: 100%;
+    padding: 0 60px 0 20px; /* Adjust padding to accommodate the spinner */
+    font-size: 16px;
+    border: none;
+    border-radius: 10px;
+    background: var(--White-White, #FFF);
+    box-shadow: 0px 4px 12px rgba(13, 10, 44, 0.06);
+  }
+  
+  .search-input:focus {
+    outline: none;
+  }
+  
+  /* Styles for the loading spinner */
+  .search-spinner {
+    position: absolute;
+    top: 50%;
+    right: 20px; /* Adjust as needed */
+    transform: translateY(-50%);
+    width: 24px;
+    height: 24px;
+    border: 3px solid rgba(0, 0, 0, 0.1);
+    border-top-color: #000;
+    border-radius: 50%;
+    animation: spinner 1s linear infinite;
+    z-index: 10;
+  }
+  
+  /* Spinner animation */
+  @keyframes spinner {
+    to { transform: translateY(-50%) rotate(360deg); }
+  }
+  
+  /* Styles for the search button */
+  .search-button {
+    background: none;
+    border: none;
+    padding: 0 20px;
+    height: 100%;
+    cursor: pointer;
+    border-radius: 0 10px 10px 0;
+  }
+  
+  .search-button:focus {
+    outline: none;
+  }
+  
+  .search-button:hover {
+    background-color: #f0f0f0;
+  }
+  
+  .search-button:active {
+    background-color: #d9d9d9;
+  }
+  
+  /* Adjust the icon size */
+  .search-button .glyphicon,
+  .search-button .fa {
+    font-size: 24px;
+    color: #000;
+  }
+  
+  /* Remove any border or outline around the button */
+  .search-button .btn {
+    border: none;
+    box-shadow: none;
+    background: none;
+  }
+  
+  /* Styles for the Analyze button */
+  .analyze-button {
+    display: flex;
+    width: 126px;
+    height: 60px;
+    padding: 0;
+    justify-content: center;
+    align-items: center;
+    gap: var(--sds-size-space-200);
+    border-radius: var(--sds-size-radius-200, 10px);
+    border: none;
+    background: var(--fd2p-3, #F56C37);
+    color: var(--sds-color-text-brand-on-brand);
+    cursor: pointer;
+
+    /* Subheading */
+    font-family: var(--sds-typography-subheading-font-family, 'Poppins', sans-serif);
+    font-size: var(--sds-typography-subheading-size-medium, 20px);
+    font-style: normal;
+    font-weight: var(--sds-typography-subheading-font-weight, 500);
+    line-height: 120%;
+  }
+
+  /* Add hover effect */
+  .analyze-button:hover {
+    background-color: #232323;
+    color: white;
+  }
+
+  /* Processing state */
+  .analyze-button.processing {
+    background-color: #232323 !important;
+    color: white !important;
+  }
+
+  /* Disable the button when processing */
+  .analyze-button:disabled {
+    cursor: not-allowed;
+  }
+
+  /* Style for the spinner inside the Analyze button */
+  .analyze-button .spinner {
+    margin-left: 8px;
+    border: 3px solid rgba(255, 255, 255, 0.3);
+    border-top: 3px solid white;
+    border-radius: 50%;
+    width: 16px;
+    height: 16px;
+    animation: spin 1s linear infinite;
+  }
+
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+  
+  /* Styles for the search results dropdown */
+  .search-results-dropdown {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 100%;
+    max-height: 300px; /* Adjust as needed */
+    overflow-y: auto;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    border-radius: 0 0 10px 10px;
+    box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+    z-index: 10; /* Ensure it appears above other elements */
+  }
+  
+  /* Style individual search result items */
+  .search-result-item {
+    padding: 10px 15px;
+    cursor: pointer;
+    font-size: 16px;
+    color: #333;
+  }
+  
+  .search-result-item:hover {
+    background-color: #f0f0f0;
+  }
+  
+  /* Styles for the Selected Songs container */
+  .matches-container {
+    display: flex;
+    flex-direction: column; /* Stack items vertically */
+    width: 654px;
+    padding: 8px;
+    gap: 8px;
+    border-radius: 10px;
+    background: var(--White-White, #FFF);
+
+    /* Shadow */
+    box-shadow: 0px 4px 12px 0px rgba(13, 10, 44, 0.06);
+
+    /* Spacing from the search bar */
+    margin-top: 24px;
+  }
+  
+  .selected-song-item {
+    display: flex;
+    align-items: center;
+    padding: 8px 12px;
+    border-radius: 8px;
+    background-color: #f8f8f8;
+    margin: 5px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    position: relative; /* For absolute positioning of remove button */
+  }
+  
+  /* Change background color on hover - turns grey */
+  .selected-song-item:hover {
+    background-color: #e0e0e0;
+  }
+  
+  /* Song title styling */
+  .selected-song-item .song-title {
+    font-size: 16px;
+    color: #333;
+    flex-grow: 1;
+    padding-right: 30px; /* Space for the remove button */
+  }
+  
+  /* Remove button styling */
+  .selected-song-item .remove-song {
+    font-size: 18px;
+    color: #F56C37; /* Orange color */
+    cursor: pointer;
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+  
+  /* Optional: Change remove button color on hover */
+  .selected-song-item .remove-song:hover {
+    color: #FF8800; /* Slightly lighter orange */
+  }
+  
+  /* Style for placeholder text to match the search bar placeholder */
+  .placeholder-text {
+    color: #999999; /* Adjust to match your placeholder color */
+    font-style: thin;
+    font-size: 16px; /* Adjust to match your placeholder font size */
+    margin: 5px; /* Reset margin */
+    padding: 7px; /* Reset padding */
+  }
+  
+  /* Center the title and subtitle on the Analyze MDNA page */
+  .mdna-page .main-title,
+  .mdna-page .subtitle {
+    text-align: center;
+  }
+  
+  /* MDNA Container */
+  .mdna-container {
+    position: relative;
+    width: 654px;
+    height: 440px;
+    margin: 0 auto;
+    border-radius: 10px;
+    background: #FFF;
+    box-shadow: 0px 4px 12px 0px rgba(13, 10, 44, 0.06);
+    overflow: hidden;
+  }
+  
+  /* Center Icon and Label */
+  .center-icon {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+  }
+  
+  .center-icon .mdna-label {
+    display: block;
+    margin-bottom: 10px;
+    font-size: 16px;
+    color: #333;
+  }
+  
+  .center-icon .your-mdna-icon {
+    width: 57px;
+    height: 57px;
+  }
+  
+  /* Suggested Song Icons */
+  .suggested-song {
+    position: absolute;
+    transform: translate(-50%, -50%);
+    z-index: 2;
+  }
+  
+  .suggested-song-icon {
+    width: 25px;
+    height: 25px;
+    cursor: pointer;
+  }
+  
+  /* Tooltip Styling on Hover */
+  .suggested-song[title]:hover::after {
+    content: attr(title);
+    position: absolute;
+    bottom: calc(100% + 10px); /* Position above the circle */
+    left: 50%;
+    transform: translateX(-50%);
+    white-space: pre-line;
+    background-color: rgba(0, 0, 0, 0.8);
+    color: #FFF;
+    padding: 8px 12px;
+    border-radius: 5px;
+    z-index: 1000;             /* Ensure it appears above other elements */
+    width: max-content;
+    max-width: 200px;
+    text-align: left;
+    opacity: 1;                /* Make visible */
+    transition: opacity 0.2s ease-in-out 0.3s; /* Fade in with delay */
+  }
+  
+  .suggested-song[title]:hover::before {
+    content: '';
+    position: absolute;
+    bottom: 100%; /* Position the arrow correctly */
+    left: 50%;
+    transform: translateX(-50%);
+    border-width: 5px;
+    border-style: solid;
+    border-color: rgba(0, 0, 0, 0.8) transparent transparent transparent;
+    z-index: 1000;             /* Ensure it appears above other elements */
+    opacity: 1;                /* Make visible */
+    transition: opacity 0.2s ease-in-out 0.3s; /* Fade in with delay */
+  }
+  
+  /* Custom CSS for MDNA page modifications */
+
+  /* Main container holding both visualization and song details */
+  .mdna-main-container {
+    display: flex;
+    align-items: flex-start;
+    justify-content: flex-start;
+    width: auto;
+    column-gap: 10px;
+  }
+
+  /* Left-side visualization container */
+  .mdna-visualization-container-custom {
+    width: 456px;
+    height: 440px;
+    flex-shrink: 0;
+    border-radius: 10px;
+    background: var(--White-White, #FFF);
+    box-shadow: 0px 4px 12px 0px rgba(13, 10, 44, 0.06);
+    position: relative; /* Required for absolute positioning inside */
+    z-index: 2;
+    margin: 0;
+    padding: 0;
+  }
+
+  /* Right-side song details container */
+  .song-details-container-custom {
+    width: 188px;
+    height: 440px;
+    padding: 12px 12px 20px 12px; /* top, right, bottom, left */
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-start; /* Ensure content starts at the top */
+    gap: 16px;
+    flex-shrink: 0;
+    border-radius: 10px;
+    background: var(--White-White, #FFF);
+    box-shadow: 0px 4px 12px 0px rgba(13, 10, 44, 0.06);
+  }
+
+  /* Spotify Link Button Styling */
+  .spotify-link-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 164px;
+    height: 35px;
+    flex-shrink: 0;
+    border-radius: 10px;
+    background: var(--fd2p-5, #232323);
+    text-decoration: none;
+    margin-top: 10px; /* Adjust spacing as needed */
+  }
+
+  .spotify-link-button .spotify-icon {
+    width: 20px; /* Adjust size as needed */
+    height: 20px;
+    margin-right: 8px;
+  }
+
+  .spotify-link-button span {
+    color: #FFF;
+    font-family: 'Poppins', sans-serif;
+    font-size: 13px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
+  }
+  
+  /* Tooltip Styling */
+  .suggested-song[title]:hover::after,
+  .suggested-song[title]:hover::before {
+    z-index: 1; /* Set tooltip z-index lower than the circle */
+  }
+  
+  /* Base styles for pseudo-elements */
+  .suggested-song[title]::after,
+  .suggested-song[title]::before {
+    content: '';
+    position: absolute;
+    opacity: 0;            /* Make invisible */
+    pointer-events: none;  /* Ignore mouse events */
   }

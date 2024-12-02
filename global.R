@@ -5,6 +5,9 @@ library(shiny)
 library(httr)
 library(jsonlite)
 
+# Source the Spotify API functions
+source("spotify.R")
+
 # Define the quick_search_songs function
 quick_search_songs <- function(query, max_results = 10L) {
   # Ensure 'query' is a single string
@@ -90,6 +93,11 @@ find_similar_songs <- function(input_titles, top_n = 5L) {
     )
   )
   
+  # Print the response content to the console immediately
+  cat("Received response from Supabase:\n")
+  cat(content(response, "text", encoding = "UTF-8"), "\n")
+  flush.console()
+  
   # Check if the request was successful
   if (response$status_code != 200) {
     message("Error: Failed to retrieve similar songs from Supabase RPC function.")
@@ -138,6 +146,25 @@ find_similar_songs <- function(input_titles, top_n = 5L) {
   
   # Reset row names
   rownames(recommended_songs) <- NULL
+  
+  # Ensure that the 'similarity' column is numeric and available
+  recommended_songs$similarity <- as.numeric(recommended_songs$similarity)
+  
+  # Get Spotify credentials from environment variables
+  client_id <- Sys.getenv("SPOTIFY_CLIENT_ID")
+  client_secret <- Sys.getenv("SPOTIFY_CLIENT_SECRET")
+  
+  if (client_id == "" || client_secret == "") {
+    stop("Spotify client ID and secret are not set. Please set SPOTIFY_CLIENT_ID and SPOTIFY_CLIENT_SECRET in your .Renviron file.")
+  }
+  
+  # Get Spotify access token
+  spotify_token <- get_spotify_token(client_id, client_secret)
+  
+  # For each song, fetch the Spotify link
+  recommended_songs$spotify_url <- sapply(recommended_songs$title, function(title) {
+    search_spotify_song(title, spotify_token)
+  })
   
   return(recommended_songs)
 }
