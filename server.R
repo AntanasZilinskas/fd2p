@@ -36,9 +36,9 @@ server <- function(input, output, session) {
     # Check if 'query' is valid
     if (!is.null(query) && nzchar(query) && nchar(query) >= 2) {
       results <- quick_search_songs(query, max_results = 10L)
-      if (length(results) > 0) {
-        # Update search results
-        search_results(data.frame(title = results, stringsAsFactors = FALSE))
+      if (nrow(results) > 0) {
+        # Update search results directly
+        search_results(results)
         # Show search results
         show_search_results(TRUE)
       } else {
@@ -87,7 +87,10 @@ server <- function(input, output, session) {
     tags$div(
       class = "search-results-dropdown",
       lapply(seq_len(nrow(results)), function(i) {
+        # Adjusted if your 'results' data frame has different column names
         song_title <- results$title[i]
+        # Alternatively, if your column is 'song_title', use:
+        # song_title <- results$song_title[i]
         tags$div(
           class = "search-result-item",
           `data-value` = song_title,

@@ -8,14 +8,14 @@ library(jsonlite)
 # Source the Spotify API functions
 source("spotify.R")
 
-# Define the quick_search_songs function
-quick_search_songs <- function(query, max_results = 10L) {
+# Define the quick_search_songs function using fuzzy search on titles
+quick_search_songs <- function(query, max_results = 5L) {
   # Ensure 'query' is a single string
   query <- as.character(query[1])
-  if (nchar(query) < 2) return(character(0))
+  if (nchar(query) < 2) return(data.frame())
   
   # Define the URL of the Supabase Edge Function
-  supabase_url <- "https://dvplamwokfwyvuaskgyk.supabase.co/functions/v1/search_similar_titles"
+  supabase_url <- "https://dvplamwokfwyvuaskgyk.supabase.co/functions/v1/search_songs"
   
   # Retrieve the API key from environment variable
   supabase_key <- Sys.getenv("SUPABASE_ANON_KEY")
@@ -27,7 +27,7 @@ quick_search_songs <- function(query, max_results = 10L) {
   # Create the JSON payload
   payload <- list(
     query = query,
-    top_n = as.integer(max_results)
+    max_results = as.integer(max_results)
   )
   
   # Send POST request to the Supabase Edge Function with Authorization header
@@ -39,26 +39,23 @@ quick_search_songs <- function(query, max_results = 10L) {
     add_headers(Authorization = paste("Bearer", supabase_key))
   )
   
-  # Print the response content to the console immediately
-  cat("Received response from Supabase:\n")
-  cat(content(response, "text", encoding = "UTF-8"), "\n")
-  flush.console()
-  
   # Check if the request was successful
   if (response$status_code != 200) {
     message("Error: Failed to retrieve results from Supabase Edge Function.")
     message("Status code: ", response$status_code)
     message("Response: ", content(response, "text", encoding = "UTF-8"))
-    return(character(0))
+    return(data.frame())
   }
   
   # Parse the JSON response
-  results <- content(response, as = "parsed", type = "application/json", encoding = "UTF-8")
+  results <- content(response, as = "parsed", simplifyDataFrame = TRUE)
   
-  # Assuming the response is a list of song titles
-  song_titles <- sapply(results, function(x) x$title)
-  
-  return(song_titles)
+  # Convert results to data frame
+  if (length(results) == 0) {
+    return(data.frame())
+  } else {
+    return(as.data.frame(results))
+  }
 }
 
 # Function to find similar songs based on selected titles
