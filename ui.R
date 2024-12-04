@@ -156,7 +156,7 @@ ui <- navbarPage(
       href = "https://fonts.googleapis.com/css2?family=Poppins:wght@400&display=swap",
       rel = "stylesheet"
     ),
-    # Link to your custom CSS
+    # Link to custom CSS
     tags$link(
       href = "custom.css",
       rel = "stylesheet"
@@ -247,33 +247,36 @@ ui <- navbarPage(
           class = "subtitle",
           "Tell us about the songs you like, and we'll help you discover more music you'll love."
         ),
-        # Adjusted search container
+        # Unified container for search and selected songs
         div(
-          class = "search-container",
+          class = "input-container",
           div(
-            class = "search-input-wrapper",
+            class = "search-container",
             div(
-              class = "input-with-spinner",
-              tags$input(
-                id = "searchInput",
-                type = "text",
-                placeholder = "Type a song name...",
-                class = "search-input",
-                autocomplete = "off"
+              class = "search-input-wrapper",
+              div(
+                class = "input-with-spinner",
+                tags$input(
+                  id = "searchInput",
+                  type = "text",
+                  placeholder = "Type a song name...",
+                  class = "search-input",
+                  autocomplete = "off"
+                ),
+                tags$div(id = "search-spinner", class = "search-spinner", style = "display: none;")
               ),
-              # Placeholder for the loading animation
-              tags$div(id = "search-spinner", class = "search-spinner", style = "display: none;")
-            ),
-            # Search results dropdown (move uiOutput here)
-            uiOutput("searchResults")
+              uiOutput("searchResults")
+            )
           ),
-          # Analyze button
-          actionButton("analyzeBtn", "Analyze", class = "analyze-button")
+          div(
+            class = "matches-container",
+            uiOutput("selectedSongs")
+          )
         ),
-        # Selected songs list
+        # Analyze button centered below selected songs
         div(
-          class = "matches-container",
-          uiOutput("selectedSongs")
+          class = "analyze-button-container",
+          actionButton("analyzeBtn", "Analyze", class = "analyze-button")
         )
       )
     )

@@ -630,13 +630,15 @@
     display: flex;
     align-items: center;
     gap: 24px;
+    width: 100%; /* Add consistent width */
+    max-width: 600px; /* Add optional max width */
     margin-top: 20px;
   }
   
   /* Styles for the search input wrapper */
   .search-input-wrapper {
     position: relative;
-    width: 504px;
+    width: 100%; /* Match parent container */
     height: 60px;
   }
   
@@ -740,6 +742,13 @@
     line-height: 120%;
   }
 
+  /* Center the Analyze button below the selected songs div */
+  .analyze-button-container {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px; /* Add spacing above the button */
+  }
+
   /* Add hover effect */
   .analyze-button:hover {
     background-color: #232323;
@@ -804,7 +813,8 @@
   .matches-container {
     display: flex;
     flex-direction: column; /* Stack items vertically */
-    width: 654px;
+    width: 100%; /* Add consistent width */
+    max-width: 600px; /* Add optional max width */
     padding: 8px;
     gap: 8px;
     border-radius: 10px;
