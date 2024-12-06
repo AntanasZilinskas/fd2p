@@ -200,7 +200,7 @@ server <- function(input, output, session) {
     session$sendCustomMessage("initialize_spinner", TRUE)
   })
   
-  # Observe Analyze button click
+  # Observe analyze button click
   observeEvent(input$analyzeBtn, {
     # Check if any songs are selected
     selected_songs_list <- selected_songs()
@@ -349,7 +349,7 @@ server <- function(input, output, session) {
       return(NULL)
     }
 
-    # Display song details with Spotify link
+    # Display song details with Spotify link and the chart
     div(
       class = "song-details-custom",
       h3(class = "song-title-custom", song$title),
@@ -369,12 +369,45 @@ server <- function(input, output, session) {
         )
       } else {
         NULL
-      }
+      },
+      # Add the chart below song details with 12px top margin
+      div(
+        style = "margin-top: 12px;",  # Apply 12px top margin
+        plotOutput("songChart", height = "210px", width = "100%")
+      )
     )
   })
+  # Render the chart for the selected song comparison
+  output$songChart <- renderPlot({
+    song_id <- selected_song_id()
+    if (is.null(song_id)) return(NULL)  # If no song is selected, don't render a chart
 
-  # Observe container clicks to deselect song
-  observeEvent(input$container_clicked, {
-    selected_song_id(NULL)
+    # Get the selected song details
+    recommendations <- recommended_songs()
+    song1 <- recommendations[recommendations$id == song_id, ]
+
+    if (nrow(song1) == 0) return(NULL)
+
+    # Define the comparison song (e.g., the first recommended song)
+    if (nrow(recommendations) > 1) {
+      song2 <- recommendations[1, ]  # Use the first song as a comparison
+      if (song2$id == song_id && nrow(recommendations) > 1) {
+        song2 <- recommendations[2, ]  # Skip if the first is the selected song
+      }
+    } else {
+      song2 <- song1  # Fallback: Compare the song to itself
+    }
+
+    # Extract song titles to pass to the updated function
+    title1 <- song1$title
+    title2 <- song2$title
+
+    # Generate the chart using the updated function
+    chart <- note_freq_chart_comparison_titles(title1, title2)
+    print(chart)  # For debugging purposes, optional
+
+    # Return the chart
+    return(chart)
   })
+
 }

@@ -8,6 +8,9 @@ library(jsonlite)
 # Source the Spotify API functions
 source("spotify.R")
 
+# note frequency chart functions
+source("testing/charts/note_freq_chart.R")
+
 # Define the quick_search_songs function using fuzzy search on titles
 quick_search_songs <- function(query, max_results = 5L) {
   # Ensure 'query' is a single string

@@ -63,7 +63,7 @@ customCSS <- HTML("
     justify-content: left;
   }
 
-  /* Center the title and subtitle on the Analyze MDNA page */
+  /* Center the title and subtitle on the analyze MDNA page */
   .mdna-page .main-title,
   .mdna-page .subtitle {
     text-align: center;
@@ -79,6 +79,10 @@ customCSS <- HTML("
     background: #FFF;
     box-shadow: 0px 4px 12px 0px rgba(13, 10, 44, 0.06);
     overflow: hidden;
+  }
+
+  .mdna-visualization-container-custom {
+    background: #F0F;
   }
 
   /* Center Icon and Label */
@@ -204,20 +208,20 @@ ui <- navbarPage(
         Shiny.setInputValue('remove_song', songTitle, {priority: 'event'});
       });
     ")),
-    # JavaScript to handle Analyze button processing state and redirection
+    # JavaScript to handle analyze button processing state and redirection
     tags$script(HTML("
       Shiny.addCustomMessageHandler('analyzeButtonProcessing', function(message) {
         var btn = document.getElementById('analyzeBtn');
         if(message.status === 'start') {
           btn.classList.add('processing');
           btn.disabled = true;
-          btn.innerHTML = 'Analyze <div class=\"spinner\"></div>';
+          btn.innerHTML = 'analyze <div class=\"spinner\"></div>';
         } else if(message.status === 'end') {
           btn.classList.remove('processing');
           btn.disabled = false;
-          btn.innerHTML = 'Analyze';
-          // Redirect to 'Analyze MDNA' page
-          $('a[data-value=\"Analyze MDNA\"]').tab('show');
+          btn.innerHTML = 'analyze';
+          // Redirect to 'analyze MDNA' page
+          $('a[data-value=\"analyze MDNA\"]').tab('show');
         }
       });
     "))
@@ -273,10 +277,10 @@ ui <- navbarPage(
             uiOutput("selectedSongs")
           )
         ),
-        # Analyze button centered below selected songs
+        # analyze button centered below selected songs
         div(
           class = "analyze-button-container",
-          actionButton("analyzeBtn", "Analyze", class = "analyze-button")
+          actionButton("analyzeBtn", "analyse", class = "analyze-button")
         )
       )
     )
@@ -287,9 +291,9 @@ ui <- navbarPage(
     title = tags$div(
       class = "menu-tab",
       tags$img(src = "assets/pulse.svg", class = "menu-icon"),
-      span("Analyze MDNA")
+      span("analyse MDNA")
     ),
-    value = "Analyze MDNA",
+    value = "analyze MDNA",
     div(
       class = "content-wrapper",
       div(

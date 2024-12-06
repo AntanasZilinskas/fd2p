@@ -278,7 +278,7 @@
     margin-top: 20px;
   }
   
-  /* Primary button (Analyze Songs) */
+  /* Primary button (analyse Songs) */
   .option-button,
   .option-button:focus,
   .option-button:active,
@@ -719,8 +719,8 @@
     background: none;
   }
   
-  /* Styles for the Analyze button */
-  .analyze-button {
+  /* Styles for the analyse button */
+  .analyse-button {
     display: flex;
     width: 126px;
     height: 60px;
@@ -742,32 +742,32 @@
     line-height: 120%;
   }
 
-  /* Center the Analyze button below the selected songs div */
-  .analyze-button-container {
+  /* Center the analyse button below the selected songs div */
+  .analyse-button-container {
     display: flex;
     justify-content: center;
     margin-top: 20px; /* Add spacing above the button */
   }
 
   /* Add hover effect */
-  .analyze-button:hover {
+  .analyse-button:hover {
     background-color: #232323;
     color: white;
   }
 
   /* Processing state */
-  .analyze-button.processing {
+  .analyse-button.processing {
     background-color: #232323 !important;
     color: white !important;
   }
 
   /* Disable the button when processing */
-  .analyze-button:disabled {
+  .analyse-button:disabled {
     cursor: not-allowed;
   }
 
-  /* Style for the spinner inside the Analyze button */
-  .analyze-button .spinner {
+  /* Style for the spinner inside the analyse button */
+  .analyse-button .spinner {
     margin-left: 8px;
     border: 3px solid rgba(255, 255, 255, 0.3);
     border-top: 3px solid white;
@@ -877,7 +877,7 @@
     padding: 7px; /* Reset padding */
   }
   
-  /* Center the title and subtitle on the Analyze MDNA page */
+  /* Center the title and subtitle on the analyse MDNA page */
   .mdna-page .main-title,
   .mdna-page .subtitle {
     text-align: center;
