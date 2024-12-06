@@ -1,13 +1,13 @@
 /* Main color scheme */
 :root {
-    --primary-dark: #3D3C3D;
-    --primary-light: #E3E3E2;
-    --accent: #F56C37;
-    --neutral: #CFCFCF;
-    --orange: #F56C37;
-    --dark: #232323;
+  --primary-dark: #3D3C3D;
+  --primary-light: #E3E3E2;
+  --accent: #F56C37;
+  --neutral: #CFCFCF;
+  --orange: #F56C37;
+  --dark: #232323;
 }
-  
+
   /* General styling */
   body {
     background-color: var(--primary-light);
@@ -16,7 +16,7 @@
     margin: 0;
     overflow-x: hidden;
   }
-  
+
   /* Navigation base styling */
   .navbar {
     width: 307px !important;
@@ -34,14 +34,14 @@
     flex-direction: column;
     align-items: center;
   }
-  
+
   /* Center the logo and title vertically within the navbar */
   .navbar {
     display: flex;
     flex-direction: column;
     align-items: center;
   }
-  
+
   /* Logo and Title Container */
   .logo-title-container {
     display: flex;
@@ -53,7 +53,7 @@
     margin-top: auto;
     margin-bottom: auto;
   }
-  
+
   /* Logo Styling */
   .logo {
     width: 38px;
@@ -61,7 +61,7 @@
     flex-shrink: 0;
     margin-right: 10px;
   }
-  
+
   /* Title Text Styling */
   .title-text {
     color: var(--accent);
@@ -71,7 +71,7 @@
     font-weight: 400;
     line-height: 1;
   }
-  
+
   /* Navbar navigation */
   .navbar-nav {
     width: 100%;
@@ -81,7 +81,7 @@
     flex-direction: column;
     align-items: center;
   }
-  
+
   /* Navbar items */
   .navbar-nav > li {
     width: 100%;
@@ -89,7 +89,7 @@
     display: flex;
     justify-content: center;
   }
-  
+
   /* Navbar links */
   .navbar-nav > li > a {
     width: 269px;
@@ -106,12 +106,12 @@
     transition: background-color 0.3s ease;
     border-radius: 10px; /* Rounded corners */
   }
-  
+
   /* Hover effect */
   .navbar-nav > li > a:hover {
     background-color: #2E2E2E; /* Slightly lighter than #232323 */
   }
-  
+
   /* Active (selected) menu item */
   .navbar-nav > li.active > a {
     background-color: #232323; /* Solid background for selected menu item */
@@ -119,30 +119,30 @@
     box-shadow: none; /* Remove any orange glow */
     border-left: none; /* Remove any left border */
   }
-  
+
   /* Remove borders and outlines */
   .navbar-nav > li > a,
   .navbar-nav > li > a:hover,
   .navbar-nav > li.active > a {
     border: none;
   }
-  
+
   /* Optional: Remove orange accents from other elements, if any */
   /* For example, buttons or links using --accent can be updated similarly */
-  
+
   /* NavbarBrand Adjustments */
   .navbar-brand {
     width: 100%;
     padding: 0 !important;
     margin: 0 !important;
   }
-  
+
   /* Adjust corners for inner elements */
   .navbar .navbar-brand,
   .navbar .navbar-nav > li > a {
     border-radius: 0;
   }
-  
+
   /* NavbarPage specific adjustments */
   .container-fluid > .navbar-header,
   .container > .navbar-header {
@@ -151,7 +151,7 @@
     padding: 0;
     width: 100%;
   }
-  
+
   .navbar-brand {
     float: none !important;
     display: block !important;
@@ -166,7 +166,7 @@
     font-weight: bold;
     width: 100%;
   }
-  
+
   /* Navbar collapse and nav items */
   .navbar-collapse {
     padding: 0;
@@ -175,14 +175,14 @@
     width: 100% !important;
     float: none !important;
   }
-  
+
   .navbar-nav {
     float: none !important;
     margin: 20px 0 0 0 !important;
     width: 100%;
     padding: 0;
   }
-  
+
   .navbar-nav > li {
     float: none !important;
     display: block;
@@ -190,7 +190,7 @@
     margin: 8px 0;
     border-radius: 10px;
   }
-  
+
   .navbar-nav > li > a {
     padding: 15px 30px !important;
     font-size: 16px !important;
@@ -201,20 +201,20 @@
     display: block;
     border-radius: 10px;
   }
-  
+
   .navbar-nav > li > a:hover {
     background-color: #2E2E2E;
     padding-left: 35px !important;
     border-radius: 10px;
   }
-  
+
 
   .navbar-nav > li.active > a {
     background-color: #232323;
     font-weight: 500;
     border-radius: 10px;
   }
-  
+
   /* Content layout */
   .content-wrapper {
     margin-left: calc(50px + 307px) !important;
@@ -224,14 +224,14 @@
     margin-bottom: 50px;
     min-height: calc(100vh - 100px);
   }
-  
+
   /* NavbarPage container adjustments */
   .container-fluid {
     padding: 0 20px;
     width: 100% !important;
     margin: 0 !important;
   }
-  
+
   /* Fix navbar container */
   .navbar > .container,
   .navbar > .container-fluid {
@@ -240,7 +240,7 @@
     margin: 0 !important;
     width: 100% !important;
   }
-  
+
   /* Welcome box styling */
   .welcome-box {
     background-color: var(--primary-light);
@@ -251,7 +251,7 @@
     max-width: 800px;
     margin: 0 auto;
   }
-  
+
   /* Rest of your existing styles remain the same */
   /* Title styling */
   .main-title {
@@ -260,25 +260,25 @@
     margin-bottom: 20px;
     color: var(--primary-dark);
   }
-  
+
   .subtitle {
     font-size: 1.2em;
     color: var(--primary-dark) !important;
     margin-bottom: 30px;
     font-weight: 500;
   }
-  
+
   /* Input and button styling */
   .input-container {
     max-width: 500px;
     margin: 0 auto;
   }
-  
+
   .button-container {
     margin-top: 20px;
   }
-  
-  /* Primary button (analyse Songs) */
+
+  /* Primary button (Analyse Songs) */
   .option-button,
   .option-button:focus,
   .option-button:active,
@@ -293,7 +293,7 @@
     margin: 10px;
     font-size: 1.1em;
   }
-  
+
   /* Spotify button specific styling */
   #spotifyBtn {
     background-color: transparent !important;
@@ -301,20 +301,20 @@
     border: 2px solid var(--accent) !important;
     transition: all 0.3s ease;
   }
-  
+
   #spotifyBtn:hover {
     background-color: var(--accent) !important;
     color: white !important;
     opacity: 1;
   }
-  
+
   .option-button:hover,
   button.option-button:hover,
   .button-container .option-button:hover {
     opacity: 0.9;
     color: white !important;
   }
-  
+
   /* Score box styling */
   .score-box {
     background-color: white !important;
@@ -326,7 +326,7 @@
     height: 100%;
     margin: 10px 0;
   }
-  
+
   /* Plot container */
   .plot-container {
     background-color: white;
@@ -336,7 +336,7 @@
     height: 100%;
     margin-right: 15px;
   }
-  
+
   /* Matches list styling */
   .matches-container {
     background-image: linear-gradient(var(--gradient-dark), var(--gradient-light));
@@ -348,7 +348,7 @@
     padding: 0.75em 1em;
     margin: 10px 0;
   }
-  
+
   .matches-container a {
     display: block;
     padding: 10px;
@@ -357,7 +357,7 @@
     text-decoration: none;
     border-left: 4px solid var(--accent);
   }
-  
+
   /* Chord box styling */
   .chord-box {
     background-color: white !important;
@@ -369,17 +369,17 @@
     height: 100%;
     margin: 10px 0;
   }
-  
+
   /* Modal styling */
   .modal {
     margin-left: 125px;
   }
-  
+
   /* Utility classes */
   .text-center {
     text-align: center !important;
   }
-  
+
   /* Media queries for responsiveness */
   @media (max-width: 768px) {
     .navbar {
@@ -398,13 +398,13 @@
       margin-left: 100px;
     }
   }
-  
+
   @media (max-width: 1200px) {
     .content-wrapper {
       padding: 20px;
     }
   }
-  
+
   /* Score bar styling */
   .score-bar {
     background-color: white;
@@ -416,24 +416,24 @@
     justify-content: space-between;
     align-items: center;
   }
-  
+
   .score-label {
     font-size: 1.2em;
     font-weight: 500;
     color: var(--primary-dark);
   }
-  
+
   .score-value {
     font-size: 1.5em;
     font-weight: bold;
     color: var(--accent);
   }
-  
+
   .score-description {
     color: var(--primary-dark);
     font-size: 1em;
   }
-  
+
   /* Content containers */
   .plot-container {
     background-color: white;
@@ -442,7 +442,7 @@
     height: 100%;
     border: 1px solid var(--neutral);
   }
-  
+
   .matches-container {
     background-color: white;
     border-radius: 10px;
@@ -451,7 +451,7 @@
     overflow-y: auto;
     border: 1px solid var(--neutral);
   }
-  
+
   .chord-box {
     background-color: white;
     padding: 20px;
@@ -459,7 +459,7 @@
     margin-top: 20px;
     border: 1px solid var(--neutral);
   }
-  
+
   /* Matches list items */
   .matches-container a {
     background-color: white !important;
@@ -471,18 +471,18 @@
     margin: 10px 0;
     text-decoration: none;
   }
-  
+
   .matches-container a:hover {
     transform: translateX(5px);
   }
-  
+
   /* Content spacing */
   .content-wrapper {
     margin-left: 250px !important;
     padding: 30px;
     width: calc(100% - 250px) !important;
   }
-  
+
   /* Responsive adjustments */
   @media (max-width: 1200px) {
     .score-bar {
@@ -495,14 +495,14 @@
       margin: 5px 0;
     }
   }
-  
+
   .plot-container,
   .matches-container {
     height: 100%;
     margin: 0;
     padding: 1em;
   }
-  
+
   /* Add styles for the search button */
   .search-button,
   .search-button:focus {
@@ -514,11 +514,11 @@
     font-size: 1em;
     cursor: pointer;
   }
-  
+
   .search-button:hover {
     background-color: #e05a2e; /* Slightly darker shade */
   }
-  
+
   /* Style for search results */
   .song-result {
     display: block;
@@ -531,11 +531,11 @@
     cursor: pointer;
     transition: background-color 0.2s ease;
   }
-  
+
   .song-result:hover {
     background-color: #e2e6ea;
   }
-  
+
   /* Styles for recommendation items */
   .recommendation-item {
     background-color: white;
@@ -544,24 +544,24 @@
     border-radius: 15px;
     border: 1px solid var(--neutral);
   }
-  
+
   .recommendation-item h4 {
     margin-top: 0;
   }
-  
+
   .recommendation-item p {
     margin: 5px 0;
   }
-  
+
   .recommendation-item a {
     color: var(--accent);
     text-decoration: none;
   }
-  
+
   .recommendation-item a:hover {
     text-decoration: underline;
   }
-  
+
   /* Optional: Rounded corners for content boxes */
   .welcome-box,
   .score-box,
@@ -571,7 +571,7 @@
   .recommendation-item {
     border-radius: 15px;
   }
-  
+
   /* Navbar navigation */
   .navbar-nav {
     width: 100%;
@@ -581,7 +581,7 @@
     flex-direction: column;
     align-items: center;
   }
-  
+
   /* Navbar items */
   .navbar-nav > li {
     width: 100%;
@@ -589,7 +589,7 @@
     display: flex;
     justify-content: center;
   }
-  
+
   /* Navbar links */
   .navbar-nav > li > a {
     width: 269px;
@@ -606,25 +606,25 @@
     line-height: 35px;
     transition: background 0.3s ease;
   }
-  
+
   /* Hover effect */
   .navbar-nav > li > a:hover {
     background-color: #2E2E2E;
   }
-  
+
   /* Active (selected) menu item */
   .navbar-nav > li.active > a {
     background-color: #232323;
     border-left: none;
   }
-  
+
   /* Remove borders and outlines */
   .navbar-nav > li > a,
   .navbar-nav > li > a:hover,
   .navbar-nav > li.active > a {
     border: none;
   }
-  
+
   /* Styles for the search container */
   .search-container {
     display: flex;
@@ -634,20 +634,20 @@
     max-width: 600px; /* Add optional max width */
     margin-top: 20px;
   }
-  
+
   /* Styles for the search input wrapper */
   .search-input-wrapper {
     position: relative;
     width: 100%; /* Match parent container */
     height: 60px;
   }
-  
+
   .input-with-spinner {
     position: relative;
     width: 100%;
     height: 100%;
   }
-  
+
   .search-input {
     width: 100%;
     height: 100%;
@@ -658,11 +658,11 @@
     background: var(--White-White, #FFF);
     box-shadow: 0px 4px 12px rgba(13, 10, 44, 0.06);
   }
-  
+
   .search-input:focus {
     outline: none;
   }
-  
+
   /* Styles for the loading spinner */
   .search-spinner {
     position: absolute;
@@ -677,12 +677,12 @@
     animation: spinner 1s linear infinite;
     z-index: 10;
   }
-  
+
   /* Spinner animation */
   @keyframes spinner {
     to { transform: translateY(-50%) rotate(360deg); }
   }
-  
+
   /* Styles for the search button */
   .search-button {
     background: none;
@@ -692,34 +692,34 @@
     cursor: pointer;
     border-radius: 0 10px 10px 0;
   }
-  
+
   .search-button:focus {
     outline: none;
   }
-  
+
   .search-button:hover {
     background-color: #f0f0f0;
   }
-  
+
   .search-button:active {
     background-color: #d9d9d9;
   }
-  
+
   /* Adjust the icon size */
   .search-button .glyphicon,
   .search-button .fa {
     font-size: 24px;
     color: #000;
   }
-  
+
   /* Remove any border or outline around the button */
   .search-button .btn {
     border: none;
     box-shadow: none;
     background: none;
   }
-  
-  /* Styles for the analyse button */
+
+  /* Styles for the Analyse button */
   .analyse-button {
     display: flex;
     width: 126px;
@@ -742,7 +742,7 @@
     line-height: 120%;
   }
 
-  /* Center the analyse button below the selected songs div */
+  /* Center the Analyse button below the selected songs div */
   .analyse-button-container {
     display: flex;
     justify-content: center;
@@ -766,7 +766,7 @@
     cursor: not-allowed;
   }
 
-  /* Style for the spinner inside the analyse button */
+  /* Style for the spinner inside the Analyse button */
   .analyse-button .spinner {
     margin-left: 8px;
     border: 3px solid rgba(255, 255, 255, 0.3);
@@ -781,7 +781,7 @@
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
   }
-  
+
   /* Styles for the search results dropdown */
   .search-results-dropdown {
     position: absolute;
@@ -796,7 +796,7 @@
     box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
     z-index: 10; /* Ensure it appears above other elements */
   }
-  
+
   /* Style individual search result items */
   .search-result-item {
     padding: 10px 15px;
@@ -804,11 +804,11 @@
     font-size: 16px;
     color: #333;
   }
-  
+
   .search-result-item:hover {
     background-color: #f0f0f0;
   }
-  
+
   /* Styles for the Selected Songs container */
   .matches-container {
     display: flex;
@@ -826,7 +826,7 @@
     /* Spacing from the search bar */
     margin-top: 24px;
   }
-  
+
   .selected-song-item {
     display: flex;
     align-items: center;
@@ -838,12 +838,12 @@
     transition: background-color 0.2s ease;
     position: relative; /* For absolute positioning of remove button */
   }
-  
+
   /* Change background color on hover - turns grey */
   .selected-song-item:hover {
     background-color: #e0e0e0;
   }
-  
+
   /* Song title styling */
   .selected-song-item .song-title {
     font-size: 16px;
@@ -851,7 +851,7 @@
     flex-grow: 1;
     padding-right: 30px; /* Space for the remove button */
   }
-  
+
   /* Remove button styling */
   .selected-song-item .remove-song {
     font-size: 18px;
@@ -862,12 +862,12 @@
     top: 50%;
     transform: translateY(-50%);
   }
-  
+
   /* Optional: Change remove button color on hover */
   .selected-song-item .remove-song:hover {
     color: #FF8800; /* Slightly lighter orange */
   }
-  
+
   /* Style for placeholder text to match the search bar placeholder */
   .placeholder-text {
     color: #999999; /* Adjust to match your placeholder color */
@@ -876,13 +876,13 @@
     margin: 5px; /* Reset margin */
     padding: 7px; /* Reset padding */
   }
-  
-  /* Center the title and subtitle on the analyse MDNA page */
+
+  /* Center the title and subtitle on the Analyse MDNA page */
   .mdna-page .main-title,
   .mdna-page .subtitle {
     text-align: center;
   }
-  
+
   /* MDNA Container */
   .mdna-container {
     position: relative;
@@ -894,7 +894,7 @@
     box-shadow: 0px 4px 12px 0px rgba(13, 10, 44, 0.06);
     overflow: hidden;
   }
-  
+
   /* Center Icon and Label */
   .center-icon {
     position: absolute;
@@ -903,32 +903,32 @@
     transform: translate(-50%, -50%);
     text-align: center;
   }
-  
+
   .center-icon .mdna-label {
     display: block;
     margin-bottom: 10px;
     font-size: 16px;
     color: #333;
   }
-  
+
   .center-icon .your-mdna-icon {
     width: 57px;
     height: 57px;
   }
-  
+
   /* Suggested Song Icons */
   .suggested-song {
     position: absolute;
     transform: translate(-50%, -50%);
     z-index: 2;
   }
-  
+
   .suggested-song-icon {
     width: 25px;
     height: 25px;
     cursor: pointer;
   }
-  
+
   /* Tooltip Styling on Hover */
   .suggested-song[title]:hover::after {
     content: attr(title);
@@ -948,7 +948,7 @@
     opacity: 1;                /* Make visible */
     transition: opacity 0.2s ease-in-out 0.3s; /* Fade in with delay */
   }
-  
+
   .suggested-song[title]:hover::before {
     content: '';
     position: absolute;
@@ -962,7 +962,7 @@
     opacity: 1;                /* Make visible */
     transition: opacity 0.2s ease-in-out 0.3s; /* Fade in with delay */
   }
-  
+
   /* Custom CSS for MDNA page modifications */
 
   /* Main container holding both visualization and song details */
@@ -1032,13 +1032,13 @@
     font-weight: 400;
     line-height: normal;
   }
-  
+
   /* Tooltip Styling */
   .suggested-song[title]:hover::after,
   .suggested-song[title]:hover::before {
     z-index: 1; /* Set tooltip z-index lower than the circle */
   }
-  
+
   /* Base styles for pseudo-elements */
   .suggested-song[title]::after,
   .suggested-song[title]::before {

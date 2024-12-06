@@ -200,7 +200,7 @@ server <- function(input, output, session) {
     session$sendCustomMessage("initialize_spinner", TRUE)
   })
   
-  # Observe analyze button click
+  # Observe Analyze button click
   observeEvent(input$analyzeBtn, {
     # Check if any songs are selected
     selected_songs_list <- selected_songs()
