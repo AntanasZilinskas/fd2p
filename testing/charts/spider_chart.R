@@ -1,6 +1,80 @@
 # Load required library
 if (!require(fmsb)) install.packages("fmsb", dependencies = TRUE)
 library(fmsb)
+source("testing/charts/complexity.R")
+
+# Function to extract tempo
+get_tempo <- function(data) {
+  data[[1]]$tempo
+}
+
+# Function to extract measures
+get_measures <- function(data) {
+  data[[1]]$measures
+}
+
+# Function to extract mode
+get_mode <- function(data) {
+  data[[1]]$mode
+}
+
+# Function to normalize and calculate melodic contour percentages (up vs. down)
+get_melodic_contour_score <- function(data) {
+  # Extract the melodic contour values
+  contour <- unlist(data[[1]]$melodic_contour)
+  
+  # Assign names explicitly
+  names(contour) <- c("up", "flat", "down")
+  
+  # Calculate the total for normalization
+  total <- sum(contour)
+  if (total == 0) total <- 1  # Prevent division by zero
+  
+  # Normalize the values
+  percentages <- contour / total
+  
+  # Compute weighted score: 1 for up, 0.5 for flat, 0 for down
+  score <- (percentages["up"] * 1) + (percentages["flat"] * 0.5) + (percentages["down"] * 0)
+  return(score)
+}
+
+# Function to extract average duration
+get_average_duration <- function(data) {
+  data[[1]]$average_duration
+}
+
+# Function to aggregate interval histogram into a single figure (e.g., mean or sum)
+get_interval_histogram_aggregate <- function(data) {
+  intervals <- unlist(data[[1]]$interval_histogram)
+  mean(intervals)  # You can change this to `sum(intervals)` or other aggregate measures
+}
+
+# Function to extract and summarize time signatures
+get_time_signatures <- function(data) {
+  time_signatures <- unlist(data[[1]]$time_signatures)
+  unique_time_signatures <- unique(time_signatures)
+  paste(unique_time_signatures, collapse = ", ")
+}
+
+# Function to create a summary dataframe for charting
+create_summary_dataframe <- function(data) {
+  melodic_contour <- get_melodic_contour(data)
+  
+  data.frame(
+    Feature = c("Tempo", "Measures", "Mode", "Melodic Contour Up (%)", "Melodic Contour Down (%)",
+                "Average Duration (s)", "Interval Histogram Aggregate", "Time Signatures"),
+    Value = c(
+      get_tempo(data),
+      get_measures(data),
+      get_mode(data),
+      melodic_contour["up"],
+      melodic_contour["down"],
+      get_average_duration(data),
+      get_interval_histogram_aggregate(data),
+      get_time_signatures(data)
+    )
+  )
+}
 
 # Function to create a spider chart comparing two songs and return the chart
 create_spider_chart_comparison <- function(data1, complexity_score1, data2, complexity_score2) {
