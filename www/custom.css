@@ -994,7 +994,7 @@
         transparent 80%, 
         rgba(128, 128, 128, 0.3) 80%, 
         rgba(128, 128, 128, 0.3) 81%, 
-        transparent 82%, 
+        transparent 8%, 
         transparent 110%), 
       var(--White-White, #ffffff); /* Fallback solid background color */
     box-shadow: 0px 4px 12px 0px rgba(13, 10, 44, 0.06);

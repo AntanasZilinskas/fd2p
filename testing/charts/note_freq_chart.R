@@ -30,7 +30,7 @@ get_song_details_by_title <- function(song_name) {
   }
 }
 
-# Function to create a comparative bar chart for note frequencies of two songs. 
+# Function to create a comparative bar chart for note frequencies of two songs.  1st is preferences
 # Param: reorder: TRUE if we want it graduated by freq, FALSE if we want it alphabelical
 note_freq_chart_comparison <- function(song_details1, song_details2, reorder = TRUE) {
   library(ggplot2)
@@ -166,11 +166,69 @@ note_freq_chart_comparison_titles <- function(song1, song2) {
   note_freq_chart_comparison(result, result2)
 }
 
-# Example usage
-song_details_list <- list(result, result2)
-average_features <- average_song_features(song_details_list)
-# print(average_features)
+average_from_titles <- function(song_list) {
+  # Check if the song list is not empty
+  if (length(song_list) == 0) {
+    stop("The song list is empty.")
+  }
+  
+  # Initialize a list to store the results
+  song_results <- list()
+  
+  # Loop through each song title in the song_list
+  for (song in song_list) {
+    # Call get_songs_by_title for each song
+    song_results[[song]] <- get_song_details_by_title(song)
+  }
+  
+  # Call average_songs with the results
+  average_result <- average_song_features(song_results)
+  
+  # Return the final result
+  return(average_result)
+}
 
-# create_note_frequency_chart(result)
-chart <- note_freq_chart_comparison(result, result2)
+library(stringr) # For str_trim
+
+compare_song_with_average <- function(song_title, song_list) {
+  # Check if song_list is valid
+  if (is.null(song_list) || length(song_list) == 0) {
+    stop("Error: song_list is empty or NULL. Please provide a valid list of song titles.")
+  }
+  
+  # Clean up song titles in song_list by trimming leading/trailing spaces
+  song_list <- str_trim(song_list)
+  
+  # Check if any song title is still invalid after trimming
+  if (any(song_list == "")) {
+    stop("Error: song_list contains empty or invalid song titles after trimming.")
+  }
+  
+  # Get the song details for the individual song
+  song_details <- get_song_details_by_title(str_trim(song_title)) # Also trim song_title
+  
+  # Get the song details for each song in the list
+  song_results <- list()
+  for (song in song_list) {
+    # print(paste("Fetching details for song:", song)) # Debugging
+    song_results[[song]] <- get_song_details_by_title(song)
+  }
+  
+  # Compute the average features for the list of songs
+  average_features <- average_song_features(song_results)
+  
+  # Call note_freq_chart_comparison to compare the individual song's features
+  # with the average features of the song list
+  chart <- note_freq_chart_comparison(average_features, song_details)
+  
+  # Return the chart
+  return(chart)
+}
+
+# Example usage
+song_title <- "The Wexford Carol"
+song_list <- c("Wexford     ", "Wests       ", "Wexford Reel") # Example with trailing spaces
+chart <- compare_song_with_average(song_title, song_list)
+
+# Print the chart
 print(chart)

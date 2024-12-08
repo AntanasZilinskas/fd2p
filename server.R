@@ -408,9 +408,11 @@ server <- function(input, output, session) {
     # Extract song titles to pass to the updated function
     title1 <- song1$title
     title2 <- song2$title
-
+    print(selected_songs)
     # Generate the chart using the updated function
-    chart <- note_freq_chart_comparison_titles(title1, title2)
+    song_list <- selected_songs()
+    # chart <- compare_song_with_average(title1, song_list)
+    chart <- spider_chart_compare_with_average(title1, song_list)
     print(chart)  # For debugging purposes, optional
 
     # Return the chart
