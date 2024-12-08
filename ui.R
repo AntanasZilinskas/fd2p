@@ -212,11 +212,11 @@ ui <- navbarPage(
     tags$script(HTML("
       Shiny.addCustomMessageHandler('analyseButtonProcessing', function(message) {
         var btn = document.getElementById('analyseBtn');
-        if(message.status === 'start') {
+        if (message.status === 'start') {
           btn.classList.add('processing');
           btn.disabled = true;
           btn.innerHTML = 'Analyse <div class=\"spinner\"></div>';
-        } else if(message.status === 'end') {
+        } else if (message.status === 'end') {
           btn.classList.remove('processing');
           btn.disabled = false;
           btn.innerHTML = 'Analyse';

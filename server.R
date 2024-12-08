@@ -201,26 +201,33 @@ server <- function(input, output, session) {
   })
   
   # Observe Analyze button click
-  observeEvent(input$analyzeBtn, {
+  observeEvent(input$analyseBtn, {
+    print("Analyse button clicked.")
+    
     # Check if any songs are selected
     selected_songs_list <- selected_songs()
     if(length(selected_songs_list) == 0) {
       showNotification("Please select at least one song before analyzing.", type = "warning")
     } else {
       # Send message to start processing
-      session$sendCustomMessage('analyzeButtonProcessing', list(status = 'start'))
+      session$sendCustomMessage('analyseButtonProcessing', list(status = 'start'))
 
       # Perform the processing
-      recommended_songs_data <- find_similar_songs(selected_songs_list, top_n = 5L)
+      tryCatch({
+        recommended_songs_data <- find_similar_songs(selected_songs_list, top_n = 5L)
 
-      # Debugging: Print the recommended songs data
-      print("Recommended Songs Data:")
-      print(recommended_songs_data)
+        # Debugging: Print the recommended songs data
+        print("Recommended Songs Data:")
+        print(recommended_songs_data)
 
-      recommended_songs(recommended_songs_data)
-
-      # Send message to end processing and redirect
-      session$sendCustomMessage('analyzeButtonProcessing', list(status = 'end'))
+        recommended_songs(recommended_songs_data)
+      }, error = function(e) {
+        # Show notification of the error
+        showNotification(paste("An error occurred:", e$message), type = "error")
+      }, finally = {
+        # Send message to end processing and redirect
+        session$sendCustomMessage('analyseButtonProcessing', list(status = 'end'))
+      })
     }
   })
   
