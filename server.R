@@ -25,6 +25,12 @@ server <- function(input, output, session) {
   # Reactive value to store the ID of the selected song
   selected_song_id <- reactiveVal(NULL)
   
+  # Reactive value to store selected Nerd mode tab
+  nerd_mode_tab <- reactiveVal("overview")
+  
+  # Define the tabs without 'Structure'
+  nerd_tabs <- c("overview", "harmonics", "melody", "rhythm")
+  
   # Function to perform the search
   perform_search <- function(query) {
     message("Search query: ", query)
@@ -89,10 +95,7 @@ server <- function(input, output, session) {
     tags$div(
       class = "search-results-dropdown",
       lapply(seq_len(nrow(results)), function(i) {
-        # Adjusted if your 'results' data frame has different column names
         song_title <- results$title[i]
-        # Alternatively, if your column is 'song_title', use:
-        # song_title <- results$song_title[i]
         tags$div(
           class = "search-result-item",
           `data-value` = song_title,
@@ -165,38 +168,6 @@ server <- function(input, output, session) {
     selected_songs(updated_songs)
   })
   
-  # Render recommended songs on the MDNA page
-  output$recommendedSongs <- renderUI({
-    recommendations <- recommended_songs()
-    if (nrow(recommendations) == 0) {
-      return(tags$p("No recommendations to display, please select some songs first."))
-    }
-    
-    tagList(
-      lapply(seq_len(nrow(recommendations)), function(i) {
-        song <- recommendations[i, ]
-        
-        # Safely access song fields with defaults
-        title <- if (!is.null(song$title) && nzchar(song$title)) song$title else "Unknown Title"
-        creators <- if (!is.null(song$creators) && nzchar(song$creators)) song$creators else "Unknown Artist"
-        album <- if (!is.null(song$album) && nzchar(song$album)) song$album else "Unknown Album"
-        spotify_url <- if (!is.null(song$spotify_url) && nzchar(song$spotify_url)) song$spotify_url else NULL
-        
-        tags$div(
-          class = "recommendation-item",
-          tags$h4(title),
-          tags$p(paste("Artists:", creators)),
-          tags$p(paste("Album:", album)),
-          if (!is.null(spotify_url)) {
-            tags$a(href = spotify_url, target = "_blank", "Listen on Spotify")
-          } else {
-            NULL
-          }
-        )
-      })
-    )
-  })
-  
   # Add a session listener for custom messages
   session$onFlushed(function() {
     session$sendCustomMessage("initialize_spinner", TRUE)
@@ -231,6 +202,206 @@ server <- function(input, output, session) {
         session$sendCustomMessage('analyseButtonProcessing', list(status = 'end'))
       })
     }
+  })
+  
+  # Observe the song click event
+  observeEvent(input$song_clicked, {
+    selected_song_id(input$song_clicked)
+  })
+  
+  # Observe tab link clicks
+  lapply(nerd_tabs, function(tab_name) {
+    observeEvent(input[[paste0("nerdTab_", tab_name)]], {
+      nerd_mode_tab(tab_name)
+    })
+  })
+  
+  # Render content based on selected Nerd mode tab
+  output$nerdModeContent <- renderUI({
+    tab <- nerd_mode_tab()
+    switch(tab,
+           "overview" = {
+             # Display the same visualization as in normal mode
+             div(
+               class = "overview-container",
+               # Center icon with title
+               div(
+                 class = "center-icon",
+                 img(src = "assets/your-mdna.svg", class = "your-mdna-icon"),
+                 span(class = "mdna-label", "Your MDNA")
+               ),
+               # Visualization of recommended songs
+               uiOutput("recommendedSongsVisualization")
+             )
+           },
+           "harmonics" = {
+             # Content for Harmonics tab
+             div("This is the Harmonics content.")
+           },
+           "melody" = {
+             # Content for Melody tab
+             div("This is the Melody content.")
+           },
+           "rhythm" = {
+             # Content for Rhythm tab
+             div("This is the Rhythm content.")
+           },
+           # Default case
+           div("Select a tab.")
+    )
+  })
+  
+  # Render the MDNA content based on Nerd mode
+  output$mdnaContent <- renderUI({
+    recommendations <- recommended_songs()
+    
+    if (nrow(recommendations) == 0) {
+      return(NULL)
+    } else {
+      if (input$nerdMode) {
+        # Nerd mode is enabled
+        
+        # Left side container (includes tabs and content)
+        left_container <- div(
+          class = "left-side-container",
+          
+          # Tabs at the top
+          div(
+            class = "nerd-mode-tabs",
+            # Generate tabs
+            lapply(nerd_tabs, function(tab_name) {
+              tab_label <- tools::toTitleCase(tab_name)
+              # Determine if this tab is selected
+              tab_class <- "nerd-tab"
+              if (nerd_mode_tab() == tab_name) {
+                tab_class <- paste(tab_class, "selected")
+              }
+              # Create tab button
+              actionLink(
+                inputId = paste0("nerdTab_", tab_name),
+                label = tab_label,
+                class = tab_class
+              )
+            })
+          ),
+          
+          # Left container with reduced size
+          div(
+            class = "mdna-visualization-container-nerd",
+            # Visualization content based on selected tab
+            uiOutput("nerdModeContent")
+          )
+        )
+        
+        # Right-side song details container
+        right_container <- div(
+          class = "song-details-container-custom",
+          uiOutput("songDetails")
+        )
+        
+        # Main container including left and right components
+        div(
+          class = "mdna-main-container",
+          # Containers for content
+          left_container,
+          right_container
+        )
+        
+      } else {
+        # Nerd mode is disabled
+        div(
+          class = "mdna-main-container",
+          # Left-side MDNA visualization container
+          div(
+            class = "left-side-container",
+            div(
+              class = "mdna-visualization-container-custom",
+              onclick = "Shiny.setInputValue('container_clicked', Math.random());",
+              # Center icon with title
+              div(
+                class = "center-icon",
+                img(src = "assets/your-mdna.svg", class = "your-mdna-icon"),
+                span(class = "mdna-label", "Your MDNA")
+              ),
+              # Visualization of recommended songs
+              uiOutput("recommendedSongsVisualization")
+            )
+          ),
+          # Right-side song details container
+          div(
+            class = "song-details-container-custom",
+            uiOutput("songDetails")
+          )
+        )
+      }
+    }
+  })
+  
+  # Render the song details in the right container
+  output$songDetails <- renderUI({
+    song_id <- selected_song_id()
+    if (is.null(song_id)) {
+      return(
+        div(
+          class = "song-details-placeholder",
+          "Click on a song to see details."
+        )
+      )
+    }
+
+    recommendations <- recommended_songs()
+    song <- recommendations[recommendations$id == song_id, ]
+
+    if (nrow(song) == 0) {
+      return(NULL)
+    }
+
+    # Display song details with Spotify link and the chart
+    div(
+      class = "song-details-custom",
+      h3(class = "song-title-custom", song$title),
+      p(class = "song-artist-custom", paste("Artist:", song$creators)),
+      p(
+        class = "song-similarity-custom", 
+        paste("Similarity Score:", sprintf("%.2f", song$similarity))
+      ),
+      # Add the Spotify link button
+      if (!is.na(song$spotify_url)) {
+        a(
+          href = song$spotify_url,
+          target = "_blank",
+          class = "spotify-link-button",
+          img(src = "assets/spotify.svg", class = "spotify-icon"),
+          span("Listen on Spotify!")
+        )
+      } else {
+        NULL
+      },
+      # Add the chart below song details with 12px top margin
+      div(
+        style = "margin-top: 12px;",  # Apply 12px top margin
+        plotOutput("songChart", height = "210px", width = "100%")
+      )
+    )
+  })
+  
+  # Render the chart for the selected song comparison
+  output$songChart <- renderPlot({
+    song_id <- selected_song_id()
+    if (is.null(song_id)) return(NULL)  # If no song is selected, don't render a chart
+
+    # Get the selected song details
+    recommendations <- recommended_songs()
+    song1 <- recommendations[recommendations$id == song_id, ]
+
+    if (nrow(song1) == 0) return(NULL)
+
+    # Generate the chart using your existing function
+    # For example, using spider_chart_compare_with_average
+    chart <- spider_chart_compare_with_average(song1$title, selected_songs())
+
+    # Return the chart
+    chart
   })
   
   # Render recommended songs visualization on the MDNA page
@@ -294,131 +465,13 @@ server <- function(input, output, session) {
         img(
           src = icon_src,
           class = "suggested-song-icon",
-          onclick = sprintf("event.stopPropagation(); Shiny.setInputValue('song_clicked', %d, {priority: 'event'});", song$id)
+          onclick = sprintf("event.stopPropagation(); Shiny.setInputValue('song_clicked', '%s', {priority: 'event'});", song$id)
         )
       )
     })
 
     # Return the list of song elements
     do.call(tagList, song_elements)
-  })
-
-  # Observe the song click event
-  observeEvent(input$song_clicked, {
-    selected_song_id(input$song_clicked)
-  })
-
-  output$mdnaContent <- renderUI({
-    recommendations <- recommended_songs()
-    
-    if (nrow(recommendations) == 0) {
-      # No recommendations yet; display a message or keep it empty
-      return(NULL)
-    } else {
-      # Main container holding both the MDNA visualization and the song details
-      div(
-        class = "mdna-main-container",
-        # Left-side MDNA visualization container
-        div(
-          class = "mdna-visualization-container-custom",
-          onclick = "Shiny.setInputValue('container_clicked', Math.random());",
-          # Center icon with title
-          div(
-            class = "center-icon",
-            img(src = "assets/your-mdna.svg", class = "your-mdna-icon"),
-            span(class = "mdna-label", "Your MDNA")
-          ),
-          # Visualization of recommended songs
-          uiOutput("recommendedSongsVisualization")
-        ),
-        # Right-side song details container
-        div(
-          class = "song-details-container-custom",
-          uiOutput("songDetails")
-        )
-      )
-    }
-  })
-
-  output$songDetails <- renderUI({
-    song_id <- selected_song_id()
-    if (is.null(song_id)) {
-      return(
-        div(
-          class = "song-details-placeholder",
-          "Click on a song to see details."
-        )
-      )
-    }
-
-    recommendations <- recommended_songs()
-    song <- recommendations[recommendations$id == song_id, ]
-
-    if (nrow(song) == 0) {
-      return(NULL)
-    }
-
-    # Display song details with Spotify link and the chart
-    div(
-      class = "song-details-custom",
-      h3(class = "song-title-custom", song$title),
-      p(class = "song-artist-custom", paste("Artist:", song$creators)),
-      p(
-        class = "song-similarity-custom", 
-        paste("Similarity Score:", sprintf("%.2f", song$similarity))
-      ),
-      # Add the Spotify link button
-      if (!is.na(song$spotify_url)) {
-        a(
-          href = song$spotify_url,
-          target = "_blank",
-          class = "spotify-link-button",
-          img(src = "assets/spotify.svg", class = "spotify-icon"),
-          span("Listen on Spotify!")
-        )
-      } else {
-        NULL
-      },
-      # Add the chart below song details with 12px top margin
-      div(
-        style = "margin-top: 12px;",  # Apply 12px top margin
-        plotOutput("songChart", height = "210px", width = "100%")
-      )
-    )
-  })
-  # Render the chart for the selected song comparison
-  output$songChart <- renderPlot({
-    song_id <- selected_song_id()
-    if (is.null(song_id)) return(NULL)  # If no song is selected, don't render a chart
-
-    # Get the selected song details
-    recommendations <- recommended_songs()
-    song1 <- recommendations[recommendations$id == song_id, ]
-
-    if (nrow(song1) == 0) return(NULL)
-
-    # Define the comparison song (e.g., the first recommended song)
-    if (nrow(recommendations) > 1) {
-      song2 <- recommendations[1, ]  # Use the first song as a comparison
-      if (song2$id == song_id && nrow(recommendations) > 1) {
-        song2 <- recommendations[2, ]  # Skip if the first is the selected song
-      }
-    } else {
-      song2 <- song1  # Fallback: Compare the song to itself
-    }
-
-    # Extract song titles to pass to the updated function
-    title1 <- song1$title
-    title2 <- song2$title
-    print(selected_songs)
-    # Generate the chart using the updated function
-    song_list <- selected_songs()
-    # chart <- compare_song_with_average(title1, song_list)
-    chart <- spider_chart_compare_with_average(title1, song_list)
-    print(chart)  # For debugging purposes, optional
-
-    # Return the chart
-    return(chart)
   })
 
 }

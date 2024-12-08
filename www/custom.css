@@ -968,10 +968,11 @@
   /* Main container holding both visualization and song details */
   .mdna-main-container {
     display: flex;
+    flex-direction: row;
     align-items: flex-start;
-    justify-content: flex-start;
-    width: auto;
-    column-gap: 10px;
+    gap: 10px;
+    margin: 0;
+    padding: 0;
   }
 
   /* Left-side visualization container */
@@ -1018,6 +1019,9 @@
     border-radius: 10px;
     background: var(--White-White, #FFF);
     box-shadow: 0px 4px 12px 0px rgba(13, 10, 44, 0.06);
+    align-self: flex-start;
+    margin: 2px;
+    padding: 1px;
   }
 
   /* Spotify Link Button Styling */
@@ -1063,3 +1067,193 @@
     opacity: 0;            /* Make invisible */
     pointer-events: none;  /* Ignore mouse events */
   }
+
+  /* Styles specific to the Nerd mode switch */
+  .nerd-mode-switch-container {
+    margin-top: 20px;
+    text-align: center; /* Center the switch container */
+  }
+
+  .nerd-mode-switch-wrapper {
+    display: inline-flex;
+    align-items: center;
+  }
+
+  /* Adjust the alignment of the switch and label */
+  .nerd-mode-switch {
+    position: relative;
+    display: inline-block;
+    width: 60px;
+    height: 34px;
+    margin-right: 10px; /* Space between switch and label */
+    cursor: pointer; /* Show pointer cursor on hover */
+  }
+
+  /* Hide the default checkbox but ensure it covers the switch area */
+  .nerd-mode-switch input[type="checkbox"] {
+    opacity: 0;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    position: absolute;
+    left: 0;
+    top: 0;
+    z-index: 2; /* Bring the input above the slider */
+    cursor: pointer;
+  }
+
+  /* The slider */
+  .nerd-mode-switch .slider {
+    position: absolute;
+    background-color: var(--neutral); /* Gray when off */
+    border-radius: 34px;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    transition: background-color 0.4s;
+    z-index: 1; /* Behind the input */
+  }
+
+  /* The circle inside the slider */
+  .nerd-mode-switch .slider:before {
+    position: absolute;
+    content: "";
+    height: 26px;
+    width: 26px;
+    left: 4px;
+    top: 4px; /* Center the circle vertically */
+    background-color: #fff; /* White knob */
+    transition: transform 0.4s;
+    border-radius: 50%;
+    box-shadow: 0 0 2px rgba(0, 0, 0, 0.2); /* Shadow effect */
+  }
+
+  /* When checked */
+  .nerd-mode-switch input[type="checkbox"]:checked + .slider {
+    background-color: var(--accent); /* Orange when on */
+  }
+
+  .nerd-mode-switch input[type="checkbox"]:checked + .slider:before {
+    transform: translateX(26px);
+  }
+
+  /* Label for the switch */
+  .nerd-mode-switch-label {
+    font-size: 16px;
+    font-weight: 500;
+    color: var(--primary-dark);
+    vertical-align: middle;
+  }
+
+  /* --- Styles for Nerd mode --- */
+
+  /* Adjust the left container in Nerd mode */
+  .mdna-visualization-container-nerd {
+    width: 456px;
+    height: 391px;
+    flex-shrink: 0;
+    border-radius: 10px;
+    background: var(--White-White, #FFF);
+    box-shadow: 0px 4px 12px 0px rgba(13, 10, 44, 0.06);
+    position: relative;
+    overflow: hidden;
+    margin: 0;
+    padding: 0;
+  }
+
+  /* Tabs at the top, positioned above the containers */
+  .nerd-mode-tabs {
+    width: 100%;
+    display: flex;
+    justify-content: flex-start;
+    margin-bottom: 10px;
+    margin-top: 0;
+    padding: 0;
+  }
+
+  /* Styles for tab buttons */
+  .nerd-tab {
+    width: 99px;
+    height: 35px;
+    flex-shrink: 0;
+    border-radius: 10px;
+    background: var(--fd2p-2, #E3E3E2);
+    border: 1px solid #000;
+    margin-right: 5px;
+    line-height: 35px;
+    text-align: center;
+    cursor: pointer;
+    text-decoration: none;
+    color: #000;
+    font-family: 'Poppins', sans-serif;
+    font-size: 14px;
+  }
+
+  .nerd-tab.selected {
+    width: 91px;
+    background: var(--fd2p-5, #232323);
+    color: #FFFFFF;
+    border: none;
+  }
+
+  .nerd-tab:hover {
+    background: #CCCCCC;
+  }
+
+  .nerd-tab:focus {
+    outline: none;
+  }
+
+  /* Content area below the tabs */
+  .mdna-visualization-container-nerd #nerdModeContent {
+    padding: 10px;
+    overflow-y: auto;
+    height: calc(100% - 50px); /* Adjust height to fit below tabs */
+  }
+
+  /* Adjust the overview container */
+  .overview-container {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    /* Add any additional styles if needed */
+  }
+
+  /* Ensure the visualization inside the overview aligns properly */
+  .overview-container .center-icon {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    margin: 0;
+  }
+
+  .overview-container .your-mdna-icon {
+    width: 57px;
+    height: 57px;
+  }
+
+  .overview-container .mdna-label {
+    display: block;
+    margin-bottom: 10px;
+    font-size: 16px;
+    color: #333;
+  }
+
+  /* Adjust mdna-main-container to accommodate tabs */
+  .mdna-main-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: flex-start;
+  }
+
+  /* Optionally, style the right container if necessary */
+  .song-details-container-custom {
+    /* Your existing styles */
+  }
+
+  /* --- End of Nerd mode styles --- */

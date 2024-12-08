@@ -147,6 +147,44 @@ customCSS <- HTML("
     border-color: transparent transparent rgba(0, 0, 0, 0.8) transparent;
     z-index: 999;
   }
+
+  /* Style for the Nerd mode switch container */
+  .nerd-mode-switch-container {
+    margin-top: 20px;
+    text-align: center; /* Center the switch horizontally */
+  }
+
+  /* Style for the Nerd mode checkbox label */
+  .nerd-mode-switch-container .checkbox label {
+    font-size: 16px;
+    font-weight: 500;
+    color: var(--primary-dark);
+    cursor: pointer;
+  }
+
+  /* Adjust the checkbox appearance */
+  .nerd-mode-switch-container .checkbox input[type=\"checkbox\"] {
+    margin-right: 8px;
+  }
+
+  /* Optional: Style the checkbox itself */
+  .nerd-mode-switch-container .checkbox input[type=\"checkbox\"] + label::before {
+    content: '';
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    margin-right: 8px;
+    border: 1px solid var(--primary-dark);
+    border-radius: 4px;
+    background-color: #fff;
+    vertical-align: middle;
+  }
+
+  /* Change appearance when checked */
+  .nerd-mode-switch-container .checkbox input[type=\"checkbox\"]:checked + label::before {
+    background-color: var(--accent);
+    border-color: var(--accent);
+  }
 ")
 
 ui <- navbarPage(
@@ -304,7 +342,25 @@ ui <- navbarPage(
           "Here are the songs that are most similar to your current taste."
         ),
         # Placeholder for the MDNA visualization or message
-        uiOutput("mdnaContent")
+        uiOutput("mdnaContent"),
+
+        # Add the Nerd mode switch here
+        div(
+          class = "nerd-mode-switch-container",
+          div(
+            class = "nerd-mode-switch-wrapper",
+            # Wrap input and slider in a label
+            tags$label(
+              class = "nerd-mode-switch",
+              # The hidden checkbox input
+              tags$input(id = "nerdMode", type = "checkbox"),
+              # The slider
+              tags$span(class = "slider")
+            ),
+            # Label for the switch
+            tags$span(class = "nerd-mode-switch-label", "Nerd mode!")
+          )
+        )
       )
     )
   )
