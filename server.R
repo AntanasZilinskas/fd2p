@@ -3,6 +3,8 @@ library(shiny)
 library(methods)
 # Ensure global.R is sourced
 source("global.R")
+source("testing/charts/spider_chart.R")
+source("testing/charts/note_freq_chart.R")
 
 server <- function(input, output, session) {
   # Store selected songs
