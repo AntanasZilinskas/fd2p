@@ -899,7 +899,7 @@
   .center-icon {
     position: absolute;
     left: 50%;
-    top: 50%;
+    top: 53.5%;
     transform: translate(-50%, -50%);
     text-align: center;
   }
@@ -980,7 +980,23 @@
     height: 440px;
     flex-shrink: 0;
     border-radius: 10px;
-    background: var(--White-White, #FFF);
+    background: 
+      radial-gradient(circle, 
+        transparent 0%, 
+        transparent 20%, 
+        rgba(128, 128, 128, 0.3) 20%, 
+        rgba(128, 128, 128, 0.3) 21%, 
+        transparent 22%, 
+        transparent 50%, 
+        rgba(128, 128, 128, 0.3) 50%, 
+        rgba(128, 128, 128, 0.3) 51%, 
+        transparent 52%, 
+        transparent 80%, 
+        rgba(128, 128, 128, 0.3) 80%, 
+        rgba(128, 128, 128, 0.3) 81%, 
+        transparent 82%, 
+        transparent 110%), 
+      var(--White-White, #ffffff); /* Fallback solid background color */
     box-shadow: 0px 4px 12px 0px rgba(13, 10, 44, 0.06);
     position: relative; /* Required for absolute positioning inside */
     z-index: 2;
