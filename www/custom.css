@@ -1359,3 +1359,92 @@
       margin-top: 10px;
     }
   }
+
+  /* Custom styling for Rhythm tab */
+  .rhythm-container {
+    padding: 10px;
+    font-family: 'Poppins', sans-serif;
+  }
+
+  .rhythm-container h4 {
+    margin-top: 20px;
+    margin-bottom: 10px;
+  }
+
+  .rhythm-container p {
+    margin: 5px 0;
+  }
+
+  .rhythm-container .shiny-input-container {
+    margin: 10px 0;
+  }
+
+  /* Custom slider styling */
+  input[type="range"] {
+    -webkit-appearance: none; /* Hides the slider in Chrome */
+    width: 100%; /* Full-width */
+    background: transparent; /* Transparent background */
+  }
+
+  /* Track styling */
+  input[type="range"]::-webkit-slider-runnable-track {
+    width: 100%;
+    height: 8px;
+    cursor: pointer;
+    background: #F56C37;
+    border-radius: 4px;
+  }
+
+  /* Thumb (handle) styling */
+  input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none; /* Remove default styling */
+    height: 18px;
+    width: 18px;
+    border-radius: 50%;
+    background: #F56C37;
+    cursor: pointer;
+    margin-top: -5px; /* Align thumb with the track */
+  }
+
+  /* For Firefox */
+  input[type="range"]::-moz-range-track {
+    width: 100%;
+    height: 8px;
+    cursor: pointer;
+    background: #F56C37;
+    border-radius: 4px;
+  }
+
+  input[type="range"]::-moz-range-thumb {
+    height: 18px;
+    width: 18px;
+    border-radius: 50%;
+    background: #F56C37;
+    cursor: pointer;
+  }
+
+  /* Hide the outline when focused */
+  input[type="range"]:focus {
+    outline: none;
+  }
+
+  /* Custom styling for Shiny sliders */
+
+  /* Change the color of the slider range (track) */
+  .sliderInput .ui-slider .ui-slider-range {
+    background: #F56C37 !important;
+  }
+
+  /* Change the color of the slider handle (thumb) */
+  .sliderInput .ui-slider .ui-slider-handle {
+    background: #F56C37 !important;
+    border-color: #F56C37 !important;
+  }
+
+  /* Optional: Adjust the hover and active states of the handle */
+  .sliderInput .ui-slider .ui-slider-handle:hover,
+  .sliderInput .ui-slider .ui-slider-handle:active,
+  .sliderInput .ui-slider .ui-slider-handle.ui-state-active {
+    background: #F56C37 !important;
+    border-color: #F56C37 !important;
+  }

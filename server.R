@@ -244,7 +244,40 @@ server <- function(input, output, session) {
            },
            "rhythm" = {
              # Content for the Rhythm tab
-             div("This is the Rhythm content.")
+             selected_data <- selected_song_tempo_duration()
+             average_data <- average_tempo_duration()
+             
+             if (is.null(selected_data) || is.null(average_data)) {
+               div("Tempo and note duration data not available.")
+             } else {
+               div(
+                 class = "rhythm-container",
+                 h4("Tempo Comparison"),
+                 p(paste("Average Tempo of Selected Songs:", round(average_data$tempo, 2), "BPM")),
+                 p(paste("Tempo of Selected Song:", round(selected_data$tempo, 2), "BPM")),
+                 sliderInput(
+                   inputId = "tempo_adjustment",
+                   label = "Adjust Tempo:",
+                   min = 0,  # Min BPM
+                   max = 1000,  # Max BPM
+                   value = average_data$tempo,  # Set to average tempo
+                   step = 1,
+                   post = " BPM"
+                 ),
+                 h4("Average Note Duration Comparison"),
+                 p(paste("Average Note Duration of Selected Songs:", round(average_data$average_note_duration, 2), "ms")),
+                 p(paste("Average Note Duration of Selected Song:", round(selected_data$average_note_duration, 2), "ms")),
+                 sliderInput(
+                   inputId = "duration_adjustment",
+                   label = "Adjust Note Duration:",
+                   min = 0,  # Min ms
+                   max = 1000,  # Max ms
+                   value = average_data$average_note_duration,  # Set to average duration
+                   step = 1,
+                   post = " ms"
+                 )
+               )
+             }
            },
            # Default case
            div("Select a tab.")
@@ -494,5 +527,88 @@ server <- function(input, output, session) {
       text(0.5, 0.5, "Select a song to view the harmonics chart.", cex = 1.2)
     }
   })
-
+  
+  # Function to extract average note duration and tempo from feature vector
+  extract_tempo_and_duration <- function(feature_vector) {
+    # Convert feature vector to numeric vector if not already
+    if (!is.numeric(feature_vector)) {
+      feature_vector <- as.numeric(unlist(strsplit(gsub("\\[|\\]", "", feature_vector), ",")))
+    }
+    
+    # Average Note Duration at index 73
+    average_note_duration_index <- 73
+    # Tempo at index 74
+    tempo_index <- 74
+    
+    # Get normalized values (between 0 and 1)
+    average_note_duration_normalized <- feature_vector[average_note_duration_index]
+    tempo_normalized <- feature_vector[tempo_index]
+    
+    # Scale to actual values (up to 1000)
+    average_note_duration <- average_note_duration_normalized * 1000  # in milliseconds
+    tempo <- tempo_normalized * 1000  # in BPM
+    
+    return(list(
+      average_note_duration = average_note_duration,
+      tempo = tempo
+    ))
+  }
+  
+  # Reactive expression to get the selected song's features
+  selected_song_features <- reactive({
+    song_id <- selected_song_id()
+    if (is.null(song_id)) return(NULL)
+    
+    recommendations <- recommended_songs()
+    song <- recommendations[recommendations$id == song_id, ]
+    if (nrow(song) == 0) return(NULL)
+    
+    song_details <- get_song_details_by_title(song$title)
+    if (is.null(song_details) || length(song_details) == 0) return(NULL)
+    
+    return(song_details[[1]])  # Return the song details list
+  })
+  
+  # Reactive expression to get the average features
+  average_features_data <- reactive({
+    if (length(selected_songs()) == 0) return(NULL)
+    
+    average_features <- average_from_titles(selected_songs())
+    if (is.null(average_features) || length(average_features) == 0) return(NULL)
+    
+    return(average_features[[1]])  # Return the average features list
+  })
+  
+  # Reactive expression to get tempo and duration for selected song
+  selected_song_tempo_duration <- reactive({
+    features <- selected_song_features()
+    if (is.null(features)) return(NULL)
+    
+    feature_vector <- features$feature_vector
+    if (is.null(feature_vector)) return(NULL)
+    
+    extract_tempo_and_duration(feature_vector)
+  })
+  
+  # Reactive expression to get tempo and duration for average features
+  average_tempo_duration <- reactive({
+    features <- average_features_data()
+    if (is.null(features)) return(NULL)
+    
+    feature_vector <- features$feature_vector
+    if (is.null(feature_vector)) return(NULL)
+    
+    extract_tempo_and_duration(feature_vector)
+  })
+  
+  # Handle adjustments if needed
+  observeEvent(input$tempo_adjustment, {
+    adjusted_tempo <- input$tempo_adjustment
+    # Implement functionality for adjusted tempo
+  })
+  
+  observeEvent(input$duration_adjustment, {
+    adjusted_duration <- input$duration_adjustment
+    # Implement functionality for adjusted duration
+  })
 }
