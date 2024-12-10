@@ -1,0 +1,18 @@
+services:
+  - type: web
+    name: harmonly-app
+    env: docker
+    region: frankfurt  # or your preferred region
+    plan: free   # adjust based on your needs
+    healthCheckPath: /
+    envVars:
+      - key: SUPABASE_ANON_KEY
+        sync: false  # requires manual input in Render dashboard
+      - key: SUPABASE_SERVICE_KEY
+        sync: false
+      - key: SPOTIFY_CLIENT_ID
+        sync: false
+      - key: SPOTIFY_CLIENT_SECRET
+        sync: false
+    buildCommand: docker build -t harmonly-app .
+    startCommand: docker run -p $PORT:3838 harmonly-app 

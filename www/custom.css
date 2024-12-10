@@ -1009,7 +1009,7 @@
   .song-details-container-custom {
     width: 188px;
     height: 440px;
-    padding: 12px 12px 20px 12px; /* top, right, bottom, left */
+    padding: 20px 12px; /* top, right, bottom, left */
     display: flex;
     flex-direction: column;
     align-items: flex-start;
@@ -1020,8 +1020,8 @@
     background: var(--White-White, #FFF);
     box-shadow: 0px 4px 12px 0px rgba(13, 10, 44, 0.06);
     align-self: flex-start;
-    margin: 2px;
-    padding: 1px;
+    margin: 0;
+    padding: 0;
   }
 
   /* Spotify Link Button Styling */
@@ -1249,6 +1249,10 @@
     flex-wrap: wrap;
     justify-content: space-between;
     align-items: flex-start;
+    margin: 0;
+    padding: 0;
+    width: 654px; /* Set desired width */
+    max-width: 100%; /* Ensure responsiveness */
   }
 
   /* Optionally, style the right container if necessary */
@@ -1298,4 +1302,60 @@
   /* Optional: Adjust the gap between containers */
   .mdna-main-container.nerd-mode {
     gap: 10px; /* Adjust as needed */
+  }
+
+  /* Adjust the mdna-main-container for both modes */
+  .mdna-main-container {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    justify-content: flex-start; /* Align items to the start */
+    flex-wrap: nowrap; /* Prevent wrapping */
+    width: auto; /* Remove fixed width to allow flexibility */
+    max-width: 100%;
+    margin: 0 auto; /* Center the container if needed */
+    padding: 0;
+    gap: 10px; /* Adjust the space between containers */
+  }
+
+  /* Left-side container styling */
+  .mdna-main-container .left-side-container {
+    flex: 1; /* Allow to grow and shrink */
+    margin: 0;
+    padding: 0;
+  }
+
+  /* Right-side song details container styling */
+  .mdna-main-container .song-details-container-custom {
+    width: 188px;
+    height: 440px;
+    padding: 20px 12px; /* top-bottom, left-right */
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+    flex-shrink: 0;
+    border-radius: 10px;
+    background: var(--White-White, #FFF);
+    box-shadow: 0px 4px 12px rgba(13, 10, 44, 0.06);
+    margin: 0;
+  }
+
+  /* Remove any default margins and paddings from child containers */
+  .left-side-container,
+  .song-details-container-custom {
+    margin: 0;
+    padding: 0;
+  }
+
+  /* Optional media query for responsiveness */
+  @media (max-width: 768px) {
+    .mdna-main-container {
+      flex-direction: column;
+    }
+
+    .mdna-main-container .song-details-container-custom {
+      width: 100%; /* Adjust to full width on small screens */
+      margin-top: 10px;
+    }
   }

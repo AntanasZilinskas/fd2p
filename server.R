@@ -258,81 +258,66 @@ server <- function(input, output, session) {
     if (nrow(recommendations) == 0) {
       return(NULL)
     } else {
-      if (input$nerdMode) {
-        # Nerd mode is enabled
-        
-        # Left side container (includes tabs and content)
-        left_container <- div(
-          class = "left-side-container",
-          
-          # Tabs at the top
-          div(
-            class = "nerd-mode-tabs",
-            # Generate tabs
-            lapply(nerd_tabs, function(tab_name) {
-              tab_label <- tools::toTitleCase(tab_name)
-              # Determine if this tab is selected
-              tab_class <- "nerd-tab"
-              if (nerd_mode_tab() == tab_name) {
-                tab_class <- paste(tab_class, "selected")
-              }
-              # Create tab button
-              actionLink(
-                inputId = paste0("nerdTab_", tab_name),
-                label = tab_label,
-                class = tab_class
-              )
-            })
-          ),
-          
-          # Left container with reduced size
-          div(
-            class = "mdna-visualization-container-nerd",
-            # Visualization content based on selected tab
-            uiOutput("nerdModeContent")
-          )
-        )
-        
-        # Right-side song details container
-        right_container <- div(
-          class = "song-details-container-custom",
-          uiOutput("songDetails")
-        )
-        
-        # Main container including left and right components
-        div(
-          class = "mdna-main-container nerd-mode",
-          left_container,
-          right_container
-        )
-        
-      } else {
-        # Nerd mode is disabled
-        div(
-          class = "mdna-main-container",
-          # Left-side MDNA visualization container
-          div(
-            class = "left-side-container",
+      # Left side container
+      left_container <- div(
+        class = "left-side-container",
+        if (input$nerdMode) {
+          # Content for Nerd mode
+          tagList(
+            # Tabs at the top
             div(
-              class = "mdna-visualization-container-custom",
-              onclick = "Shiny.setInputValue('container_clicked', Math.random());",
-              # Center icon with title
-              div(
-                class = "center-icon",
-                img(src = "assets/your-mdna.svg", class = "your-mdna-icon"),
-                span(class = "mdna-label", "Your MDNA")
-              ),
-              # Visualization of recommended songs
-              uiOutput("recommendedSongsVisualization")
+              class = "nerd-mode-tabs",
+              # Generate tabs
+              lapply(nerd_tabs, function(tab_name) {
+                tab_label <- tools::toTitleCase(tab_name)
+                # Determine if this tab is selected
+                tab_class <- "nerd-tab"
+                if (nerd_mode_tab() == tab_name) {
+                  tab_class <- paste(tab_class, "selected")
+                }
+                # Create tab button
+                actionLink(
+                  inputId = paste0("nerdTab_", tab_name),
+                  label = tab_label,
+                  class = tab_class
+                )
+              })
+            ),
+            # Visualization content based on selected tab
+            div(
+              class = "mdna-visualization-container-nerd",
+              uiOutput("nerdModeContent")
             )
-          ),
-          # Right-side song details container
-          div(
-            class = "song-details-container-custom",
-            uiOutput("songDetails")
           )
-        )
-      }
+        } else {
+          # Content for non-Nerd mode
+          div(
+            class = "mdna-visualization-container-custom",
+            onclick = "Shiny.setInputValue('container_clicked', Math.random());",
+            # Center icon with title
+            div(
+              class = "center-icon",
+              img(src = "assets/your-mdna.svg", class = "your-mdna-icon"),
+              span(class = "mdna-label", "Your MDNA")
+            ),
+            # Visualization of recommended songs
+            uiOutput("recommendedSongsVisualization")
+          )
+        }
+      )
+      
+      # Right-side song details container
+      right_container <- div(
+        class = "song-details-container-custom",
+        uiOutput("songDetails")
+      )
+      
+      # Main container including left and right components
+      div(
+        class = "mdna-main-container",
+        left_container,
+        right_container
+      )
     }
   })
   
