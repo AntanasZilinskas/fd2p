@@ -1448,3 +1448,47 @@
     background: #F56C37 !important;
     border-color: #F56C37 !important;
   }
+
+  /* Custom styling for sliders with class 'custom-slider' */
+
+  .custom-slider .ui-slider .ui-slider-range {
+    background: #F56C37 !important;
+  }
+
+  .custom-slider .ui-slider .ui-slider-handle {
+    background: #F56C37 !important;
+    border-color: #F56C37 !important;
+  }
+
+  /* Adjust hover and active states */
+  .custom-slider .ui-slider .ui-slider-handle:hover,
+  .custom-slider .ui-slider .ui-slider-handle:active,
+  .custom-slider .ui-slider .ui-slider-handle.ui-state-active {
+    background: #F56C37 !important;
+    border-color: #F56C37 !important;
+  }
+
+  /* Optional: Style the slider labels and values */
+  .custom-slider .control-label,
+  .custom-slider .irs-grid-text {
+    color: #F56C37;
+  }
+
+  /* Custom styling for sliders within divs with class 'custom-slider' */
+
+  .custom-slider .ui-slider .ui-slider-range {
+    background: #F56C37 !important;
+  }
+
+  .custom-slider .ui-slider .ui-slider-handle {
+    background: #F56C37 !important;
+    border-color: #F56C37 !important;
+  }
+
+  /* Adjust hover and active states */
+  .custom-slider .ui-slider .ui-slider-handle:hover,
+  .custom-slider .ui-slider .ui-slider-handle:active,
+  .custom-slider .ui-slider .ui-slider-handle.ui-state-active {
+    background: #F56C37 !important;
+    border-color: #F56C37 !important;
+  }

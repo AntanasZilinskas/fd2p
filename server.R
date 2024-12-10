@@ -1,10 +1,14 @@
 # server.R
 library(shiny)
 library(methods)
+library(shinyWidgets)
 # Ensure global.R is sourced
 source("global.R")
 source("testing/charts/spider_chart.R")
 source("testing/charts/note_freq_chart.R")
+
+# Set the slider color globally (for all sliders)
+setSliderColor("#F56C37", sliderId = 0)
 
 server <- function(input, output, session) {
   # Store selected songs
@@ -255,26 +259,38 @@ server <- function(input, output, session) {
                  h4("Tempo Comparison"),
                  p(paste("Average Tempo of Selected Songs:", round(average_data$tempo, 2), "BPM")),
                  p(paste("Tempo of Selected Song:", round(selected_data$tempo, 2), "BPM")),
-                 sliderInput(
-                   inputId = "tempo_adjustment",
-                   label = "Adjust Tempo:",
-                   min = 0,  # Min BPM
-                   max = 1000,  # Max BPM
-                   value = average_data$tempo,  # Set to average tempo
-                   step = 1,
-                   post = " BPM"
+                 div(
+                   class = "custom-slider",
+                   sliderInput(
+                     inputId = "tempo_adjustment",
+                     label = "Adjust Tempo:",
+                     min = 0,  # Min BPM
+                     max = 1000,  # Max BPM
+                     value = average_data$tempo,  # Set to average tempo
+                     step = 1,
+                     post = " BPM"
+                   )
                  ),
                  h4("Average Note Duration Comparison"),
                  p(paste("Average Note Duration of Selected Songs:", round(average_data$average_note_duration, 2), "ms")),
                  p(paste("Average Note Duration of Selected Song:", round(selected_data$average_note_duration, 2), "ms")),
-                 sliderInput(
-                   inputId = "duration_adjustment",
-                   label = "Adjust Note Duration:",
-                   min = 0,  # Min ms
-                   max = 1000,  # Max ms
-                   value = average_data$average_note_duration,  # Set to average duration
-                   step = 1,
-                   post = " ms"
+                 div(
+                   class = "custom-slider",
+                   sliderInput(
+                     inputId = "duration_adjustment",
+                     label = "Adjust Note Duration:",
+                     min = 0,  # Min ms
+                     max = 1000,  # Max ms
+                     value = average_data$average_note_duration,  # Set to average duration
+                     step = 1,
+                     post = " ms"
+                   )
+                 ),
+                 br(),
+                 actionButton(
+                   inputId = "analyze_button",
+                   label = "Analyze",
+                   class = "analyze-button"
                  )
                )
              }
