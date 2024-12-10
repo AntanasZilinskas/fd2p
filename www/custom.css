@@ -1283,7 +1283,7 @@
 
   /* Adjust the widths of child containers */
   .mdna-main-container.nerd-mode .left-side-container {
-    flex: 0 0 390px; /* Fixed width for left container */
+    flex: 0 0 auto; /* Fixed width for left container */
     margin-right: 0; /* Remove extra margin */
   }
 

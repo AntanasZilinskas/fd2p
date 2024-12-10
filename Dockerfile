@@ -11,19 +11,33 @@ RUN apt-get update && apt-get install -y \
     libpng-dev \
     libtiff5-dev \
     libjpeg-dev \
+    build-essential \
     && rm -rf /var/lib/apt/lists/*
 
-# Install renv
-RUN R -e "install.packages('renv', repos='https://cran.rstudio.com/')"
+# Install required R packages
+RUN R -e "install.packages(c(\
+    'shiny', \
+    'httr', \
+    'jsonlite', \
+    'methods', \
+    'ggplot2', \
+    'scales', \
+    'gridExtra', \
+    'dplyr', \
+    'tidyr', \
+    'readr', \
+    'purrr', \
+    'Rcpp' \
+    ), repos='https://cran.rstudio.com/')"
 
-# Copy app files and renv.lock
+# Create app directory
+RUN mkdir /app
+
+# Copy app files
 COPY . /app
 
 # Set working directory
 WORKDIR /app
-
-# Restore R packages using renv
-RUN R -e "renv::restore(library = '/usr/local/lib/R/site-library')"
 
 # Make sure the copied files are readable by the shiny user
 RUN chown -R shiny:shiny /app
