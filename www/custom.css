@@ -1257,3 +1257,45 @@
   }
 
   /* --- End of Nerd mode styles --- */
+
+  /* --- Adjustments for mdna-main-container and child elements --- */
+
+  /* Ensure all elements use border-box sizing */
+  * {
+    box-sizing: border-box;
+  }
+
+  /* Adjust the mdna-main-container for Nerd mode */
+  .mdna-main-container.nerd-mode {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    justify-content: space-between; /* Distribute space evenly */
+    margin: 0;
+    padding: 0;
+    width: 654px; /* Set desired width */
+    max-width: 100%; /* Ensure responsiveness */
+  }
+
+  /* Adjust the widths of child containers */
+  .mdna-main-container.nerd-mode .left-side-container {
+    flex: 0 0 390px; /* Fixed width for left container */
+    margin-right: 0; /* Remove extra margin */
+  }
+
+  .mdna-main-container.nerd-mode .song-details-container-custom {
+    flex: 1; /* Allow right container to fill remaining space */
+    margin-left: 0; /* Remove extra margin */
+  }
+
+  /* Remove any default margins and paddings from child containers */
+  .left-side-container,
+  .song-details-container-custom {
+    margin: 0;
+    padding: 0;
+  }
+
+  /* Optional: Adjust the gap between containers */
+  .mdna-main-container.nerd-mode {
+    gap: 10px; /* Adjust as needed */
+  }

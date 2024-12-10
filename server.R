@@ -301,8 +301,7 @@ server <- function(input, output, session) {
         
         # Main container including left and right components
         div(
-          class = "mdna-main-container",
-          # Containers for content
+          class = "mdna-main-container nerd-mode",
           left_container,
           right_container
         )
