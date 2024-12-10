@@ -235,15 +235,15 @@ server <- function(input, output, session) {
              )
            },
            "harmonics" = {
-             # Content for Harmonics tab
-             div("This is the Harmonics content.")
+             # Content for the Harmonics tab
+             plotOutput("harmonicsChart", height = "400px", width = "100%")
            },
            "melody" = {
-             # Content for Melody tab
+             # Content for the Melody tab
              div("This is the Melody content.")
            },
            "rhythm" = {
-             # Content for Rhythm tab
+             # Content for the Rhythm tab
              div("This is the Rhythm content.")
            },
            # Default case
@@ -456,6 +456,43 @@ server <- function(input, output, session) {
 
     # Return the list of song elements
     do.call(tagList, song_elements)
+  })
+  
+  # Reactive expression to generate the note frequency chart data
+  note_freq_chart_data <- reactive({
+    # Ensure a song is selected
+    song_id <- selected_song_id()
+    if (is.null(song_id)) return(NULL)
+    
+    # Get the selected song title
+    recommendations <- recommended_songs()
+    song <- recommendations[recommendations$id == song_id, ]
+    if (nrow(song) == 0) return(NULL)
+    
+    selected_song_title <- song$title
+    
+    # Get the song details using existing functions
+    song_details <- get_song_details_by_title(selected_song_title)
+    
+    # Get the average features from the selected songs
+    average_features <- average_from_titles(selected_songs())
+    
+    # Generate the note frequency comparison chart
+    chart <- note_freq_chart_comparison(average_features, song_details)
+    
+    return(chart)
+  })
+  
+  # Render the harmonics chart
+  output$harmonicsChart <- renderPlot({
+    chart <- note_freq_chart_data()
+    if (!is.null(chart)) {
+      print(chart)  # Display the chart
+    } else {
+      # Optional: Display a message when no song is selected
+      plot.new()
+      text(0.5, 0.5, "Select a song to view the harmonics chart.", cex = 1.2)
+    }
   })
 
 }
