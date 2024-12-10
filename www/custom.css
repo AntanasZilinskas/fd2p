@@ -1007,7 +1007,7 @@
 
   /* Right-side song details container */
   .song-details-container-custom {
-    width: 188px;
+    width: 250px;
     height: 440px;
     padding: 20px 12px; /* top, right, bottom, left */
     display: flex;
