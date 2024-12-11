@@ -103,7 +103,8 @@ server <- function(input, output, session) {
         tags$div(
           class = "search-result-item",
           `data-value` = song_title,
-          song_title
+          tags$span(class = "song-title-text", song_title),
+          tags$span(class = "add-text", "Add")
         )
       })
     )
@@ -127,10 +128,8 @@ server <- function(input, output, session) {
     updated_results <- results[results$title != song_title, , drop = FALSE]
     search_results(updated_results)
     
-    # Hide search results if empty
-    if (nrow(updated_results) == 0) {
-      show_search_results(FALSE)
-    }
+    # Hide search results immediately after selection
+    show_search_results(FALSE)
   })
   
   # Hide search results when clicking outside
@@ -224,79 +223,78 @@ server <- function(input, output, session) {
   output$nerdModeContent <- renderUI({
     tab <- nerd_mode_tab()
     switch(tab,
-           "overview" = {
-             # Display the same visualization as in normal mode
-             div(
-               class = "overview-container",
-               # Center icon with title
-               div(
-                 class = "center-icon",
-                 img(src = "assets/your-mdna.svg", class = "your-mdna-icon"),
-                 span(class = "mdna-label", "Your MDNA")
-               ),
-               # Visualization of recommended songs
-               uiOutput("recommendedSongsVisualization")
-             )
-           },
-           "harmonics" = {
-             # Content for the Harmonics tab
-             plotOutput("harmonicsChart", height = "400px", width = "100%")
-           },
-           "melody" = {
-             # Content for the Melody tab
-             div("This is the Melody content.")
-           },
-           "rhythm" = {
-             # Content for the Rhythm tab
-             selected_data <- selected_song_tempo_duration()
-             average_data <- average_tempo_duration()
-             
-             if (is.null(selected_data) || is.null(average_data)) {
-               div("Tempo and note duration data not available.")
-             } else {
-               div(
-                 class = "rhythm-container",
-                 h4("Tempo Comparison"),
-                 p(paste("Average Tempo of Selected Songs:", round(average_data$tempo, 2), "BPM")),
-                 p(paste("Tempo of Selected Song:", round(selected_data$tempo, 2), "BPM")),
-                 div(
-                   class = "custom-slider",
-                   sliderInput(
-                     inputId = "tempo_adjustment",
-                     label = "Adjust Tempo:",
-                     min = 0,  # Min BPM
-                     max = 1000,  # Max BPM
-                     value = average_data$tempo,  # Set to average tempo
-                     step = 1,
-                     post = " BPM"
-                   )
-                 ),
-                 h4("Average Note Duration Comparison"),
-                 p(paste("Average Note Duration of Selected Songs:", round(average_data$average_note_duration, 2), "ms")),
-                 p(paste("Average Note Duration of Selected Song:", round(selected_data$average_note_duration, 2), "ms")),
-                 div(
-                   class = "custom-slider",
-                   sliderInput(
-                     inputId = "duration_adjustment",
-                     label = "Adjust Note Duration:",
-                     min = 0,  # Min ms
-                     max = 1000,  # Max ms
-                     value = average_data$average_note_duration,  # Set to average duration
-                     step = 1,
-                     post = " ms"
-                   )
-                 ),
-                 br(),
-                 actionButton(
-                   inputId = "analyze_button",
-                   label = "Analyze",
-                   class = "analyze-button"
-                 )
-               )
-             }
-           },
-           # Default case
-           div("Select a tab.")
+      "overview" = {
+        div(
+          class = "overview-container",
+          # Center icon with title
+          div(
+            class = "center-icon",
+            img(src = "assets/your-mdna.svg", class = "your-mdna-icon"),
+            span(class = "mdna-label", "Your MDNA")
+          ),
+          # Visualization of recommended songs
+          uiOutput("recommendedSongsVisualization")
+        )
+      },
+      "harmonics" = {
+        # Content for the Harmonics tab
+        plotOutput("harmonicsChart", height = "400px", width = "100%")
+      },
+      "melody" = {
+        # Content for the Melody tab
+        div("This is the Melody content.")
+      },
+      "rhythm" = {
+        # Content for the Rhythm tab
+        selected_data <- selected_song_tempo_duration()
+        average_data <- average_tempo_duration()
+        
+        if (is.null(selected_data) || is.null(average_data)) {
+          div("Tempo and note duration data not available.")
+        } else {
+          div(
+            class = "rhythm-container",
+            h4("Tempo Comparison"),
+            p(paste("Average Tempo of Selected Songs:", round(average_data$tempo, 2), "BPM")),
+            p(paste("Tempo of Selected Song:", round(selected_data$tempo, 2), "BPM")),
+            div(
+              class = "custom-slider",
+              sliderInput(
+                inputId = "tempo_adjustment",
+                label = "Adjust Tempo:",
+                min = 0,  # Min BPM
+                max = 1000,  # Max BPM
+                value = average_data$tempo,  # Set to average tempo
+                step = 1,
+                post = " BPM"
+              )
+            ),
+            h4("Average Note Duration Comparison"),
+            p(paste("Average Note Duration of Selected Songs:", round(average_data$average_note_duration, 2), "ms")),
+            p(paste("Average Note Duration of Selected Song:", round(selected_data$average_note_duration, 2), "ms")),
+            div(
+              class = "custom-slider",
+              sliderInput(
+                inputId = "duration_adjustment",
+                label = "Adjust Note Duration:",
+                min = 0,  # Min ms
+                max = 1000,  # Max ms
+                value = average_data$average_note_duration,  # Set to average duration
+                step = 1,
+                post = " ms"
+              )
+            ),
+            br(),
+            actionButton(
+              inputId = "analyze_button",
+              label = "Analyze",
+              class = "analyze-button"
+            )
+          )
+        }
+      },
+      # Default case
+      div("Select a tab.")
     )
   })
   
@@ -373,7 +371,9 @@ server <- function(input, output, session) {
   # Render the song details in the right container
   output$songDetails <- renderUI({
     song_id <- selected_song_id()
-    if (is.null(song_id)) {
+    recommendations <- recommended_songs()
+    
+    if (is.null(song_id) || nrow(recommendations) == 0) {
       return(
         div(
           class = "song-details-placeholder",
@@ -382,11 +382,14 @@ server <- function(input, output, session) {
       )
     }
 
-    recommendations <- recommended_songs()
-    song <- recommendations[recommendations$id == song_id, ]
+    # Ensure both are character type for comparison
+    song <- recommendations[as.character(recommendations$id) == as.character(song_id), , drop = FALSE]
 
     if (nrow(song) == 0) {
-      return(NULL)
+      return(div(
+        class = "song-details-placeholder",
+        "Song details not available."
+      ))
     }
 
     # Display song details with Spotify link and the chart
@@ -399,7 +402,7 @@ server <- function(input, output, session) {
         paste("Similarity Score:", sprintf("%.2f", song$similarity))
       ),
       # Add the Spotify link button
-      if (!is.na(song$spotify_url)) {
+      if (!is.null(song$spotify_url) && !is.na(song$spotify_url)) {
         a(
           href = song$spotify_url,
           target = "_blank",
@@ -407,8 +410,6 @@ server <- function(input, output, session) {
           img(src = "assets/spotify.svg", class = "spotify-icon"),
           span("Listen on Spotify!")
         )
-      } else {
-        NULL
       },
       # Add the chart below song details with 12px top margin
       div(
@@ -425,12 +426,12 @@ server <- function(input, output, session) {
 
     # Get the selected song details
     recommendations <- recommended_songs()
-    song1 <- recommendations[recommendations$id == song_id, ]
+    # Ensure both are character type for comparison
+    song1 <- recommendations[as.character(recommendations$id) == as.character(song_id), , drop = FALSE]
 
     if (nrow(song1) == 0) return(NULL)
 
     # Generate the chart using your existing function
-    # For example, using spider_chart_compare_with_average
     chart <- spider_chart_compare_with_average(song1$title, selected_songs())
 
     # Return the chart
@@ -441,7 +442,7 @@ server <- function(input, output, session) {
   output$recommendedSongsVisualization <- renderUI({
     recommendations <- recommended_songs()
     
-    if (nrow(recommendations) == 0) {
+    if (is.null(recommendations) || nrow(recommendations) == 0) {
       return(NULL)
     }
 
@@ -449,18 +450,29 @@ server <- function(input, output, session) {
     center_x <- 0
     center_y <- 0
 
-    # Ensure similarity scores are available
-    similarity_scores <- as.numeric(recommendations$similarity)
-    min_score <- min(similarity_scores)
-    max_score <- max(similarity_scores)
-    normalized_scores <- (similarity_scores - min_score) / (max_score - min_score + 0.0001)  # Prevent division by zero
+    # Ensure similarity scores are available and numeric
+    similarity_scores <- as.numeric(as.character(recommendations$similarity))
+    if (length(similarity_scores) == 0) {
+      return(NULL)
+    }
+    
+    min_score <- min(similarity_scores, na.rm = TRUE)
+    max_score <- max(similarity_scores, na.rm = TRUE)
+    score_range <- max_score - min_score
+    
+    # Handle case where all scores are the same
+    if (score_range == 0) {
+      normalized_scores <- rep(0.5, length(similarity_scores))
+    } else {
+      normalized_scores <- (similarity_scores - min_score) / score_range
+    }
 
     num_songs <- nrow(recommendations)
     angle_increment <- 360 / num_songs
 
     # Generate UI elements for each song
     song_elements <- lapply(1:num_songs, function(i) {
-      song <- recommendations[i, ]
+      song <- recommendations[i, , drop = FALSE]
       angle_deg <- angle_increment * (i - 1)
       angle_rad <- angle_deg * (pi / 180)
       distance <- (1 - normalized_scores[i]) * max_distance  # Closer distance for higher similarity
@@ -478,11 +490,11 @@ server <- function(input, output, session) {
 
       # Determine icon based on selection
       selected_id <- selected_song_id()
-      if (!is.null(selected_id) && song$id == selected_id) {
-        icon_src <- "assets/selected-song.svg"
-      } else {
-        icon_src <- "assets/suggested-songs.svg"
-      }
+      is_selected <- !is.null(selected_id) && 
+                    !is.null(song$id) && 
+                    as.character(song$id) == as.character(selected_id)
+      
+      icon_src <- if (is_selected) "assets/selected-song.svg" else "assets/suggested-songs.svg"
 
       # Create a div for the song icon with onclick event
       tags$div(
@@ -493,12 +505,15 @@ server <- function(input, output, session) {
         title = paste(
           "Title:", song$title, "\n",
           "Artists:", song$creators, "\n",
-          "Similarity Score:", sprintf("%.2f", song$similarity)
+          "Similarity Score:", sprintf("%.2f", as.numeric(as.character(song$similarity)))
         ),
         img(
           src = icon_src,
           class = "suggested-song-icon",
-          onclick = sprintf("event.stopPropagation(); Shiny.setInputValue('song_clicked', '%s', {priority: 'event'});", song$id)
+          onclick = sprintf(
+            "event.stopPropagation(); Shiny.setInputValue('song_clicked', '%s', {priority: 'event'});",
+            song$id
+          )
         )
       )
     })
@@ -507,41 +522,51 @@ server <- function(input, output, session) {
     do.call(tagList, song_elements)
   })
   
-  # Reactive expression to generate the note frequency chart data
-  note_freq_chart_data <- reactive({
-    # Ensure a song is selected
+  # Reactive expression to get the selected song's features
+  selected_song_features <- reactive({
     song_id <- selected_song_id()
-    if (is.null(song_id)) return(NULL)
+    if (is.null(song_id)) {
+      print("selected_song_features: song_id is NULL")
+      return(NULL)
+    }
     
-    # Get the selected song title
     recommendations <- recommended_songs()
-    song <- recommendations[recommendations$id == song_id, ]
+    print(paste("selected_song_features: recommendations available:", !is.null(recommendations)))
+    if (is.null(recommendations) || nrow(recommendations) == 0) return(NULL)
+    
+    # Ensure both are character type for comparison
+    song <- recommendations[as.character(recommendations$id) == as.character(song_id), , drop = FALSE]
+    print(paste("selected_song_features: found song in recommendations:", nrow(song) > 0))
     if (nrow(song) == 0) return(NULL)
     
-    selected_song_title <- song$title
-    
-    # Get the song details using existing functions
-    song_details <- get_song_details_by_title(selected_song_title)
-    
-    # Get the average features from the selected songs
-    average_features <- average_from_titles(selected_songs())
-    
-    # Generate the note frequency comparison chart
-    chart <- note_freq_chart_comparison(average_features, song_details)
-    
-    return(chart)
-  })
-  
-  # Render the harmonics chart
-  output$harmonicsChart <- renderPlot({
-    chart <- note_freq_chart_data()
-    if (!is.null(chart)) {
-      print(chart)  # Display the chart
-    } else {
-      # Optional: Display a message when no song is selected
-      plot.new()
-      text(0.5, 0.5, "Select a song to view the harmonics chart.", cex = 1.2)
+    print(paste("selected_song_features: song title:", song$title))
+    song_details <- get_song_details_by_title(song$title)
+    print(paste("selected_song_features: got song details:", !is.null(song_details)))
+    if (is.null(song_details) || length(song_details) == 0) {
+      # If we can't get song details, use the data from recommendations
+      print("selected_song_features: using data from recommendations")
+      
+      # Ensure we have a proper feature vector
+      feature_vector <- song$feature_vector
+      if (!is.null(feature_vector) && !is.numeric(feature_vector)) {
+        feature_vector <- as.numeric(unlist(strsplit(gsub("\\[|\\]", "", feature_vector), ",")))
+      }
+      
+      return(list(
+        feature_vector = feature_vector,
+        tempo = song$tempo,
+        average_duration = song$average_duration,
+        pitch_class_histogram = numeric(12),  # Default empty histograms
+        interval_histogram = numeric(12),
+        melodic_contour = numeric(12),
+        chord_progressions = numeric(12),
+        note_duration_histogram = numeric(12),
+        time_signatures = numeric(0)
+      ))
     }
+    
+    print(paste("selected_song_features: feature vector available:", !is.null(song_details[[1]]$feature_vector)))
+    return(song_details[[1]])
   })
   
   # Function to extract average note duration and tempo from feature vector
@@ -570,61 +595,267 @@ server <- function(input, output, session) {
     ))
   }
   
-  # Reactive expression to get the selected song's features
-  selected_song_features <- reactive({
-    song_id <- selected_song_id()
-    if (is.null(song_id)) return(NULL)
-    
-    recommendations <- recommended_songs()
-    song <- recommendations[recommendations$id == song_id, ]
-    if (nrow(song) == 0) return(NULL)
-    
-    song_details <- get_song_details_by_title(song$title)
-    if (is.null(song_details) || length(song_details) == 0) return(NULL)
-    
-    return(song_details[[1]])  # Return the song details list
-  })
-  
   # Reactive expression to get the average features
   average_features_data <- reactive({
-    if (length(selected_songs()) == 0) return(NULL)
+    if (length(selected_songs()) == 0) {
+      print("average_features_data: no songs selected")
+      return(NULL)
+    }
     
+    print("average_features_data: getting average features")
     average_features <- average_from_titles(selected_songs())
-    if (is.null(average_features) || length(average_features) == 0) return(NULL)
+    if (is.null(average_features) || length(average_features) == 0) {
+      print("average_features_data: failed to get average features")
+      return(NULL)
+    }
     
-    return(average_features[[1]])  # Return the average features list
+    print("average_features_data: got average features")
+    print("Feature vector:")
+    print(average_features[[1]]$feature_vector)
+    return(average_features[[1]])
   })
   
   # Reactive expression to get tempo and duration for selected song
   selected_song_tempo_duration <- reactive({
     features <- selected_song_features()
-    if (is.null(features)) return(NULL)
+    print("selected_song_tempo_duration: got features")
+    if (is.null(features)) {
+      print("selected_song_tempo_duration: features is NULL")
+      return(NULL)
+    }
     
+    # First try to get tempo and duration directly
+    if (!is.null(features$tempo) && !is.null(features$average_duration)) {
+      print("selected_song_tempo_duration: using direct tempo and duration")
+      return(list(
+        tempo = features$tempo,
+        average_note_duration = features$average_duration
+      ))
+    }
+    
+    # If not available, try to extract from feature vector
     feature_vector <- features$feature_vector
-    if (is.null(feature_vector)) return(NULL)
+    if (is.null(feature_vector)) {
+      print("selected_song_tempo_duration: feature vector is NULL")
+      return(NULL)
+    }
     
-    extract_tempo_and_duration(feature_vector)
+    print("selected_song_tempo_duration: extracting from feature vector")
+    result <- extract_tempo_and_duration(feature_vector)
+    print(paste("selected_song_tempo_duration: extracted values -",
+                "tempo:", result$tempo,
+                "duration:", result$average_note_duration))
+    return(result)
   })
   
   # Reactive expression to get tempo and duration for average features
   average_tempo_duration <- reactive({
     features <- average_features_data()
-    if (is.null(features)) return(NULL)
+    if (is.null(features)) {
+      print("average_tempo_duration: features is NULL")
+      return(NULL)
+    }
     
+    # First try to get tempo and duration directly
+    if (!is.null(features$tempo) && !is.null(features$average_duration)) {
+      print("average_tempo_duration: using direct tempo and duration")
+      return(list(
+        tempo = features$tempo,
+        average_note_duration = features$average_duration
+      ))
+    }
+    
+    # If not available, try to extract from feature vector
     feature_vector <- features$feature_vector
-    if (is.null(feature_vector)) return(NULL)
+    if (is.null(feature_vector)) {
+      print("average_tempo_duration: feature vector is NULL")
+      return(NULL)
+    }
     
-    extract_tempo_and_duration(feature_vector)
+    print("average_tempo_duration: extracting from feature vector")
+    result <- extract_tempo_and_duration(feature_vector)
+    print(paste("average_tempo_duration: extracted values -",
+                "tempo:", result$tempo,
+                "duration:", result$average_note_duration))
+    return(result)
   })
   
-  # Handle adjustments if needed
-  observeEvent(input$tempo_adjustment, {
-    adjusted_tempo <- input$tempo_adjustment
-    # Implement functionality for adjusted tempo
+  # Add analyze button handler for the rhythm tab
+  observeEvent(input$analyze_button, {
+    print("Analyze button clicked")
+    # Get current average features
+    avg_features <- average_features_data()
+    if (is.null(avg_features)) {
+      print("analyze_button: average features is NULL")
+      showNotification("Could not get average features", type = "error")
+      return()
+    }
+    
+    print("analyze_button: got average features")
+    print("Current feature vector:")
+    print(avg_features$feature_vector)
+    
+    # Get the feature vector
+    feature_vector <- avg_features$feature_vector
+    if (!is.numeric(feature_vector)) {
+      print("analyze_button: converting feature vector to numeric")
+      feature_vector <- as.numeric(unlist(strsplit(gsub("\\[|\\]", "", feature_vector), ",")))
+    }
+    
+    # Update both tempo and duration with current slider values
+    print(paste("analyze_button: current tempo adjustment:", input$tempo_adjustment))
+    print(paste("analyze_button: current duration adjustment:", input$duration_adjustment))
+    
+    feature_vector[74] <- input$tempo_adjustment / 1000  # Tempo
+    feature_vector[73] <- input$duration_adjustment / 1000  # Duration
+    
+    print("analyze_button: updated feature vector:")
+    print(feature_vector)
+    
+    # Convert the feature vector to JSON string
+    vector_json <- jsonlite::toJSON(feature_vector)
+    print("analyze_button: JSON vector:")
+    print(vector_json)
+    
+    # Prepare the API request for similar songs
+    url <- "https://dvplamwokfwyvuaskgyk.supabase.co/rest/v1/rpc/find_similar_songs_by_vector"
+    
+    # Use the service role key for this operation
+    supabase_key <- Sys.getenv("SUPABASE_SERVICE_KEY")
+    if (supabase_key == "") {
+      showNotification("Supabase SERVICE API key is not set", type = "error")
+      return()
+    }
+    
+    headers <- c(
+      "Content-Type" = "application/json",
+      "apikey" = supabase_key,
+      "Authorization" = paste("Bearer", supabase_key)
+    )
+    body <- list(
+      input_vector = vector_json,
+      top_n = 5
+    )
+    
+    # Show processing state
+    shinyjs::addClass(id = "analyze_button", class = "processing")
+    shinyjs::disable("analyze_button")
+    
+    # Make the API request
+    tryCatch({
+      print("analyze_button: making API request")
+      response <- httr::POST(
+        url = url,
+        httr::add_headers(.headers = headers),
+        body = jsonlite::toJSON(body, auto_unbox = TRUE),
+        encode = "json"
+      )
+      
+      print(paste("analyze_button: API response status:", httr::status_code(response)))
+      
+      if (httr::status_code(response) == 200) {
+        # Parse the response
+        results <- httr::content(response, "parsed")
+        print(paste("analyze_button: got", length(results), "results"))
+        
+        # Get the titles of similar songs
+        similar_titles <- sapply(results, function(x) x$title)
+        print("analyze_button: similar song titles:")
+        print(similar_titles)
+        
+        # Use find_similar_songs to get complete song data
+        recommended_songs_data <- find_similar_songs(similar_titles, top_n = length(similar_titles))
+        
+        if (!is.null(recommended_songs_data) && nrow(recommended_songs_data) > 0) {
+          print("analyze_button: got complete song data")
+          # Update the recommendations with the complete data
+          recommended_songs(recommended_songs_data)
+          
+          # Select the first song by default
+          selected_song_id(recommended_songs_data$id[1])
+          
+          # Switch to the Analyse MDNA tab
+          updateTabsetPanel(session, "mainNav", selected = "Analyse MDNA")
+        } else {
+          print("analyze_button: failed to get complete song data")
+          showNotification("Error getting complete song data", type = "error")
+        }
+      } else {
+        print(paste("analyze_button: API error -", httr::content(response, "text")))
+        showNotification("Error fetching similar songs", type = "error")
+      }
+    }, error = function(e) {
+      print(paste("analyze_button error:", e$message))
+      showNotification(paste("Error:", e$message), type = "error")
+    }, finally = {
+      # Remove processing state
+      shinyjs::removeClass(id = "analyze_button", class = "processing")
+      shinyjs::enable("analyze_button")
+    })
   })
   
-  observeEvent(input$duration_adjustment, {
-    adjusted_duration <- input$duration_adjustment
-    # Implement functionality for adjusted duration
+  # Reactive expression to generate the note frequency chart data
+  note_freq_chart_data <- reactive({
+    # Ensure a song is selected
+    song_id <- selected_song_id()
+    if (is.null(song_id)) return(NULL)
+    
+    # Get the selected song title
+    recommendations <- recommended_songs()
+    song <- recommendations[as.character(recommendations$id) == as.character(song_id), , drop = FALSE]
+    if (nrow(song) == 0) return(NULL)
+    
+    selected_song_title <- song$title
+    print(paste("note_freq_chart_data: processing song:", selected_song_title))
+    
+    # Get the song details using existing functions
+    song_details <- get_song_details_by_title(selected_song_title)
+    if (is.null(song_details) || length(song_details) == 0) {
+      print("note_freq_chart_data: using data from recommendations")
+      # Create a song details list with default values
+      song_details <- list(list(
+        feature_vector = song$feature_vector,
+        pitch_class_histogram = numeric(12),
+        interval_histogram = numeric(12),
+        melodic_contour = numeric(12),
+        chord_progressions = numeric(12),
+        note_duration_histogram = numeric(12),
+        time_signatures = numeric(0)
+      ))
+    }
+    
+    # Get the average features from the selected songs
+    average_features <- average_from_titles(selected_songs())
+    if (is.null(average_features) || length(average_features) == 0) {
+      print("note_freq_chart_data: using default average features")
+      # Create default average features
+      average_features <- list(list(
+        feature_vector = numeric(128),
+        pitch_class_histogram = numeric(12),
+        interval_histogram = numeric(12),
+        melodic_contour = numeric(12),
+        chord_progressions = numeric(12),
+        note_duration_histogram = numeric(12),
+        time_signatures = numeric(0)
+      ))
+    }
+    
+    print("note_freq_chart_data: generating chart")
+    # Generate the note frequency comparison chart
+    chart <- note_freq_chart_comparison(average_features, song_details)
+    
+    return(chart)
+  })
+
+  # Render the harmonics chart
+  output$harmonicsChart <- renderPlot({
+    chart <- note_freq_chart_data()
+    if (!is.null(chart)) {
+      print(chart)  # Display the chart
+    } else {
+      # Optional: Display a message when no song is selected
+      plot.new()
+      text(0.5, 0.5, "Select a song to view the harmonics chart.", cex = 1.2)
+    }
   })
 }

@@ -1,9 +1,20 @@
 # global.R
 
-# Load required packages
-library(shiny)
-library(httr)
-library(jsonlite)
+# Define required packages
+required_packages <- c(
+  "shiny",
+  "httr",
+  "jsonlite",
+  "shinyjs",
+  "methods"
+)
+
+# Install missing packages
+new_packages <- required_packages[!(required_packages %in% installed.packages()[,"Package"])]
+if(length(new_packages)) install.packages(new_packages)
+
+# Load all required packages
+lapply(required_packages, library, character.only = TRUE)
 
 # Source the Spotify API functions
 source("spotify.R")

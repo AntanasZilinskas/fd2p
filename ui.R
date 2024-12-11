@@ -1,5 +1,4 @@
-library(shiny)
-library(methods)
+# ui.R
 
 # Custom CSS for color scheme
 customCSS <- HTML("
@@ -190,6 +189,7 @@ customCSS <- HTML("
 ui <- navbarPage(
   id = "mainNav",
   inverse = TRUE,
+  useShinyjs(),
 
   # Include the Google Fonts link and custom CSS
   header = tags$head(
