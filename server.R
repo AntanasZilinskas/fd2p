@@ -1565,6 +1565,86 @@ server <- function(input, output, session) {
     })
   })
 
+  # Handle find similar songs based on rhythm
+  observeEvent(input$findSimilarRhythm, {
+    # Get current tempo and duration adjustments
+    tempo_adj <- input$tempo_adjustment
+    duration_adj <- input$duration_adjustment
+    
+    # Get average features
+    avg_features <- average_features_data()
+    if (is.null(avg_features)) {
+      showNotification("No feature data available", type = "error")
+      return()
+    }
+    
+    # Create a copy of the feature vector and ensure it's numeric
+    feature_vector <- avg_features$feature_vector
+    if (!is.numeric(feature_vector)) {
+      feature_vector <- as.numeric(unlist(strsplit(gsub("\\[|\\]", "", feature_vector), ",")))
+    }
+    
+    # Update tempo and duration in feature vector (positions 74 and 73)
+    feature_vector[74] <- tempo_adj / 1000  # Normalize tempo
+    feature_vector[73] <- duration_adj / 1000  # Normalize duration
+    
+    # Prepare the API request for similar songs
+    url <- "https://dvplamwokfwyvuaskgyk.supabase.co/rest/v1/rpc/find_similar_songs_by_vector"
+    
+    # Use the service role key for this operation
+    supabase_key <- Sys.getenv("SUPABASE_SERVICE_KEY")
+    if (supabase_key == "") {
+      showNotification("Supabase SERVICE API key is not set", type = "error")
+      return()
+    }
+    
+    headers <- c(
+      "Content-Type" = "application/json",
+      "apikey" = supabase_key,
+      "Authorization" = paste("Bearer", supabase_key)
+    )
+    
+    body <- list(
+      input_vector = jsonlite::toJSON(feature_vector, auto_unbox = TRUE),
+      top_n = 5
+    )
+    
+    # Make the API request
+    tryCatch({
+      response <- httr::POST(
+        url = url,
+        httr::add_headers(.headers = headers),
+        body = jsonlite::toJSON(body, auto_unbox = TRUE),
+        encode = "json"
+      )
+      
+      if (httr::status_code(response) == 200) {
+        # Parse the response
+        results <- httr::content(response, "parsed")
+        
+        if (length(results) > 0) {
+          # Get the complete song data
+          similar_songs_data <- find_similar_songs(sapply(results, function(x) x$title), top_n = length(results))
+          
+          if (!is.null(similar_songs_data) && nrow(similar_songs_data) > 0) {
+            recommended_songs(similar_songs_data)
+            # Switch to overview tab to show results
+            nerd_mode_tab("overview")
+            showNotification("Found songs with similar rhythm patterns!", type = "message")
+          } else {
+            showNotification("Error getting complete song data", type = "error")
+          }
+        } else {
+          showNotification("No similar songs found", type = "warning")
+        }
+      } else {
+        showNotification("Error fetching similar songs", type = "error")
+      }
+    }, error = function(e) {
+      showNotification(paste("Error finding similar songs:", e$message), type = "error")
+    })
+  })
+
   # Render search results as a dropdown
   output$searchResults <- renderUI({
     if (!show_search_results()) return(NULL)
