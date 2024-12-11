@@ -2049,3 +2049,58 @@
   color: #2C3E50;
   margin-bottom: 10px;
 }
+
+/* Harmonics and Melody slider styling to match rhythm */
+.pitch-sliders .irs-bar,
+.interval-sliders .irs-bar,
+.custom-slider .irs-bar {
+  background: #F56C37 !important;
+  border-top: 1px solid #F56C37 !important;
+  border-bottom: 1px solid #F56C37 !important;
+}
+
+.pitch-sliders .irs-bar-edge,
+.interval-sliders .irs-bar-edge,
+.custom-slider .irs-bar-edge {
+  background: #F56C37 !important;
+  border: 1px solid #F56C37 !important;
+}
+
+.pitch-sliders .irs-single,
+.interval-sliders .irs-single,
+.custom-slider .irs-single,
+.pitch-sliders .irs-from,
+.interval-sliders .irs-from,
+.custom-slider .irs-from,
+.pitch-sliders .irs-to,
+.interval-sliders .irs-to,
+.custom-slider .irs-to {
+  background-color: #F56C37 !important;
+}
+
+.pitch-sliders .irs-handle,
+.interval-sliders .irs-handle,
+.custom-slider .irs-handle {
+  border: 3px solid #F56C37 !important;
+  background-color: white !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.pitch-sliders .irs-handle.state_hover,
+.interval-sliders .irs-handle.state_hover,
+.custom-slider .irs-handle.state_hover,
+.pitch-sliders .irs-handle:hover,
+.interval-sliders .irs-handle:hover,
+.custom-slider .irs-handle:hover {
+  background-color: #F56C37 !important;
+}
+
+/* Override any other slider colors */
+.irs-bar,
+.irs-bar-edge,
+.irs-single,
+.irs-from,
+.irs-to {
+  background: #F56C37 !important;
+  border-color: #F56C37 !important;
+}
