@@ -262,6 +262,17 @@ ui <- navbarPage(
           $('a[data-value=\"Analyse MDNA\"]').tab('show');
         }
       });
+    ")),
+    # JavaScript to handle search input click
+    tags$script(HTML("
+      Shiny.addCustomMessageHandler('setupSearchInputClick', function(message) {
+        var searchInput = document.getElementById(message.inputId);
+        if (searchInput) {
+          searchInput.addEventListener('click', function() {
+            Shiny.setInputValue('searchInput_clicked', Math.random());
+          });
+        }
+      });
     "))
   ),
 

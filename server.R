@@ -49,10 +49,23 @@ server <- function(input, output, session) {
     if (!is.null(query) && nzchar(query) && nchar(query) >= 2) {
       results <- quick_search_songs(query, max_results = 10L)
       if (nrow(results) > 0) {
+        # Remove duplicate titles from initial results
+        results <- results[!duplicated(results$title), , drop = FALSE]
+        
+        # Get current selected songs
+        current_songs <- selected_songs()
+        
+        # Filter out titles that are already selected
+        new_results <- results[!results$title %in% current_songs, , drop = FALSE]
+        
         # Update search results directly
-        search_results(results)
-        # Show search results
-        show_search_results(TRUE)
+        search_results(new_results)
+        # Show search results if we have any new ones
+        show_search_results(nrow(new_results) > 0)
+        
+        if (nrow(new_results) == 0) {
+          showNotification("All matching songs are already selected.", type = "warning")
+        }
       } else {
         # No results found
         search_results(data.frame(title = character(0), stringsAsFactors = FALSE))
@@ -78,37 +91,39 @@ server <- function(input, output, session) {
   # Observe search input changes
   observeEvent(input$searchInput, {
     query <- input$searchInput
-    if (!is.null(query) && query != "") {
-      perform_search(query)
-    } else {
-      # If input is empty, hide search results
-      show_search_results(FALSE)
-      search_results(data.frame(title = character(0), stringsAsFactors = FALSE))
+    if (!is.null(query)) {
+      if (query != "") {
+        perform_search(query)
+      } else {
+        # If input is empty but we have previous results, show them
+        results <- search_results()
+        if (nrow(results) > 0) {
+          show_search_results(TRUE)
+        }
+      }
     }
   }, ignoreInit = TRUE)
   
-  # Render search results as a dropdown
-  output$searchResults <- renderUI({
-    if (!show_search_results()) return(NULL)
+  # Send a custom message to set up click handlers
+  observe({
+    # Send a custom message to set up the click handler for search results
+    session$sendCustomMessage("setupSearchResultClick", TRUE)
     
-    results <- search_results()
-    if (nrow(results) == 0) {
-      return(NULL)
-    }
-    
-    tags$div(
-      class = "search-results-dropdown",
-      lapply(seq_len(nrow(results)), function(i) {
-        song_title <- results$title[i]
-        tags$div(
-          class = "search-result-item",
-          `data-value` = song_title,
-          tags$span(class = "song-title-text", song_title),
-          tags$span(class = "add-text", "Add")
-        )
-      })
-    )
+    # Send a custom message to set up the search input click handler
+    session$sendCustomMessage("setupSearchInputClick", list(
+      inputId = "searchInput"
+    ))
   })
+  
+  # Handle clicking on search input to show previous results
+  observeEvent(input$searchInput_clicked, {
+    print("Search input clicked")
+    results <- search_results()
+    if (nrow(results) > 0) {
+      print("Showing previous search results")
+      show_search_results(TRUE)
+    }
+  }, ignoreInit = TRUE)
   
   # Handle clicking on search result items
   observe({
@@ -176,14 +191,30 @@ server <- function(input, output, session) {
     session$sendCustomMessage("initialize_spinner", TRUE)
   })
   
+  # Observe changes in selected songs to enable/disable Analyse button
+  observe({
+    songs <- selected_songs()
+    if (length(songs) < 2) {
+      shinyjs::disable("analyseBtn")
+      # Optional: add visual feedback about why it's disabled
+      shinyjs::addClass("analyseBtn", "disabled")
+      # Update tooltip or hint
+      shinyjs::runjs("document.getElementById('analyseBtn').title = 'Select at least 2 songs to analyze';")
+    } else {
+      shinyjs::enable("analyseBtn")
+      shinyjs::removeClass("analyseBtn", "disabled")
+      shinyjs::runjs("document.getElementById('analyseBtn').title = '';")
+    }
+  })
+  
   # Observe Analyze button click
   observeEvent(input$analyseBtn, {
     print("Analyse button clicked.")
     
-    # Check if any songs are selected
+    # Check if any songs are selected (this is now redundant but kept for safety)
     selected_songs_list <- selected_songs()
-    if(length(selected_songs_list) == 0) {
-      showNotification("Please select at least one song before analyzing.", type = "warning")
+    if(length(selected_songs_list) < 2) {
+      showNotification("Please select at least two songs before analyzing.", type = "warning")
     } else {
       # Send message to start processing
       session$sendCustomMessage('analyseButtonProcessing', list(status = 'start'))
@@ -857,5 +888,57 @@ server <- function(input, output, session) {
       plot.new()
       text(0.5, 0.5, "Select a song to view the harmonics chart.", cex = 1.2)
     }
+  })
+  
+  # Render search results as a dropdown
+  output$searchResults <- renderUI({
+    if (!show_search_results()) return(NULL)
+    
+    results <- search_results()
+    if (nrow(results) == 0) {
+      return(NULL)
+    }
+    
+    tags$div(
+      class = "search-results-dropdown",
+      lapply(seq_len(nrow(results)), function(i) {
+        song_title <- results$title[i]
+        tags$div(
+          class = "search-result-item",
+          `data-value` = song_title,
+          div(
+            class = "search-result-content",
+            tags$span(class = "song-title-text", song_title),
+            tags$span(class = "add-text", "Click to add")
+          )
+        )
+      }),
+      tags$style(HTML("
+        .search-result-content {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          width: 100%;
+          padding: 8px 12px;
+        }
+        .add-text {
+          color: #F56C37;
+          font-size: 14px;
+          font-weight: 500;
+          opacity: 0;
+          transition: opacity 0.2s ease;
+          margin-left: 12px;
+        }
+        .search-result-item:hover .add-text {
+          opacity: 1;
+        }
+        .song-title-text {
+          flex: 1;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+        }
+      "))
+    )
   })
 }
