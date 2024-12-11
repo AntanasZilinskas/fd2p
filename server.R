@@ -254,78 +254,126 @@ server <- function(input, output, session) {
   output$nerdModeContent <- renderUI({
     tab <- nerd_mode_tab()
     switch(tab,
-      "overview" = {
-        div(
-          class = "overview-container",
-          # Center icon with title
-          div(
-            class = "center-icon",
-            img(src = "assets/your-mdna.svg", class = "your-mdna-icon"),
-            span(class = "mdna-label", "Your MDNA")
-          ),
-          # Visualization of recommended songs
-          uiOutput("recommendedSongsVisualization")
-        )
-      },
-      "harmonics" = {
-        # Content for the Harmonics tab
-        plotOutput("harmonicsChart", height = "400px", width = "100%")
-      },
-      "melody" = {
-        # Content for the Melody tab
-        div("This is the Melody content.")
-      },
-      "rhythm" = {
-        # Content for the Rhythm tab
-        selected_data <- selected_song_tempo_duration()
-        average_data <- average_tempo_duration()
-        
-        if (is.null(selected_data) || is.null(average_data)) {
-          div("Tempo and note duration data not available.")
-        } else {
-          div(
-            class = "rhythm-container",
-            h4("Tempo Comparison"),
-            p(paste("Average Tempo of Selected Songs:", round(average_data$tempo, 2), "BPM")),
-            p(paste("Tempo of Selected Song:", round(selected_data$tempo, 2), "BPM")),
-            div(
-              class = "custom-slider",
-              sliderInput(
-                inputId = "tempo_adjustment",
-                label = "Adjust Tempo:",
-                min = 0,  # Min BPM
-                max = 1000,  # Max BPM
-                value = average_data$tempo,  # Set to average tempo
-                step = 1,
-                post = " BPM"
-              )
-            ),
-            h4("Average Note Duration Comparison"),
-            p(paste("Average Note Duration of Selected Songs:", round(average_data$average_note_duration, 2), "ms")),
-            p(paste("Average Note Duration of Selected Song:", round(selected_data$average_note_duration, 2), "ms")),
-            div(
-              class = "custom-slider",
-              sliderInput(
-                inputId = "duration_adjustment",
-                label = "Adjust Note Duration:",
-                min = 0,  # Min ms
-                max = 1000,  # Max ms
-                value = average_data$average_note_duration,  # Set to average duration
-                step = 1,
-                post = " ms"
-              )
-            ),
-            br(),
-            actionButton(
-              inputId = "analyze_button",
-              label = "Analyze",
-              class = "analyze-button"
-            )
-          )
-        }
-      },
-      # Default case
-      div("Select a tab.")
+           "overview" = {
+             div(
+               class = "overview-container",
+               # Center icon with title
+               div(
+                 class = "center-icon",
+                 img(src = "assets/your-mdna.svg", class = "your-mdna-icon"),
+                 span(class = "mdna-label", "Your MDNA")
+               ),
+               # Visualization of recommended songs
+               uiOutput("recommendedSongsVisualization")
+             )
+           },
+           "harmonics" = {
+             # Content for the Harmonics tab
+             plotOutput("harmonicsChart", height = "400px", width = "100%")
+           },
+           "melody" = {
+             # Content for the Melody tab
+             div("This is the Melody content.")
+           },
+           "rhythm" = {
+             # Content for the Rhythm tab
+             selected_data <- selected_song_tempo_duration()
+             average_data <- average_tempo_duration()
+             
+             if (is.null(selected_data) || is.null(average_data)) {
+               div("Tempo and note duration data not available.")
+             } else {
+               div(
+                 class = "rhythm-container",
+                 # Introduction text
+                 div(
+                   class = "rhythm-intro",
+                   h3("Rhythm Analysis and Song Discovery"),
+                   p("Adjust the tempo and note duration to find songs with similar rhythmic patterns. 
+                     The current values are based on your selected songs' average.")
+                 ),
+                 
+                 # Tempo section
+                 div(
+                   class = "rhythm-section",
+                   h4("Tempo Comparison"),
+                   div(
+                     class = "rhythm-values",
+                     div(
+                       class = "rhythm-value",
+                       span(class = "value-label", "Average Tempo:"),
+                       span(class = "value-number", paste(round(average_data$tempo, 0), "BPM"))
+                     ),
+                     div(
+                       class = "rhythm-value",
+                       span(class = "value-label", "Selected Song:"),
+                       span(class = "value-number", paste(round(selected_data$tempo, 0), "BPM"))
+                     )
+                   ),
+                   div(
+                     class = "custom-slider",
+                     sliderInput(
+                       inputId = "tempo_adjustment",
+                       label = "Adjust Tempo:",
+                       min = 0,
+                       max = 1000,
+                       value = average_data$tempo,
+                       step = 1,
+                       post = " BPM"
+                     )
+                   )
+                 ),
+                 
+                 # Note Duration section
+                 div(
+                   class = "rhythm-section",
+                   h4("Average Note Duration"),
+                   div(
+                     class = "rhythm-values",
+                     div(
+                       class = "rhythm-value",
+                       span(class = "value-label", "Average Duration:"),
+                       span(class = "value-number", paste(round(average_data$average_note_duration, 0), "ms"))
+                     ),
+                     div(
+                       class = "rhythm-value",
+                       span(class = "value-label", "Selected Song:"),
+                       span(class = "value-number", paste(round(selected_data$average_note_duration, 0), "ms"))
+                     )
+                   ),
+                   div(
+                     class = "custom-slider",
+                     sliderInput(
+                       inputId = "duration_adjustment",
+                       label = "Adjust Note Duration:",
+                       min = 0,
+                       max = 1000,
+                       value = average_data$average_note_duration,
+                       step = 1,
+                       post = " ms"
+                     )
+                   )
+                 ),
+                 
+                 # Action button section
+                 div(
+                   class = "rhythm-action",
+                   actionButton(
+                     inputId = "analyze_button",
+                     label = "Find Similar Songs",
+                     class = "analyze-button",
+                     icon = icon("search")
+                   ),
+                   div(
+                     class = "action-hint",
+                     "Adjust the values above and click to discover songs with similar rhythmic patterns"
+                   )
+                 )
+               )
+             }
+           },
+           # Default case
+           div("Select a tab.")
     )
   })
   
