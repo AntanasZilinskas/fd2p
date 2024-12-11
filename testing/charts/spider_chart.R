@@ -245,7 +245,8 @@ spider_chart_compare_with_average <- function(song_title, song_list) {
     cglty = 1,  # Grid line type
     axislabcol = "black",  # Axis label color
     caxislabels = seq(0, 1, length.out = 5),  # Axis labels for normalized range
-    vlcex = 0.8  # Variable label size
+    calcex = 0.5,
+    vlcex = 0.5  # Variable label size
   )
   
   # Reset margins to previous values
@@ -253,11 +254,11 @@ spider_chart_compare_with_average <- function(song_title, song_list) {
 }
 
 
-# song_title <- "Wexford"
-# song_list <- c("Wexford", "In The Bleak Midwinter", "Deck The Halls")
+song_title <- "Wexford"
+song_list <- c("Wexford", "In The Bleak Midwinter", "Deck The Halls")
 
-# # Generate the comparison spider chart
-# spider_chart_compare_with_average(song_title, song_list)
+# Generate the comparison spider chart
+spider_chart_compare_with_average(song_title, song_list)
 
 
 
