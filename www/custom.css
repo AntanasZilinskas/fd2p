@@ -1620,3 +1620,66 @@
 .disabled-tab:hover {
     background-color: transparent !important;
 }
+
+.interval-sliders {
+    margin: 20px 0;
+    padding: 20px;
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.interval-sliders .form-group {
+    margin-bottom: 15px;
+}
+
+.interval-sliders .irs-bar {
+    background-color: #F56C37;
+    border-color: #F56C37;
+}
+
+.interval-sliders .irs-bar-edge {
+    background-color: #F56C37;
+    border-color: #F56C37;
+}
+
+.interval-sliders .irs-single {
+    background-color: #F56C37;
+}
+
+.interval-sliders .irs-grid-text {
+    font-size: 12px;
+    color: #666;
+}
+
+/* Melody section styling */
+.melody-container {
+  padding: 20px;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.melody-section {
+  margin-bottom: 24px;
+}
+
+.melody-section h4 {
+  color: #2C3E50;
+  font-size: 20px;
+  margin-bottom: 12px;
+}
+
+.melody-section p {
+  color: #666;
+  font-size: 14px;
+  line-height: 1.5;
+  margin-bottom: 20px;
+}
+
+.interval-chart {
+  background-color: #f8f9fa;
+  padding: 16px;
+  border-radius: 6px;
+  border: 1px solid #e9ecef;
+}

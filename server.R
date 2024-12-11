@@ -289,7 +289,49 @@ server <- function(input, output, session) {
            },
            "melody" = {
              # Content for the Melody tab
-             div("This is the Melody content.")
+             div(
+               class = "melody-container",
+               div(
+                 class = "melody-section",
+                 h4("Interval Distribution"),
+                 p("This chart shows the distribution of melodic intervals in your selected songs. 
+                   The intervals are measured in semitones, showing how the melody moves up and down."),
+                 div(
+                   class = "interval-chart",
+                   plotOutput("intervalHistogram", height = "400px", width = "100%")
+                 ),
+                 div(
+                   class = "interval-sliders",
+                   fluidRow(
+                     column(4, sliderInput("interval_0", "Unison (0)", min = 0, max = 1, value = 0.5, step = 0.01)),
+                     column(4, sliderInput("interval_1", "Minor Second (1)", min = 0, max = 1, value = 0.5, step = 0.01)),
+                     column(4, sliderInput("interval_2", "Major Second (2)", min = 0, max = 1, value = 0.5, step = 0.01))
+                   ),
+                   fluidRow(
+                     column(4, sliderInput("interval_3", "Minor Third (3)", min = 0, max = 1, value = 0.5, step = 0.01)),
+                     column(4, sliderInput("interval_4", "Major Third (4)", min = 0, max = 1, value = 0.5, step = 0.01)),
+                     column(4, sliderInput("interval_5", "Perfect Fourth (5)", min = 0, max = 1, value = 0.5, step = 0.01))
+                   ),
+                   fluidRow(
+                     column(4, sliderInput("interval_6", "Tritone (6)", min = 0, max = 1, value = 0.5, step = 0.01)),
+                     column(4, sliderInput("interval_7", "Perfect Fifth (7)", min = 0, max = 1, value = 0.5, step = 0.01)),
+                     column(4, sliderInput("interval_8", "Minor Sixth (8)", min = 0, max = 1, value = 0.5, step = 0.01))
+                   ),
+                   fluidRow(
+                     column(4, sliderInput("interval_9", "Major Sixth (9)", min = 0, max = 1, value = 0.5, step = 0.01)),
+                     column(4, sliderInput("interval_10", "Minor Seventh (10)", min = 0, max = 1, value = 0.5, step = 0.01)),
+                     column(4, sliderInput("interval_11", "Major Seventh (11)", min = 0, max = 1, value = 0.5, step = 0.01))
+                   )
+                 ),
+                 div(
+                   class = "rhythm-action",
+                   actionButton("findSimilarIntervals", 
+                              "Find New Similar Songs", 
+                              class = "analyze-button",
+                              icon = icon("search"))
+                 )
+               )
+             )
            },
            "rhythm" = {
              # Content for the Rhythm tab
@@ -1018,4 +1060,181 @@ server <- function(input, output, session) {
     !is.null(recommended_songs())
   })
   outputOptions(output, "hasAnalysis", suspendWhenHidden = FALSE)
+
+  # Calculate average interval distribution
+  average_intervals <- reactive({
+    # Get the average features from selected songs
+    avg_features <- average_features_data()
+    if (is.null(avg_features)) return(NULL)
+    
+    # Extract interval histogram and ensure it's numeric
+    hist <- avg_features$interval_histogram
+    if (!is.numeric(hist)) {
+      # Convert from JSON if needed
+      hist <- as.numeric(unlist(strsplit(gsub("\\[|\\]", "", hist), ",")))
+    }
+    # Normalize
+    if (sum(hist) > 0) hist <- hist / sum(hist)
+    hist
+  })
+
+  # Get current song's interval distribution
+  current_intervals <- reactive({
+    # Get features for the selected song
+    features <- selected_song_features()
+    if (is.null(features)) return(NULL)
+    
+    # Extract interval histogram and ensure it's numeric
+    hist <- features$interval_histogram
+    if (!is.numeric(hist)) {
+      # Convert from JSON if needed
+      hist <- as.numeric(unlist(strsplit(gsub("\\[|\\]", "", hist), ",")))
+    }
+    # Normalize
+    if (sum(hist) > 0) hist <- hist / sum(hist)
+    hist
+  })
+
+  # Create the interval histogram plot
+  output$intervalHistogram <- renderPlot({
+    avg_dist <- average_intervals()
+    curr_dist <- current_intervals()
+    
+    if (is.null(avg_dist) || is.null(curr_dist)) {
+      # If no data available, show empty plot with message
+      plot.new()
+      text(0.5, 0.5, "Select a song to view interval distribution", cex = 1.2)
+      return()
+    }
+    
+    # Get user preferences from sliders and ensure they're numeric
+    user_dist <- as.numeric(c(
+      input$interval_0, input$interval_1, input$interval_2,
+      input$interval_3, input$interval_4, input$interval_5,
+      input$interval_6, input$interval_7, input$interval_8,
+      input$interval_9, input$interval_10, input$interval_11
+    ))
+    
+    # Normalize user distribution if sum is greater than 0
+    if (sum(user_dist) > 0) {
+      user_dist <- user_dist / sum(user_dist)
+    }
+    
+    # Combine the data into a matrix
+    plot_data <- rbind(avg_dist, curr_dist, user_dist)
+    
+    # Create the plot
+    barplot(
+      height = plot_data,
+      beside = TRUE,
+      col = c("grey", "#F56C37", "lightblue"),
+      names.arg = 0:11,
+      legend.text = c("Average", "Current Song", "Your Preference"),
+      main = "Interval Distribution",
+      xlab = "Interval (semitones)",
+      ylab = "Frequency"
+    )
+  })
+
+  # Handle find similar songs based on intervals
+  observeEvent(input$findSimilarIntervals, {
+    # Get user preferences and ensure they're numeric
+    user_intervals <- as.numeric(c(
+      input$interval_0, input$interval_1, input$interval_2,
+      input$interval_3, input$interval_4, input$interval_5,
+      input$interval_6, input$interval_7, input$interval_8,
+      input$interval_9, input$interval_10, input$interval_11
+    ))
+    
+    # Normalize if sum is greater than 0
+    if (sum(user_intervals) > 0) {
+      user_intervals <- user_intervals / sum(user_intervals)
+    }
+    
+    # Get average features
+    avg_features <- average_features_data()
+    if (is.null(avg_features)) {
+      showNotification("No feature data available", type = "error")
+      return()
+    }
+    
+    # Create a copy of the feature vector and ensure it's numeric
+    feature_vector <- avg_features$feature_vector
+    if (!is.numeric(feature_vector)) {
+      feature_vector <- as.numeric(unlist(strsplit(gsub("\\[|\\]", "", feature_vector), ",")))
+    }
+    
+    # Update interval histogram portion (positions 12-23 in the feature vector)
+    feature_vector[12:23] <- user_intervals
+    
+    # Prepare the API request for similar songs
+    url <- "https://dvplamwokfwyvuaskgyk.supabase.co/rest/v1/rpc/find_similar_songs_by_vector"
+    
+    # Use the service role key for this operation
+    supabase_key <- Sys.getenv("SUPABASE_SERVICE_KEY")
+    if (supabase_key == "") {
+      showNotification("Supabase SERVICE API key is not set", type = "error")
+      return()
+    }
+    
+    headers <- c(
+      "Content-Type" = "application/json",
+      "apikey" = supabase_key,
+      "Authorization" = paste("Bearer", supabase_key)
+    )
+    
+    body <- list(
+      input_vector = jsonlite::toJSON(feature_vector, auto_unbox = TRUE),
+      top_n = 5
+    )
+    
+    # Make the API request
+    tryCatch({
+      response <- httr::POST(
+        url = url,
+        httr::add_headers(.headers = headers),
+        body = jsonlite::toJSON(body, auto_unbox = TRUE),
+        encode = "json"
+      )
+      
+      if (httr::status_code(response) == 200) {
+        # Parse the response
+        results <- httr::content(response, "parsed")
+        
+        if (length(results) > 0) {
+          # Get the complete song data
+          similar_songs_data <- find_similar_songs(sapply(results, function(x) x$title), top_n = length(results))
+          
+          if (!is.null(similar_songs_data) && nrow(similar_songs_data) > 0) {
+            recommended_songs(similar_songs_data)
+            # Switch to overview tab to show results
+            nerd_mode_tab("overview")
+            showNotification("Found songs with similar interval patterns!", type = "message")
+          } else {
+            showNotification("Error getting complete song data", type = "error")
+          }
+        } else {
+          showNotification("No similar songs found", type = "warning")
+        }
+      } else {
+        showNotification("Error fetching similar songs", type = "error")
+      }
+    }, error = function(e) {
+      showNotification(paste("Error finding similar songs:", e$message), type = "error")
+    })
+  })
+
+  # Initialize sliders with average values when a song is selected
+  observe({
+    avg_dist <- average_intervals()
+    if (!is.null(avg_dist)) {
+      # Update each slider with the corresponding average value
+      for (i in 0:11) {
+        updateSliderInput(session,
+          inputId = paste0("interval_", i),
+          value = avg_dist[i + 1]  # Add 1 because R is 1-indexed
+        )
+      }
+    }
+  })
 }
