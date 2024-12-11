@@ -226,9 +226,9 @@ compare_song_with_average <- function(song_title, song_list) {
 }
 
 # Example usage
-song_title <- "The Wexford Carol"
-song_list <- c("Wexford     ", "Wests       ", "Wexford Reel") # Example with trailing spaces
-chart <- compare_song_with_average(song_title, song_list)
+# song_title <- "The Wexford Carol"
+# song_list <- c("Wexford     ", "Wests       ", "Wexford Reel") # Example with trailing spaces
+# chart <- compare_song_with_average(song_title, song_list)
 
 # Print the chart
-print(chart)
+# print(chart)

@@ -56,10 +56,10 @@ calculate_complexity <- function(songs) {
 }
 
 # Example usage
-result <- get_song_details_by_title("In The Bleak Midwinter")
-result2 <- get_song_details_by_title("Wexford")
-complexity_score_1 <- calculate_complexity(result)
-complexity_score_2 <- calculate_complexity(result2)
-print(complexity_score_1)
-print(complexity_score_2)
+# result <- get_song_details_by_title("In The Bleak Midwinter")
+# result2 <- get_song_details_by_title("Wexford")
+# complexity_score_1 <- calculate_complexity(result)
+# complexity_score_2 <- calculate_complexity(result2)
+# print(complexity_score_1)
+# print(complexity_score_2)
 
