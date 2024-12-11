@@ -272,16 +272,38 @@ server <- function(input, output, session) {
     tab <- nerd_mode_tab()
     switch(tab,
            "overview" = {
+             recommendations <- recommended_songs()
+             if (is.null(recommendations) || nrow(recommendations) == 0) {
+               return(div("No recommendations available"))
+             }
+             
+             # Sort recommendations by similarity in descending order
+             recommendations <- recommendations[order(-recommendations$similarity), ]
+             
              div(
-               class = "overview-container",
-               # Center icon with title
-               div(
-                 class = "center-icon",
-                 img(src = "assets/your-mdna.svg", class = "your-mdna-icon"),
-                 span(class = "mdna-label", "Your MDNA")
-               ),
-               # Visualization of recommended songs
-               uiOutput("recommendedSongsVisualization")
+               class = "nerd-overview-list",
+               lapply(1:nrow(recommendations), function(i) {
+                 song <- recommendations[i, ]
+                 is_selected <- !is.null(selected_song_id()) && 
+                               as.character(song$id) == as.character(selected_song_id())
+                 
+                 div(
+                   class = paste("nerd-song-item", if(is_selected) "selected" else ""),
+                   onclick = sprintf(
+                     "Shiny.setInputValue('song_clicked', '%s', {priority: 'event'});",
+                     song$id
+                   ),
+                   div(
+                     class = "nerd-song-info",
+                     div(class = "nerd-song-title", song$title),
+                     div(class = "nerd-song-artist", song$creators)
+                   ),
+                   div(
+                     class = "nerd-song-match",
+                     paste0(round(song$similarity * 100, 2), "% match")
+                   )
+                 )
+               })
              )
            },
            "harmonics" = {
@@ -339,9 +361,9 @@ server <- function(input, output, session) {
                  div(
                    class = "rhythm-action",
                    actionButton("findSimilarPitch", 
-                               "Find Songs With This Pattern", 
+                               HTML('<i class="fas fa-search"></i> Find Songs With This Pattern'), 
                                class = "analyze-button",
-                               icon = icon("search"))
+                               style = "color: white;")
                  )
                )
              )
@@ -410,9 +432,9 @@ server <- function(input, output, session) {
                  div(
                    class = "rhythm-action",
                    actionButton("findSimilarIntervals", 
-                               "Find Songs With This Movement", 
+                               HTML('<i class="fas fa-search"></i> Find Songs With This Movement'), 
                                class = "analyze-button",
-                               icon = icon("search"))
+                               style = "color: white;")
                  )
                )
              )
@@ -423,7 +445,7 @@ server <- function(input, output, session) {
              average_data <- average_tempo_duration()
              
              if (is.null(selected_data) || is.null(average_data)) {
-               div("Tempo and note duration data not available.")
+               div("Select a song to analyse tempo and note duration data.")
              } else {
                div(
                  class = "rhythm-container",
@@ -525,9 +547,9 @@ server <- function(input, output, session) {
                    class = "rhythm-action",
                    actionButton(
                      inputId = "analyze_button",
-                     label = "Find Songs With This Groove",
+                     label = HTML('<i class="fas fa-search"></i> Find Songs With This Groove'), 
                      class = "analyze-button",
-                     icon = icon("search")
+                     style = "color: white;"
                    )
                  )
                )

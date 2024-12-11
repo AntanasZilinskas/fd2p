@@ -977,12 +977,13 @@
 
   /* Left-side visualization container for Nerd mode */
   .mdna-visualization-container-nerd {
-    flex: 0 0 58%;  /* Set width to 48% */
+    flex: 0 0 58%;
     min-width: 400px;
     height: 495px;
     border-radius: 10px;
-    border: 1px solid #E3E3E2;  /* Added subtle grey border */
-    background: var(--White-White, #FFF);
+    border: 1px solid #E3E3E2;
+    background: white !important;
+    background-image: none !important;
     box-shadow: 0px 4px 12px rgba(13, 10, 44, 0.06);
     position: relative;
     overflow: hidden;
@@ -991,6 +992,20 @@
     display: flex;
     flex-direction: column;
     align-items: center;
+  }
+
+  /* Ensure all children of nerd mode container have clean background */
+  .mdna-visualization-container-nerd *,
+  .mdna-visualization-container-nerd .shiny-html-output,
+  .mdna-visualization-container-nerd #nerdModeContent {
+    background: white !important;
+    background-image: none !important;
+  }
+
+  /* Override any inherited background patterns */
+  .shiny-html-output.shiny-bound-output#nerdModeContent {
+    background: white !important;
+    background-image: none !important;
   }
 
   /* Right-side song details container */
@@ -2272,4 +2287,118 @@
     position: relative;
     z-index: 1;
     margin: 20px;
+}
+
+/* Nerd mode overview list styling */
+.nerd-overview-list {
+  padding: 20px;
+  height: 100%;
+  overflow-y: auto;
+}
+
+.nerd-song-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 15px;
+  margin-bottom: 10px;
+  background: white;
+  border: 1px solid #E3E3E2;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.nerd-song-item:hover {
+  transform: translateX(5px);
+  border-color: #F56C37;
+}
+
+.nerd-song-item.selected {
+  border-color: #F56C37;
+  background-color: rgba(245, 108, 55, 0.05);
+}
+
+.nerd-song-info {
+  flex: 1;
+}
+
+.nerd-song-title {
+  font-size: 16px;
+  font-weight: 500;
+  color: var(--primary-dark);
+  margin-bottom: 4px;
+}
+
+.nerd-song-artist {
+  font-size: 14px;
+  color: #666;
+}
+
+.nerd-song-match {
+  padding: 4px 8px;
+  background-color: rgba(245, 108, 55, 0.1);
+  color: #F56C37;
+  border-radius: 4px;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+/* Analysis button styling */
+.analyze-button,
+.rhythm-action button,
+button.analyze-button {
+  background-color: var(--accent) !important;
+  color: white !important;
+  border: none !important;
+  border-radius: 8px !important;
+  padding: 10px 20px !important;
+  font-size: 16px !important;
+  font-weight: 500 !important;
+  cursor: pointer !important;
+  transition: all 0.3s ease !important;
+  display: inline-flex !important;  /* Changed to inline-flex */
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 8px !important;
+  min-width: 200px !important;
+  margin: 20px auto !important;
+}
+
+.analyze-button:hover,
+.rhythm-action button:hover,
+button.analyze-button:hover {
+  background-color: #e05a2e !important;  /* Slightly darker shade */
+  transform: translateY(-2px);
+}
+
+/* Icon in button */
+.analyze-button i,
+.rhythm-action button i,
+button.analyze-button i {
+  font-size: 16px !important;
+  margin-right: 8px !important;
+  color: white !important;  /* Ensure icon color is white */
+  display: inline-block !important;
+}
+
+.fa-search {  /* Specific styling for search icon */
+  color: white !important;
+  font-size: 16px !important;
+}
+
+/* Processing state */
+.analyze-button.processing,
+.rhythm-action button.processing,
+button.analyze-button.processing {
+  opacity: 0.7;
+  cursor: wait;
+}
+
+/* Container for the button */
+.rhythm-action {
+  display: flex;
+  justify-content: center;
+  margin: 20px 0;
+  width: 100%;
 }
