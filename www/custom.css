@@ -2357,12 +2357,13 @@ button.analyze-button {
   font-weight: 500 !important;
   cursor: pointer !important;
   transition: all 0.3s ease !important;
-  display: inline-flex !important;  /* Changed to inline-flex */
+  display: inline-flex !important;
   align-items: center !important;
   justify-content: center !important;
   gap: 8px !important;
   min-width: 200px !important;
   margin: 20px auto !important;
+  overflow: hidden !important;
 }
 
 .analyze-button:hover,
@@ -2375,16 +2376,27 @@ button.analyze-button:hover {
 /* Icon in button */
 .analyze-button i,
 .rhythm-action button i,
-button.analyze-button i {
-  font-size: 16px !important;
-  margin-right: 8px !important;
-  color: white !important;  /* Ensure icon color is white */
+button.analyze-button i,
+.fa-search {  /* Combined icon selectors */
+  font-size: 14px !important;  /* Slightly reduced size */
+  color: white !important;
   display: inline-block !important;
+  line-height: 1 !important;  /* Added to control height */
+  vertical-align: middle !important;  /* Added for alignment */
+  margin-right: 8px !important;
+  fill: white !important;  /* Added to control SVG fill */
 }
 
-.fa-search {  /* Specific styling for search icon */
-  color: white !important;
-  font-size: 16px !important;
+/* Remove any default Font Awesome styles that might interfere */
+.fa,
+.fas {
+  font-family: "Font Awesome 6 Free" !important;
+  -webkit-font-smoothing: antialiased !important;
+  display: inline-block !important;
+  font-style: normal !important;
+  font-variant: normal !important;
+  text-rendering: auto !important;
+  line-height: 1 !important;
 }
 
 /* Processing state */
