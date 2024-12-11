@@ -932,15 +932,16 @@
   .mdna-main-container {
     display: flex;
     justify-content: space-between;
-    gap: 24px;
+    align-items: stretch;
+    gap: 2%; /* Adjust gap as needed */
     width: 100%;
     padding: 20px;
     box-sizing: border-box;
   }
 
-  /* Left-side visualization container */
+  /* Left-side visualization container for non-Nerd mode */
   .mdna-visualization-container-custom {
-    flex: 0 0 66.666%;  /* flex-grow: 0, flex-shrink: 0, flex-basis: 66.666% */
+    width: 100%;
     height: 540px;
     border-radius: 10px;
     background: var(--White-White, #FFF);
@@ -949,15 +950,32 @@
     overflow: hidden;
     margin: 0;
     padding: 0;
+    display: block;  /* Ensure visibility */
+  }
+
+  /* Left-side visualization container for Nerd mode */
+  .mdna-visualization-container-nerd {
+    flex: 0 0 48%;  /* Set width to 48% */
+    height: auto;
+    border-radius: 10px;
+    background: var(--White-White, #FFF);
+    box-shadow: 0px 4px 12px rgba(13, 10, 44, 0.06);
+    position: relative;
+    overflow: hidden;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
   }
 
   /* Right-side song details container */
   .song-details-container-custom {
-    flex: 0 0 33.333%;  /* flex-grow: 0, flex-shrink: 0, flex-basis: 33.333% */
-    height: 540px;
+    flex: 0 0 48%;  /* Set width to 48% */
+    height: auto;
     border-radius: 10px;
     background: var(--White-White, #FFF);
-    box-shadow: 0px 4px 12px 0px rgba(13, 10, 44, 0.06);
+    box-shadow: 0px 4px 12px rgba(13, 10, 44, 0.06);
     position: relative;
     overflow: hidden;
     margin: 0;
@@ -1798,4 +1816,32 @@
   z-index: 100;
   border-radius: 10px;
   overflow-y: auto;  /* Allow scrolling if content is too long */
+}
+
+/* Nerd mode containers */
+.mdna-main-container.nerd-mode .mdna-visualization-container-nerd,
+.mdna-main-container.nerd-mode .welcome-box.mdna-page {
+  width: calc(50% - 12px);
+  height: 540px;
+  border-radius: 10px;
+  background: var(--White-White, #FFF);
+  box-shadow: 0px 4px 12px 0px rgba(13, 10, 44, 0.06);
+  position: relative;
+  overflow: hidden;
+  margin: 0;
+}
+
+/* Additional padding for welcome box */
+.mdna-main-container.nerd-mode .welcome-box.mdna-page {
+  padding: 20px;
+}
+
+/* Main container styles */
+.mdna-main-container {
+  display: flex;
+  justify-content: space-between;
+  gap: 24px;
+  width: 100%;
+  padding: 20px;
+  box-sizing: border-box;
 }
