@@ -1845,3 +1845,238 @@
   padding: 20px;
   box-sizing: border-box;
 }
+
+/* Add styles for the description box */
+.description-box {
+  background-color: #f8f9fa;
+  border-left: 4px solid #F56C37;
+  padding: 20px;
+  margin-bottom: 25px;
+  border-radius: 0 8px 8px 0;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.description-box p {
+  margin-bottom: 15px;
+  line-height: 1.6;
+  color: #2C3E50;
+}
+
+.description-box ul {
+  margin-left: 20px;
+  margin-bottom: 10px;
+}
+
+.description-box li {
+  margin-bottom: 12px;
+  line-height: 1.4;
+}
+
+.description-box strong {
+  color: #F56C37;
+  font-weight: 600;
+}
+
+/* Chart legend styling */
+.chart-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+  margin: 15px 0;
+  padding: 10px;
+  background: white;
+  border-radius: 6px;
+  border: 1px solid #e9ecef;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+}
+
+.legend-color {
+  width: 20px;
+  height: 10px;
+  border-radius: 2px;
+}
+
+.legend-color.orange { background-color: #F56C37; }
+.legend-color.grey { background-color: grey; }
+.legend-color.blue { background-color: lightblue; }
+
+/* Try these section styling */
+.try-these {
+  background: white;
+  padding: 15px;
+  border-radius: 8px;
+  margin: 15px 0;
+  border: 1px solid #e9ecef;
+}
+
+.try-these ul {
+  margin-top: 10px;
+}
+
+/* Tip styling */
+.tip {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #fff3e0;
+  padding: 12px;
+  border-radius: 6px;
+  margin-top: 15px;
+  font-style: italic;
+  color: #F56C37;
+}
+
+.tip i {
+  color: #F56C37;
+}
+
+/* Make strong text stand out */
+.description-box strong {
+  color: #F56C37;
+  font-weight: 600;
+}
+
+/* List item styling */
+.description-box li {
+  margin-bottom: 12px;
+  line-height: 1.4;
+}
+
+/* Improve spacing for better readability */
+.description-box p {
+  margin-bottom: 15px;
+  line-height: 1.6;
+}
+
+/* Update button text to be more descriptive */
+.analyze-button {
+  background-color: #F56C37;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  font-weight: 500;
+  margin-top: 20px;
+}
+
+.analyze-button:hover {
+  background-color: #232323;
+}
+
+/* Improve spacing in containers */
+.harmonics-container,
+.melody-container {
+  padding: 20px;
+}
+
+.harmonics-section,
+.melody-section {
+  margin-bottom: 30px;
+}
+
+/* Rhythm section specific styling */
+.rhythm-section {
+  margin-bottom: 30px;
+}
+
+.rhythm-values {
+  display: flex;
+  justify-content: space-around;
+  margin-bottom: 15px;
+  background: white;
+  padding: 15px;
+  border-radius: 8px;
+  border: 1px solid #e9ecef;
+}
+
+.rhythm-value {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+}
+
+.value-label {
+  font-size: 14px;
+  color: #2C3E50;
+}
+
+.value-number {
+  font-size: 24px;
+  font-weight: 600;
+}
+
+.value-number.orange {
+  color: #F56C37;
+}
+
+.value-number.grey {
+  color: grey;
+}
+
+/* Custom styling for rhythm sliders */
+.rhythm-section .custom-slider {
+  background: #f8f9fa;
+  padding: 20px;
+  border-radius: 8px;
+  margin-top: 15px;
+}
+
+.rhythm-section .custom-slider .irs-bar {
+  background: #F56C37;
+}
+
+.rhythm-section .custom-slider .irs-single {
+  background: #F56C37;
+}
+
+.rhythm-section .custom-slider .irs-grid-text {
+  color: #2C3E50;
+}
+
+/* Rhythm specific description box additions */
+.rhythm-section .description-box .try-these {
+  background: #f8f9fa;
+}
+
+.rhythm-section .description-box .try-these ul li {
+  margin-bottom: 10px;
+}
+
+/* Enhance the rhythm action button */
+.rhythm-action {
+  display: flex;
+  justify-content: center;
+  margin-top: 30px;
+}
+
+.rhythm-action .analyze-button {
+  min-width: 200px;
+  font-size: 16px;
+}
+
+/* Add hover effect to rhythm values */
+.rhythm-value:hover {
+  transform: translateY(-2px);
+  transition: transform 0.2s ease;
+}
+
+/* Add animation for value changes */
+.value-number {
+  transition: color 0.3s ease;
+}
+
+/* Improve slider labels */
+.rhythm-section .custom-slider label {
+  font-weight: 500;
+  color: #2C3E50;
+  margin-bottom: 10px;
+}
