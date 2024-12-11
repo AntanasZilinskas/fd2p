@@ -1151,7 +1151,27 @@
   .mdna-visualization-container-nerd #nerdModeContent {
     padding: 10px;
     overflow-y: auto;
-    height: calc(100% - 50px); /* Adjust height to fit below tabs */
+    width: 456px;
+    height: 405px;
+    flex-shrink: 0;
+    border-radius: 10px;
+    background: 
+      radial-gradient(circle, 
+        transparent 0%, 
+        transparent 20%, 
+        rgba(128, 128, 128, 0.3) 20%, 
+        rgba(128, 128, 128, 0.3) 21%, 
+        transparent 22%, 
+        transparent 50%, 
+        rgba(128, 128, 128, 0.3) 50%, 
+        rgba(128, 128, 128, 0.3) 51%, 
+        transparent 52%, 
+        transparent 80%, 
+        rgba(128, 128, 128, 0.3) 80%, 
+        rgba(128, 128, 128, 0.3) 81%, 
+        transparent 8%, 
+        transparent 110%), 
+      var(--White-White, #ffffff); /* Fallback solid background color */
   }
 
   /* Adjust the overview container */
