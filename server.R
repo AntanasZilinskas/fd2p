@@ -290,8 +290,24 @@ server <- function(input, output, session) {
                div(
                  class = "harmonics-section",
                  h4("Note Distribution"),
-                 p("This chart shows the distribution of notes in your selected songs. 
-                   The notes are represented in their pitch classes (C, C#, D, etc.)."),
+                 div(
+                   class = "description-box",
+                   p("Discover songs based on which musical notes appear most often. This is like finding songs that use similar piano keys!"),
+                   div(
+                     class = "chart-legend",
+                     tags$span(class = "legend-item", tags$span(class = "legend-color orange"), "Orange bars: Your selected song"),
+                     tags$span(class = "legend-item", tags$span(class = "legend-color grey"), "Grey bars: Average of your selections"),
+                     tags$span(class = "legend-item", tags$span(class = "legend-color blue"), "Blue bars: Your adjustments")
+                   ),
+                   p(strong("How to use the sliders:"), "Move them up or down to emphasize different notes:"),
+                   tags$ul(
+                     tags$li(strong("For rock/pop songs:"), "Boost C, G, and F - these are common in popular music"),
+                     tags$li(strong("For jazzy tunes:"), "Increase the black keys (C#, D#, F#, G#, A#)"),
+                     tags$li(strong("For emotional ballads:"), "Emphasize E and A - often used in emotional passages"),
+                     tags$li(strong("For complex harmonies:"), "Try raising several notes together to find songs with rich chord structures")
+                   ),
+                   p(class = "tip", icon("lightbulb"), " Pro tip: Start by matching the orange bars, then adjust to find variations you might like!")
+                 ),
                  div(
                    class = "pitch-chart",
                    plotOutput("harmonicsChart", height = "400px", width = "100%")
@@ -322,9 +338,9 @@ server <- function(input, output, session) {
                  div(
                    class = "rhythm-action",
                    actionButton("findSimilarPitch", 
-                              "Find New Similar Songs", 
-                              class = "analyze-button",
-                              icon = icon("search"))
+                               "Find Songs With This Pattern", 
+                               class = "analyze-button",
+                               icon = icon("search"))
                  )
                )
              )
@@ -335,9 +351,34 @@ server <- function(input, output, session) {
                class = "melody-container",
                div(
                  class = "melody-section",
-                 h4("Interval Distribution"),
-                 p("This chart shows the distribution of melodic intervals in your selected songs. 
-                   The intervals are measured in semitones, showing how the melody moves up and down."),
+                 h4("Melodic Movement"),
+                 div(
+                   class = "description-box",
+                   p("Shape how the melody flows by controlling how far notes jump from one to the next. Think of it as adjusting how 'jumpy' or 'smooth' a melody is!"),
+                   div(
+                     class = "chart-legend",
+                     tags$span(class = "legend-item", tags$span(class = "legend-color orange"), "Orange bars: Your selected song"),
+                     tags$span(class = "legend-item", tags$span(class = "legend-color grey"), "Grey bars: Average of your selections"),
+                     tags$span(class = "legend-item", tags$span(class = "legend-color blue"), "Blue bars: Your adjustments")
+                   ),
+                   p(strong("Understanding the numbers:"), "Each slider represents the distance between consecutive notes:"),
+                   tags$ul(
+                     tags$li(strong("0-2 (Unison to Major Second):"), "Smooth, stepwise melodies like 'Let It Be'"),
+                     tags$li(strong("3-5 (Thirds and Fourth):"), "Natural, singable jumps like 'Somewhere Over the Rainbow'"),
+                     tags$li(strong("6-7 (Tritone and Fifth):"), "Bold jumps like the start of 'The Simpsons Theme'"),
+                     tags$li(strong("8-12 (Sixths to Octave):"), "Dramatic leaps like 'Somewhere' from West Side Story")
+                   ),
+                   div(
+                     class = "try-these",
+                     p(strong("Try these combinations:")),
+                     tags$ul(
+                       tags$li(strong("Pop melody:"), "Higher values for 0-5, lower for larger jumps"),
+                       tags$li(strong("Jazz style:"), "Increase larger intervals for more adventurous melodies"),
+                       tags$li(strong("Folk song:"), "Focus on 2-5 for traditional-sounding tunes")
+                     )
+                   ),
+                   p(class = "tip", icon("lightbulb"), " Pro tip: Start with the pattern you see in orange, then gradually adjust to explore new melodic territories!")
+                 ),
                  div(
                    class = "interval-chart",
                    plotOutput("intervalHistogram", height = "400px", width = "100%")
@@ -368,9 +409,9 @@ server <- function(input, output, session) {
                  div(
                    class = "rhythm-action",
                    actionButton("findSimilarIntervals", 
-                              "Find New Similar Songs", 
-                              class = "analyze-button",
-                              icon = icon("search"))
+                               "Find Songs With This Movement", 
+                               class = "analyze-button",
+                               icon = icon("search"))
                  )
                )
              )
@@ -387,27 +428,50 @@ server <- function(input, output, session) {
                  class = "rhythm-container",
                  # Introduction text
                  div(
-                   class = "rhythm-intro",
-                   h3("Rhythm Analysis and Song Discovery"),
-                   p("Adjust the tempo and note duration to find songs with similar rhythmic patterns. 
-                     The current values are based on your selected songs' average.")
+                   class = "rhythm-section",
+                   h4("Rhythm Analysis"),
+                   div(
+                     class = "description-box",
+                     p("Shape the groove and feel of the music by adjusting tempo (speed) and note duration (how long notes are held)."),
+                     div(
+                       class = "chart-legend",
+                       tags$span(class = "legend-item", tags$span(class = "legend-color orange"), "Orange values: Your selected song"),
+                       tags$span(class = "legend-item", tags$span(class = "legend-color grey"), "Grey values: Average of your selections")
+                     ),
+                     p(strong("Understanding the controls:")),
+                     tags$ul(
+                       tags$li(strong("Tempo (BPM):"), "Beats Per Minute - how fast the music moves. Like a heartbeat, higher numbers mean faster music."),
+                       tags$li(strong("Note Duration:"), "How long each note is held. Shorter durations create crisp, staccato feels, longer ones create smooth, flowing music.")
+                     ),
+                     div(
+                       class = "try-these",
+                       p(strong("Try these tempo ranges:")),
+                       tags$ul(
+                         tags$li(strong("60-75 BPM:"), "Ballads and slow jams (e.g., 'Yesterday' by The Beatles)"),
+                         tags$li(strong("90-120 BPM:"), "Pop and rock songs (e.g., 'Billie Jean' by Michael Jackson)"),
+                         tags$li(strong("120-140 BPM:"), "Upbeat dance music (e.g., 'Dancing Queen' by ABBA)"),
+                         tags$li(strong("140+ BPM:"), "High-energy dance and electronic music")
+                       )
+                     ),
+                     p(class = "tip", icon("lightbulb"), " Pro tip: Start with the tempo of a song you love, then explore slightly faster or slower to find new favorites!")
+                   )
                  ),
                  
                  # Tempo section
                  div(
                    class = "rhythm-section",
-                   h4("Tempo Comparison"),
+                   h4("Tempo"),
                    div(
                      class = "rhythm-values",
                      div(
                        class = "rhythm-value",
                        span(class = "value-label", "Average Tempo:"),
-                       span(class = "value-number", paste(round(average_data$tempo, 0), "BPM"))
+                       span(class = "value-number grey", paste(round(average_data$tempo, 0), "BPM"))
                      ),
                      div(
                        class = "rhythm-value",
                        span(class = "value-label", "Selected Song:"),
-                       span(class = "value-number", paste(round(selected_data$tempo, 0), "BPM"))
+                       span(class = "value-number orange", paste(round(selected_data$tempo, 0), "BPM"))
                      )
                    ),
                    div(
@@ -415,8 +479,8 @@ server <- function(input, output, session) {
                      sliderInput(
                        inputId = "tempo_adjustment",
                        label = "Adjust Tempo:",
-                       min = 0,
-                       max = 1000,
+                       min = 40,  # Changed from 0 to more realistic minimum
+                       max = 200, # Changed from 1000 to more realistic maximum
                        value = average_data$tempo,
                        step = 1,
                        post = " BPM"
@@ -427,18 +491,18 @@ server <- function(input, output, session) {
                  # Note Duration section
                  div(
                    class = "rhythm-section",
-                   h4("Average Note Duration"),
+                   h4("Note Duration"),
                    div(
                      class = "rhythm-values",
                      div(
                        class = "rhythm-value",
                        span(class = "value-label", "Average Duration:"),
-                       span(class = "value-number", paste(round(average_data$average_note_duration, 0), "ms"))
+                       span(class = "value-number grey", paste(round(average_data$average_note_duration, 0), "ms"))
                      ),
                      div(
                        class = "rhythm-value",
                        span(class = "value-label", "Selected Song:"),
-                       span(class = "value-number", paste(round(selected_data$average_note_duration, 0), "ms"))
+                       span(class = "value-number orange", paste(round(selected_data$average_note_duration, 0), "ms"))
                      )
                    ),
                    div(
@@ -446,10 +510,10 @@ server <- function(input, output, session) {
                      sliderInput(
                        inputId = "duration_adjustment",
                        label = "Adjust Note Duration:",
-                       min = 0,
-                       max = 1000,
+                       min = 50,   # Changed from 0 to more realistic minimum
+                       max = 500,  # Changed from 1000 to more realistic maximum
                        value = average_data$average_note_duration,
-                       step = 1,
+                       step = 10,  # Changed to make adjustments easier
                        post = " ms"
                      )
                    )
@@ -460,13 +524,9 @@ server <- function(input, output, session) {
                    class = "rhythm-action",
                    actionButton(
                      inputId = "analyze_button",
-                     label = "Find Similar Songs",
+                     label = "Find Songs With This Groove",
                      class = "analyze-button",
                      icon = icon("search")
-                   ),
-                   div(
-                     class = "action-hint",
-                     "Adjust the values above and click to discover songs with similar rhythmic patterns"
                    )
                  )
                )
@@ -553,69 +613,72 @@ server <- function(input, output, session) {
     recommendations <- recommended_songs()
     
     if (is.null(song_id) || nrow(recommendations) == 0) {
-      return(
-        div(
-          class = "song-details-placeholder",
-          "Click on a song to see details."
+        return(
+            div(
+                class = "song-details-placeholder",
+                "Click on a song to see details."
+            )
         )
-      )
     }
 
-    # Ensure both are character type for comparison
     song <- recommendations[as.character(recommendations$id) == as.character(song_id), , drop = FALSE]
 
     if (nrow(song) == 0) {
-      return(div(
-        class = "song-details-placeholder",
-        "Song details not available."
-      ))
+        return(div(
+            class = "song-details-placeholder",
+            "Song details not available."
+        ))
     }
 
-    # Display song details with Spotify link and the chart
     div(
-      class = "song-details-custom",
-      h3(class = "song-title-custom", song$title),
-      p(class = "song-artist-custom", paste("Artist:", song$creators)),
-      p(
-        class = "song-similarity-custom", 
-        paste("Similarity Score:", sprintf("%.2f", song$similarity))
-      ),
-      # Add the Spotify link button
-      if (!is.null(song$spotify_url) && !is.na(song$spotify_url)) {
-        a(
-          href = song$spotify_url,
-          target = "_blank",
-          class = "spotify-link-button",
-          img(src = "assets/spotify.svg", class = "spotify-icon"),
-          span("Listen on Spotify!")
+        class = "song-details-custom",
+        h3(class = "song-title-custom", song$title),
+        p(class = "song-artist-custom", paste("Artist:", song$creators)),
+        p(
+            class = "song-similarity-custom", 
+            paste("Similarity Score:", sprintf("%.2f", song$similarity))
+        ),
+        if (!is.null(song$spotify_url) && !is.na(song$spotify_url)) {
+            a(
+                href = song$spotify_url,
+                target = "_blank",
+                class = "spotify-link-button",
+                img(src = "assets/spotify.svg", class = "spotify-icon"),
+                span("Listen on Spotify!")
+            )
+        },
+        div(
+            class = "song-chart-container",
+            plotOutput("songChart", 
+                       height = "450px",     # Increased height
+                       width = "100%"
+            )
         )
-      },
-      # Add the chart below song details with 12px top margin
-      div(
-        style = "margin-top: 12px;",  # Apply 12px top margin
-        plotOutput("songChart", height = "210px", width = "100%")
-      )
     )
   })
   
   # Render the chart for the selected song comparison
   output$songChart <- renderPlot({
     song_id <- selected_song_id()
-    if (is.null(song_id)) return(NULL)  # If no song is selected, don't render a chart
-
-    # Get the selected song details
+    if (is.null(song_id)) return(NULL)
+    
     recommendations <- recommended_songs()
-    # Ensure both are character type for comparison
     song1 <- recommendations[as.character(recommendations$id) == as.character(song_id), , drop = FALSE]
-
+    
     if (nrow(song1) == 0) return(NULL)
-
-    # Generate the chart using your existing function
-    chart <- spider_chart_compare_with_average(song1$title, selected_songs())
-
-    # Return the chart
-    chart
-  })
+    
+    # Create a new graphics device for this plot
+    tryCatch({
+      # Generate the chart
+      spider_chart_compare_with_average(song1$title, selected_songs())
+    }, error = function(e) {
+      # Log any errors
+      message("Error generating spider chart: ", e$message)
+      return(NULL)
+    })
+  }, 
+  height = function() 450,  # Match the height of the container
+  res = 96 * 2)            # Double the resolution for sharper rendering
   
   # Render recommended songs visualization on the MDNA page
   output$recommendedSongsVisualization <- renderUI({
