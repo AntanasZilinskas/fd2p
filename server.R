@@ -15,6 +15,7 @@ server <- function(input, output, session) {
   selected_songs <- reactiveVal(list())
   recommended_songs <- reactiveVal(NULL)
   has_analyzed <- reactiveVal(FALSE)
+  nerd_mode <- reactiveVal(FALSE)
 
   # Watch for navigation attempts
   observeEvent(input$mainNav, {
@@ -636,7 +637,13 @@ server <- function(input, output, session) {
         p(class = "song-artist-custom", paste("Artist:", song$creators)),
         p(
             class = "song-similarity-custom", 
-            paste("Similarity Score:", sprintf("%.2f", song$similarity))
+            paste("Similarity Score:", 
+              if (nerd_mode()) {
+                paste0(round(song$similarity * 100, 2), "% match")
+              } else {
+                paste0(round(song$similarity * 100, 0), "% match")
+              }
+            )
         ),
         if (!is.null(song$spotify_url) && !is.na(song$spotify_url)) {
             a(
@@ -747,7 +754,12 @@ server <- function(input, output, session) {
         title = paste(
           "Title:", song$title, "\n",
           "Artists:", song$creators, "\n",
-          "Similarity Score:", sprintf("%.2f", as.numeric(as.character(song$similarity)))
+          "Similarity Score:", 
+          if (nerd_mode()) {
+            paste0(round(song$similarity * 100, 2), "% match")
+          } else {
+            paste0(round(song$similarity * 100, 0), "% match")
+          }
         ),
         img(
           src = icon_src,
@@ -1510,4 +1522,9 @@ server <- function(input, output, session) {
     !is.null(recommended_songs())
   })
   outputOptions(output, "hasAnalysis", suspendWhenHidden = FALSE)
+
+  # Add observer for nerd mode toggle if not already present
+  observeEvent(input$nerdMode, {
+    nerd_mode(input$nerdMode)
+  })
 }
