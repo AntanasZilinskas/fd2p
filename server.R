@@ -11,9 +11,56 @@ source("testing/charts/note_freq_chart.R")
 setSliderColor("#F56C37", sliderId = 0)
 
 server <- function(input, output, session) {
-  # Store selected songs
-  selected_songs <- reactiveVal(character(0))
-  
+  # Initialize reactive values
+  selected_songs <- reactiveVal(list())
+  recommended_songs <- reactiveVal(NULL)
+  has_analyzed <- reactiveVal(FALSE)
+
+  # Watch for navigation attempts
+  observeEvent(input$mainNav, {
+    if (input$mainNav == "Analyse MDNA" && !has_analyzed()) {
+      showModal(modalDialog(
+        title = "Analysis Required",
+        "Please analyze your selected songs first by clicking the Analyse button!",
+        footer = actionButton("returnToSearch", "Return to Search", 
+          class = "btn-primary",
+          style = "background-color: #F56C37; border-color: #F56C37;"
+        ),
+        easyClose = FALSE
+      ))
+      updateNavbarPage(session, "mainNav", selected = "Search Songs")
+    }
+  })
+
+  # Handle return to search button click
+  observeEvent(input$returnToSearch, {
+    removeModal()
+    updateNavbarPage(session, "mainNav", selected = "Search Songs")
+  })
+
+  # Observe Analyze button click
+  observeEvent(input$analyseBtn, {
+    req(length(selected_songs()) >= 2)
+    
+    # Send message to start processing
+    session$sendCustomMessage('analyseButtonProcessing', list(status = 'start'))
+    
+    # Perform the processing
+    tryCatch({
+      recommended_songs_data <- find_similar_songs(selected_songs(), top_n = 5L)
+      recommended_songs(recommended_songs_data)
+      has_analyzed(TRUE)
+      
+      # Only redirect if analysis was successful
+      updateNavbarPage(session, "mainNav", selected = "Analyse MDNA")
+      showNotification("Analysis complete!", type = "message")
+    }, error = function(e) {
+      showNotification(paste("An error occurred:", e$message), type = "error")
+    }, finally = {
+      session$sendCustomMessage('analyseButtonProcessing', list(status = 'end'))
+    })
+  })
+
   # Reactive value to store search results
   search_results <- reactiveVal(data.frame(title = character(0), stringsAsFactors = FALSE))
   
@@ -204,37 +251,6 @@ server <- function(input, output, session) {
       shinyjs::enable("analyseBtn")
       shinyjs::removeClass("analyseBtn", "disabled")
       shinyjs::runjs("document.getElementById('analyseBtn').title = '';")
-    }
-  })
-  
-  # Observe Analyze button click
-  observeEvent(input$analyseBtn, {
-    print("Analyse button clicked.")
-    
-    # Check if any songs are selected (this is now redundant but kept for safety)
-    selected_songs_list <- selected_songs()
-    if(length(selected_songs_list) < 2) {
-      showNotification("Please select at least two songs before analyzing.", type = "warning")
-    } else {
-      # Send message to start processing
-      session$sendCustomMessage('analyseButtonProcessing', list(status = 'start'))
-
-      # Perform the processing
-      tryCatch({
-        recommended_songs_data <- find_similar_songs(selected_songs_list, top_n = 5L)
-
-        # Debugging: Print the recommended songs data
-        print("Recommended Songs Data:")
-        print(recommended_songs_data)
-
-        recommended_songs(recommended_songs_data)
-      }, error = function(e) {
-        # Show notification of the error
-        showNotification(paste("An error occurred:", e$message), type = "error")
-      }, finally = {
-        # Send message to end processing and redirect
-        session$sendCustomMessage('analyseButtonProcessing', list(status = 'end'))
-      })
     }
   })
   
@@ -996,4 +1012,10 @@ server <- function(input, output, session) {
       "))
     )
   })
+  
+  # Expose analysis state to the UI
+  output$hasAnalysis <- reactive({
+    !is.null(recommended_songs())
+  })
+  outputOptions(output, "hasAnalysis", suspendWhenHidden = FALSE)
 }

@@ -1590,3 +1590,13 @@
 .snow:nth-child(10) { left: 93%; animation-delay: 0.8s; }
 .snow:nth-child(11) { left: 35%; animation-delay: 1.5s; }
 .snow:nth-child(12) { left: 55%; animation-delay: 0.6s; }
+
+.disabled-tab {
+    pointer-events: auto !important;
+    opacity: 0.6;
+    cursor: not-allowed !important;
+}
+
+.disabled-tab:hover {
+    background-color: transparent !important;
+}
