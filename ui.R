@@ -277,6 +277,20 @@ ui <- navbarPage(
           });
         }
       });
+    ")),
+    # Add JavaScript to control tab access
+    tags$script(HTML("
+      $(document).ready(function() {
+        $('a[data-value=\"Analyse MDNA\"]').on('click', function(e) {
+          var selectedSongs = $('#selectedSongs .selected-song-item').length;
+          if (selectedSongs < 2) {
+            e.preventDefault();
+            e.stopPropagation();
+            alert('Please select at least 2 songs in the Search tab first.');
+            return false;
+          }
+        });
+      });
     "))
   ),
 
