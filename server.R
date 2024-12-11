@@ -657,8 +657,8 @@ server <- function(input, output, session) {
         div(
             class = "song-chart-container",
             plotOutput("songChart", 
-                       height = "450px",     # Increased height
-                       width = "100%"
+                       height = "400px",     # Further reduced height
+                       width = "500%"
             )
         )
     )
@@ -674,18 +674,26 @@ server <- function(input, output, session) {
     
     if (nrow(song1) == 0) return(NULL)
     
+    # Set a fixed size for the plot device
+    par(mar = c(1, 1, 1, 1))  # Reduce margins
+    
     # Create a new graphics device for this plot
     tryCatch({
       # Generate the chart
       spider_chart_compare_with_average(song1$title, selected_songs())
+      
+      # Clean up the plot device
+      par(mar = c(5, 4, 4, 2) + 0.1)  # Reset to default margins
     }, error = function(e) {
       # Log any errors
       message("Error generating spider chart: ", e$message)
       return(NULL)
     })
   }, 
-  height = function() 450,  # Match the height of the container
-  res = 96 * 2)            # Double the resolution for sharper rendering
+  height = function() 400,  # Further reduced height
+  width = function() 500,   # Further reduced width
+  res = 96 * 2,            # Double the resolution for sharper rendering
+  execOnResize = FALSE)    # Prevent resizing on window changes
   
   # Render recommended songs visualization on the MDNA page
   output$recommendedSongsVisualization <- renderUI({
