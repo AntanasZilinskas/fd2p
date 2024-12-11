@@ -291,7 +291,39 @@ ui <- navbarPage(
           }
         });
       });
-    "))
+    ")),
+    # Add JavaScript to handle tab access
+    tags$script("
+      var hasAnalyzed = false;
+      
+      $(document).on('shiny:inputchanged', function(event) {
+        if (event.name === 'analyseBtn' && event.value > 0) {
+          hasAnalyzed = true;
+        }
+        if (event.name === 'selected_songs') {
+          var songCount = event.value ? event.value.length : 0;
+          if (songCount < 2 || !hasAnalyzed) {
+            $('.navbar-nav li:nth-child(2) a').addClass('disabled-tab');
+          } else {
+            $('.navbar-nav li:nth-child(2) a').removeClass('disabled-tab');
+          }
+        }
+      });
+
+      $(document).on('click', '.disabled-tab', function(e) {
+        e.preventDefault();
+        if (!hasAnalyzed) {
+          alert('Please analyze your selected songs first!');
+        } else {
+          alert('Please select at least 2 songs first!');
+        }
+      });
+
+      // Reset hasAnalyzed when returning to search page
+      $(document).on('click', '.navbar-nav li:first-child a', function() {
+        hasAnalyzed = false;
+      });
+    ")
   ),
 
   # Logo and Title Container
@@ -348,6 +380,23 @@ ui <- navbarPage(
         div(
           class = "analyse-button-container",
           actionButton("analyseBtn", "Analyse", class = "analyse-button")
+        ),
+        div(
+          class = "festive-message",
+          div(class = "snow"),
+          div(class = "snow"),
+          div(class = "snow"),
+          div(class = "snow"),
+          div(class = "snow"),
+          div(class = "snow"),
+          div(class = "snow"),
+          div(class = "snow"),
+          div(class = "snow"),
+          div(class = "snow"),
+          div(class = "snow"),
+          div(class = "snow"),
+          tags$img(src = "assets/logo_with_santa_hat_image.png", alt = "Harmonly Santa"),
+          tags$p("Tired of the Xmas tunes already? Let's find something else christmassy!")
         )
       )
     )

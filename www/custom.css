@@ -19,7 +19,7 @@
 
   /* Navigation base styling */
   .navbar {
-    width: 307px !important;
+    width: 250px !important;
     position: fixed !important;
     left: 50px;
     top: 50px;
@@ -66,7 +66,7 @@
   .title-text {
     color: var(--accent);
     font-family: 'Poppins', sans-serif;
-    font-size: 36px;
+    font-size: 28px;
     font-style: normal;
     font-weight: 400;
     line-height: 1;
@@ -92,10 +92,10 @@
 
   /* Navbar links */
   .navbar-nav > li > a {
-    width: 269px;
+    width: 215px;
     height: 35px;
     flex-shrink: 0;
-    background: none; /* No background when not selected */
+    background: none;
     color: var(--primary-light) !important;
     display: flex;
     align-items: center;
@@ -104,20 +104,20 @@
     padding: 0;
     line-height: 35px;
     transition: background-color 0.3s ease;
-    border-radius: 10px; /* Rounded corners */
+    border-radius: 10px;
   }
 
   /* Hover effect */
   .navbar-nav > li > a:hover {
-    background-color: #2E2E2E; /* Slightly lighter than #232323 */
+    background-color: #2E2E2E;
   }
 
   /* Active (selected) menu item */
   .navbar-nav > li.active > a {
-    background-color: #232323; /* Solid background for selected menu item */
-    border-radius: 10px; /* Ensure rounded corners */
-    box-shadow: none; /* Remove any orange glow */
-    border-left: none; /* Remove any left border */
+    background-color: #232323;
+    border-radius: 10px;
+    box-shadow: none;
+    border-left: none;
   }
 
   /* Remove borders and outlines */
@@ -217,12 +217,11 @@
 
   /* Content layout */
   .content-wrapper {
-    margin-left: calc(50px + 307px) !important;
-    padding: 30px;
-    width: calc(100% - 50px - 307px - 50px) !important;
-    margin-top: 50px;
-    margin-bottom: 50px;
-    min-height: calc(100vh - 100px);
+    position: relative;
+    width: calc(100vw - 350px);
+    margin-left: 350px;
+    padding: 20px 20px 20px 50px;
+    box-sizing: border-box;
   }
 
   /* NavbarPage container adjustments */
@@ -243,22 +242,24 @@
 
   /* Welcome box styling */
   .welcome-box {
-    background-color: var(--primary-light);
-    border-radius: 15px;
-    /* box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); */
-    padding: 40px;
-    width: 80%;
-    max-width: 800px;
-    margin: 0 auto;
+    position: relative;
+    width: 98%;
+    margin: 20px auto;
+    padding: 30px;
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    text-align: center;
   }
 
-  /* Rest of your existing styles remain the same */
   /* Title styling */
   .main-title {
     font-size: 3em;
     font-weight: bold;
     margin-bottom: 20px;
     color: var(--primary-dark);
+    text-align: center;
+    width: 100%;
   }
 
   .subtitle {
@@ -266,16 +267,14 @@
     color: var(--primary-dark) !important;
     margin-bottom: 30px;
     font-weight: 500;
+    text-align: center;
+    width: 100%;
   }
 
   /* Input and button styling */
   .input-container {
-    max-width: 500px;
+    width: 100%;
     margin: 0 auto;
-  }
-
-  .button-container {
-    margin-top: 20px;
   }
 
   /* Primary button (Analyse Songs) */
@@ -339,14 +338,15 @@
 
   /* Matches list styling */
   .matches-container {
-    background-image: linear-gradient(var(--gradient-dark), var(--gradient-light));
-    box-shadow: 
-      0 0 0.125em 0.125em hsl(var(--hue),10%,90%) inset,
-      0 0.25em 0.25em var(--shadow-dark);
-    border: none !important;
-    border-radius: 0.25em;
-    padding: 0.75em 1em;
-    margin: 10px 0;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    padding: 8px;
+    gap: 8px;
+    border-radius: 10px;
+    background: #FFF;
+    box-shadow: 0px 4px 12px 0px rgba(13, 10, 44, 0.06);
+    margin-top: 0;
   }
 
   .matches-container a {
@@ -592,7 +592,7 @@
 
   /* Navbar links */
   .navbar-nav > li > a {
-    width: 269px;
+    width: 215px;
     height: 35px;
     flex-shrink: 0;
     border-radius: 10px;
@@ -627,18 +627,17 @@
 
   /* Styles for the search container */
   .search-container {
+    width: 100%;
     display: flex;
     align-items: center;
     gap: 24px;
-    width: 100%; /* Add consistent width */
-    max-width: 600px; /* Add optional max width */
-    margin-top: 20px;
+    margin-bottom: 15px;
   }
 
   /* Styles for the search input wrapper */
   .search-input-wrapper {
     position: relative;
-    width: 100%; /* Match parent container */
+    width: 100%;
     height: 60px;
   }
 
@@ -651,12 +650,10 @@
   .search-input {
     width: 100%;
     height: 100%;
-    padding: 0 60px 0 20px; /* Adjust padding to accommodate the spinner */
+    padding: 8px 12px;
+    border-radius: 8px;
+    border: 1px solid #ddd;
     font-size: 16px;
-    border: none;
-    border-radius: 10px;
-    background: var(--White-White, #FFF);
-    box-shadow: 0px 4px 12px rgba(13, 10, 44, 0.06);
   }
 
   .search-input:focus {
@@ -788,13 +785,14 @@
     top: 100%;
     left: 0;
     width: 100%;
-    max-height: 300px; /* Adjust as needed */
+    max-height: 300px;
     overflow-y: auto;
     background-color: #fff;
     border: 1px solid #ccc;
     border-radius: 0 0 10px 10px;
     box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
-    z-index: 10; /* Ensure it appears above other elements */
+    z-index: 10;
+    text-align: left;
   }
 
   /* Style individual search result items */
@@ -803,6 +801,7 @@
     cursor: pointer;
     font-size: 16px;
     color: #333;
+    text-align: left;
   }
 
   .search-result-item:hover {
@@ -810,71 +809,13 @@
   }
 
   /* Styles for the Selected Songs container */
-  .matches-container {
-    display: flex;
-    flex-direction: column; /* Stack items vertically */
-    width: 100%; /* Add consistent width */
-    max-width: 600px; /* Add optional max width */
-    padding: 8px;
-    gap: 8px;
-    border-radius: 10px;
-    background: var(--White-White, #FFF);
-
-    /* Shadow */
-    box-shadow: 0px 4px 12px 0px rgba(13, 10, 44, 0.06);
-
-    /* Spacing from the search bar */
-    margin-top: 24px;
-  }
-
-  .selected-song-item {
-    display: flex;
-    align-items: center;
-    padding: 8px 12px;
+  .selected-songs-container {
+    width: 100%;
+    margin: 20px auto;
+    padding: 20px;
+    background-color: #f8f9fa;
     border-radius: 8px;
-    background-color: #f8f8f8;
-    margin: 5px;
-    cursor: pointer;
-    transition: background-color 0.2s ease;
-    position: relative; /* For absolute positioning of remove button */
-  }
-
-  /* Change background color on hover - turns grey */
-  .selected-song-item:hover {
-    background-color: #e0e0e0;
-  }
-
-  /* Song title styling */
-  .selected-song-item .song-title {
-    font-size: 16px;
-    color: #333;
-    flex-grow: 1;
-    padding-right: 30px; /* Space for the remove button */
-  }
-
-  /* Remove button styling */
-  .selected-song-item .remove-song {
-    font-size: 18px;
-    color: #F56C37; /* Orange color */
-    cursor: pointer;
-    position: absolute;
-    right: 10px;
-    top: 50%;
-    transform: translateY(-50%);
-  }
-
-  /* Optional: Change remove button color on hover */
-  .selected-song-item .remove-song:hover {
-    color: #FF8800; /* Slightly lighter orange */
-  }
-
-  /* Style for placeholder text to match the search bar placeholder */
-  .placeholder-text {
-    color: #999999; /* Adjust to match your placeholder color */
-    font-style: thin;
-    font-size: 16px; /* Adjust to match your placeholder font size */
-    margin: 5px; /* Reset margin */
-    padding: 7px; /* Reset padding */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   }
 
   /* Center the title and subtitle on the Analyse MDNA page */
@@ -1492,3 +1433,160 @@
     background: #F56C37 !important;
     border-color: #F56C37 !important;
   }
+
+  .selected-song-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 12px;
+    border-radius: 8px;
+    background-color: #f8f8f8;
+    margin: 5px 0;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+  }
+
+  .selected-song-item:hover {
+    background-color: #e0e0e0;
+  }
+
+  .song-title {
+    text-align: left;
+    margin-right: auto;
+  }
+
+  .remove-song {
+    color: #F56C37;
+    cursor: pointer;
+  }
+
+  .festive-message {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    background-color: #3D3C3D;
+    border-radius: 8px;
+    padding: 15px 20px;
+    margin-top: 20px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .festive-message img {
+    width: 30px;
+    height: auto;
+    z-index: 1;
+  }
+
+  .festive-message p {
+    margin: 0;
+    color: #fff;
+    font-size: 16px;
+    z-index: 1;
+  }
+
+  @keyframes snowfall-1 {
+    0% {
+        transform: translateY(-10px) translateX(0);
+        opacity: 0;
+    }
+    20% {
+        opacity: 1;
+    }
+    100% {
+        transform: translateY(120px) translateX(-20px);
+        opacity: 0;
+    }
+}
+
+@keyframes snowfall-2 {
+    0% {
+        transform: translateY(-10px) translateX(0);
+        opacity: 0;
+    }
+    20% {
+        opacity: 1;
+    }
+    100% {
+        transform: translateY(120px) translateX(15px);
+        opacity: 0;
+    }
+}
+
+@keyframes snowfall-3 {
+    0% {
+        transform: translateY(-10px) translateX(0);
+        opacity: 0;
+    }
+    20% {
+        opacity: 1;
+    }
+    100% {
+        transform: translateY(120px) translateX(-10px);
+        opacity: 0;
+    }
+}
+
+.festive-message {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    background-color: #3D3C3D;
+    border-radius: 8px;
+    padding: 15px 20px;
+    margin-top: 20px;
+    position: relative;
+    overflow: hidden;
+}
+
+.festive-message img {
+    width: 30px;
+    height: auto;
+    z-index: 1;
+}
+
+.festive-message p {
+    margin: 0;
+    color: #fff;
+    font-size: 16px;
+    z-index: 1;
+}
+
+.snow {
+    position: absolute;
+    background: white;
+    border-radius: 50%;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.snow:nth-child(3n + 1) {
+    width: 3px;
+    height: 3px;
+    animation: snowfall-1 2.5s infinite;
+}
+
+.snow:nth-child(3n + 2) {
+    width: 4px;
+    height: 4px;
+    animation: snowfall-2 3s infinite;
+}
+
+.snow:nth-child(3n) {
+    width: 2px;
+    height: 2px;
+    animation: snowfall-3 2s infinite;
+}
+
+.snow:nth-child(1) { left: 7%; animation-delay: 0s; }
+.snow:nth-child(2) { left: 24%; animation-delay: 0.5s; }
+.snow:nth-child(3) { left: 45%; animation-delay: 1s; }
+.snow:nth-child(4) { left: 63%; animation-delay: 0.2s; }
+.snow:nth-child(5) { left: 85%; animation-delay: 0.7s; }
+.snow:nth-child(6) { left: 15%; animation-delay: 1.2s; }
+.snow:nth-child(7) { left: 29%; animation-delay: 0.4s; }
+.snow:nth-child(8) { left: 48%; animation-delay: 0.9s; }
+.snow:nth-child(9) { left: 72%; animation-delay: 0.3s; }
+.snow:nth-child(10) { left: 93%; animation-delay: 0.8s; }
+.snow:nth-child(11) { left: 35%; animation-delay: 1.5s; }
+.snow:nth-child(12) { left: 55%; animation-delay: 0.6s; }
