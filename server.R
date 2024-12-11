@@ -361,7 +361,7 @@ server <- function(input, output, session) {
                  div(
                    class = "rhythm-action",
                    actionButton("findSimilarPitch", 
-                               HTML('<i class="fas fa-search"></i> Find Songs With This Pattern'), 
+                               HTML('<i class="fa-solid fa-magnifying-glass"></i> Find Songs With This Pattern'), 
                                class = "analyze-button",
                                style = "color: white;")
                  )
@@ -432,7 +432,7 @@ server <- function(input, output, session) {
                  div(
                    class = "rhythm-action",
                    actionButton("findSimilarIntervals", 
-                               HTML('<i class="fas fa-search"></i> Find Songs With This Movement'), 
+                               HTML('<i class="fa-solid fa-magnifying-glass"></i> Find Songs With This Movement'), 
                                class = "analyze-button",
                                style = "color: white;")
                  )
@@ -545,12 +545,10 @@ server <- function(input, output, session) {
                  # Action button section
                  div(
                    class = "rhythm-action",
-                   actionButton(
-                     inputId = "analyze_button",
-                     label = HTML('<i class="fas fa-search"></i> Find Songs With This Groove'), 
-                     class = "analyze-button",
-                     style = "color: white;"
-                   )
+                   actionButton("findSimilarRhythm", 
+                               HTML('<i class="fa-solid fa-magnifying-glass"></i> Find Songs With This Groove'), 
+                               class = "analyze-button",
+                               style = "color: white;")
                  )
                )
              }
@@ -603,11 +601,24 @@ server <- function(input, output, session) {
           div(
             class = "mdna-visualization-container-custom",
             onclick = "Shiny.setInputValue('container_clicked', Math.random());",
-            # Center icon with title
+            # Add legend in top left
+            div(
+              class = "visualization-legend",
+              div(
+                class = "legend-item",
+                img(src = "assets/your-mdna.svg", class = "legend-icon"),
+                span("Your preference")
+              ),
+              div(
+                class = "legend-item",
+                img(src = "assets/suggested-songs.svg", class = "legend-icon"),
+                span("Harmonly recommendation")
+              )
+            ),
+            # Keep center icon without text
             div(
               class = "center-icon",
-              img(src = "assets/your-mdna.svg", class = "your-mdna-icon"),
-              span(class = "mdna-label", "Your MDNA")
+              img(src = "assets/your-mdna.svg", class = "your-mdna-icon")
             ),
             # Visualization of recommended songs
             uiOutput("recommendedSongsVisualization")
