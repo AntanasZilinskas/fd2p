@@ -280,47 +280,35 @@ ui <- navbarPage(
     ")),
     # Add JavaScript to control tab access
     tags$script(HTML("
-      $(document).ready(function() {
-        $('a[data-value=\"Analyse MDNA\"]').on('click', function(e) {
-          var selectedSongs = $('#selectedSongs .selected-song-item').length;
-          if (selectedSongs < 2) {
-            e.preventDefault();
-            e.stopPropagation();
-            alert('Please select at least 2 songs in the Search tab first.');
-            return false;
-          }
-        });
+      var hasAnalyzed = false;
+
+      // Track analyze button clicks
+      $(document).on('click', '#analyseBtn', function() {
+        hasAnalyzed = true;
+      });
+
+      });
+
+      // Reset when returning to search
+      $(document).on('click', 'a[data-value=\"Search Songs\"]', function() {
+        hasAnalyzed = false;
       });
     ")),
     # Add JavaScript to handle tab access
     tags$script("
-      var hasAnalyzed = false;
-      
-      $(document).on('shiny:inputchanged', function(event) {
-        if (event.name === 'analyseBtn' && event.value > 0) {
-          hasAnalyzed = true;
-        }
-        if (event.name === 'selected_songs') {
-          var songCount = event.value ? event.value.length : 0;
-          if (songCount < 2 || !hasAnalyzed) {
-            $('.navbar-nav li:nth-child(2) a').addClass('disabled-tab');
-          } else {
-            $('.navbar-nav li:nth-child(2) a').removeClass('disabled-tab');
-          }
-        }
+      // Any UI feedback can go here if needed
+    "),
+    # Add JavaScript to prevent navigation before analysis
+    tags$script("
+      let hasAnalyzed = false;
+
+      // Track analyze button clicks
+      $(document).on('click', '#analyseBtn', function() {
+        hasAnalyzed = true;
       });
 
-      $(document).on('click', '.disabled-tab', function(e) {
-        e.preventDefault();
-        if (!hasAnalyzed) {
-          alert('Please analyze your selected songs first!');
-        } else {
-          alert('Please select at least 2 songs first!');
-        }
-      });
-
-      // Reset hasAnalyzed when returning to search page
-      $(document).on('click', '.navbar-nav li:first-child a', function() {
+      // Reset when returning to search
+      $(document).on('click', '#mainNav li a[data-value=\"Search Songs\"]', function() {
         hasAnalyzed = false;
       });
     ")
