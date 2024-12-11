@@ -2129,3 +2129,51 @@
   background: #F56C37 !important;
   border-color: #F56C37 !important;
 }
+
+/* Add styles for the new chart title and legend */
+.spotify-section {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.chart-title {
+    margin: 8px 0 4px 0;
+    color: var(--primary-dark);
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.chart-legend-custom {
+    margin-top: 4px;
+}
+
+.legend-item-custom {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+    color: var(--primary-dark);
+}
+
+.legend-separator {
+    margin: 0 8px;
+    width: 1px;
+    height: 12px;
+    background-color: #d9d9d9;
+}
+
+.legend-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    display: inline-block;
+}
+
+.legend-dot.grey {
+    background-color: #d9d9d9;
+}
+
+.legend-dot.orange {
+    background-color: #F56C37;
+}

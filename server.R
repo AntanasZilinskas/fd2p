@@ -646,19 +646,34 @@ server <- function(input, output, session) {
             )
         ),
         if (!is.null(song$spotify_url) && !is.na(song$spotify_url)) {
-            a(
-                href = song$spotify_url,
-                target = "_blank",
-                class = "spotify-link-button",
-                img(src = "assets/spotify.svg", class = "spotify-icon"),
-                span("Listen on Spotify!")
+            div(
+                class = "spotify-section",
+                a(
+                    href = song$spotify_url,
+                    target = "_blank",
+                    class = "spotify-link-button",
+                    img(src = "assets/spotify.svg", class = "spotify-icon"),
+                    span("Listen on Spotify!")
+                ),
+                p(class = "chart-title", "Musical profile radar chart"),
+                div(
+                    class = "chart-legend-custom",
+                    div(
+                        class = "legend-item-custom",
+                        span(class = "legend-dot grey"),
+                        span("your preference"),
+                        span(class = "legend-separator"),
+                        span(class = "legend-dot orange"),
+                        span("selected song")
+                    )
+                )
             )
         },
         div(
             class = "song-chart-container",
             plotOutput("songChart", 
-                       height = "400px",     # Further reduced height
-                       width = "500%"
+                       height = "300px",     
+                       width = "400%"
             )
         )
     )
@@ -690,8 +705,8 @@ server <- function(input, output, session) {
       return(NULL)
     })
   }, 
-  height = function() 400,  # Further reduced height
-  width = function() 500,   # Further reduced width
+  height = function() 300,  # Reduced height
+  width = function() 400,   # Reduced width
   res = 96 * 2,            # Double the resolution for sharper rendering
   execOnResize = FALSE)    # Prevent resizing on window changes
   
