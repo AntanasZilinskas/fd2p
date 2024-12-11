@@ -805,8 +805,15 @@ server <- function(input, output, session) {
           # Select the first song by default
           selected_song_id(recommended_songs_data$id[1])
           
-          # Switch to the Analyse MDNA tab
-          updateTabsetPanel(session, "mainNav", selected = "Analyse MDNA")
+          # Switch to the overview tab
+          nerd_mode_tab("overview")
+          
+          # Show notification about new songs
+          showNotification(
+            paste("Found", nrow(recommended_songs_data), "new songs based on your rhythm adjustments! Check them out in the overview."),
+            type = "message",
+            duration = 5
+          )
         } else {
           print("analyze_button: failed to get complete song data")
           showNotification("Error getting complete song data", type = "error")
