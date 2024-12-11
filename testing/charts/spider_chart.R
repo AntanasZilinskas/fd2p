@@ -238,8 +238,8 @@ spider_chart_compare_with_average <- function(song_title, song_list) {
   radarchart(
     radar_data,
     axistype = 1,
-    pcol = c("#d9d9d9", "#F56C37"),  # Colors for specific song and average
-    pfcol = c("#d9d9d980", "#F56C3780"),  # Fill colors
+    pcol = c("#F56C37", "#d9d9d9"),  # Colors for specific song and average
+    pfcol = c("#F56C3780", "#d9d9d980"),  # Fill colors
     plwd = 2,  # Line width
     cglcol = "grey",  # Grid line color
     cglty = 1,  # Grid line type

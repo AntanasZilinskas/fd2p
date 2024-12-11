@@ -60,7 +60,7 @@ note_freq_chart_comparison <- function(song_details1, song_details2, reorder = T
     geom_bar(data = bar_data, aes(x = Note, y = Frequency, fill = "Song"), 
              stat = "identity", position = "dodge", width = 0.8, color = "black") +
     scale_fill_manual(values = c("Song" = "#F56C37"), labels = c("Song")) +
-    scale_color_manual(values = c("Preferences" = "#D9D9D980"), labels = c("Preferences")) +
+    scale_color_manual(values = c("Preferences" = "#D9D9D9ff"), labels = c("Preferences")) +
     
     # Line plot for Preferences
     geom_line(data = line_data, aes(x = Note, y = Frequency, group = 1, color = "Preferences"), size = 1.2) +
@@ -226,9 +226,9 @@ compare_song_with_average <- function(song_title, song_list) {
 }
 
 # Example usage
-# song_title <- "The Wexford Carol"
-# song_list <- c("Wexford     ", "Wests       ", "Wexford Reel") # Example with trailing spaces
-# chart <- compare_song_with_average(song_title, song_list)
+song_title <- "The Wexford Carol"
+song_list <- c("Wexford     ", "Wests       ", "Wexford Reel") # Example with trailing spaces
+chart <- compare_song_with_average(song_title, song_list)
 
 # Print the chart
-# print(chart)
+print(chart)
