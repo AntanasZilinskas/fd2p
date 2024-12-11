@@ -285,7 +285,49 @@ server <- function(input, output, session) {
            },
            "harmonics" = {
              # Content for the Harmonics tab
-             plotOutput("harmonicsChart", height = "400px", width = "100%")
+             div(
+               class = "harmonics-container",
+               div(
+                 class = "harmonics-section",
+                 h4("Note Distribution"),
+                 p("This chart shows the distribution of notes in your selected songs. 
+                   The notes are represented in their pitch classes (C, C#, D, etc.)."),
+                 div(
+                   class = "pitch-chart",
+                   plotOutput("harmonicsChart", height = "400px", width = "100%")
+                 ),
+                 div(
+                   class = "pitch-sliders",
+                   fluidRow(
+                     column(4, sliderInput("pitch_0", "C", min = 0, max = 1, value = 0.5, step = 0.01)),
+                     column(4, sliderInput("pitch_1", "C#", min = 0, max = 1, value = 0.5, step = 0.01)),
+                     column(4, sliderInput("pitch_2", "D", min = 0, max = 1, value = 0.5, step = 0.01))
+                   ),
+                   fluidRow(
+                     column(4, sliderInput("pitch_3", "D#", min = 0, max = 1, value = 0.5, step = 0.01)),
+                     column(4, sliderInput("pitch_4", "E", min = 0, max = 1, value = 0.5, step = 0.01)),
+                     column(4, sliderInput("pitch_5", "F", min = 0, max = 1, value = 0.5, step = 0.01))
+                   ),
+                   fluidRow(
+                     column(4, sliderInput("pitch_6", "F#", min = 0, max = 1, value = 0.5, step = 0.01)),
+                     column(4, sliderInput("pitch_7", "G", min = 0, max = 1, value = 0.5, step = 0.01)),
+                     column(4, sliderInput("pitch_8", "G#", min = 0, max = 1, value = 0.5, step = 0.01))
+                   ),
+                   fluidRow(
+                     column(4, sliderInput("pitch_9", "A", min = 0, max = 1, value = 0.5, step = 0.01)),
+                     column(4, sliderInput("pitch_10", "A#", min = 0, max = 1, value = 0.5, step = 0.01)),
+                     column(4, sliderInput("pitch_11", "B", min = 0, max = 1, value = 0.5, step = 0.01))
+                   )
+                 ),
+                 div(
+                   class = "rhythm-action",
+                   actionButton("findSimilarPitch", 
+                              "Find New Similar Songs", 
+                              class = "analyze-button",
+                              icon = icon("search"))
+                 )
+               )
+             )
            },
            "melody" = {
              # Content for the Melody tab
@@ -991,75 +1033,185 @@ server <- function(input, output, session) {
     return(chart)
   })
 
-  # Render the harmonics chart
-  output$harmonicsChart <- renderPlot({
-    chart <- note_freq_chart_data()
-    if (!is.null(chart)) {
-      print(chart)  # Display the chart
-    } else {
-      # Optional: Display a message when no song is selected
-      plot.new()
-      text(0.5, 0.5, "Select a song to view the harmonics chart.", cex = 1.2)
+  # Calculate average pitch class distribution
+  average_pitch <- reactive({
+    # Get the average features from selected songs
+    avg_features <- average_features_data()
+    if (is.null(avg_features)) return(NULL)
+    
+    # Extract pitch class histogram and ensure it's numeric
+    hist <- avg_features$pitch_class_histogram
+    if (!is.numeric(hist)) {
+      # Convert from JSON if needed
+      hist <- as.numeric(unlist(strsplit(gsub("\\[|\\]", "", hist), ",")))
     }
+    # Normalize
+    if (sum(hist) > 0) hist <- hist / sum(hist)
+    hist
   })
-  
-  # Render search results as a dropdown
-  output$searchResults <- renderUI({
-    if (!show_search_results()) return(NULL)
+
+  # Get current song's pitch class distribution
+  current_pitch <- reactive({
+    # Get features for the selected song
+    features <- selected_song_features()
+    if (is.null(features)) return(NULL)
     
-    results <- search_results()
-    if (nrow(results) == 0) {
-      return(NULL)
+    # Extract pitch class histogram and ensure it's numeric
+    hist <- features$pitch_class_histogram
+    if (!is.numeric(hist)) {
+      # Convert from JSON if needed
+      hist <- as.numeric(unlist(strsplit(gsub("\\[|\\]", "", hist), ",")))
+    }
+    # Normalize
+    if (sum(hist) > 0) hist <- hist / sum(hist)
+    hist
+  })
+
+  # Create the harmonics chart
+  output$harmonicsChart <- renderPlot({
+    avg_dist <- average_pitch()
+    curr_dist <- current_pitch()
+    
+    if (is.null(avg_dist) || is.null(curr_dist)) {
+      # If no data available, show empty plot with message
+      plot.new()
+      text(0.5, 0.5, "Select a song to view note distribution", cex = 1.2)
+      return()
     }
     
-    tags$div(
-      class = "search-results-dropdown",
-      lapply(seq_len(nrow(results)), function(i) {
-        song_title <- results$title[i]
-        tags$div(
-          class = "search-result-item",
-          `data-value` = song_title,
-          div(
-            class = "search-result-content",
-            tags$span(class = "song-title-text", song_title),
-            tags$span(class = "add-text", "Click to add")
-          )
-        )
-      }),
-      tags$style(HTML("
-        .search-result-content {
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          width: 100%;
-          padding: 8px 12px;
-        }
-        .add-text {
-          color: #F56C37;
-          font-size: 14px;
-          font-weight: 500;
-          opacity: 0;
-          transition: opacity 0.2s ease;
-          margin-left: 12px;
-        }
-        .search-result-item:hover .add-text {
-          opacity: 1;
-        }
-        .song-title-text {
-          flex: 1;
-          overflow: hidden;
-          text-overflow: ellipsis;
-          white-space: nowrap;
-        }
-      "))
+    # Get user preferences from sliders and ensure they're numeric
+    user_dist <- as.numeric(c(
+      input$pitch_0, input$pitch_1, input$pitch_2,
+      input$pitch_3, input$pitch_4, input$pitch_5,
+      input$pitch_6, input$pitch_7, input$pitch_8,
+      input$pitch_9, input$pitch_10, input$pitch_11
+    ))
+    
+    # Normalize user distribution if sum is greater than 0
+    if (sum(user_dist) > 0) {
+      user_dist <- user_dist / sum(user_dist)
+    }
+    
+    # Note names for x-axis
+    note_names <- c("C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B")
+    
+    # Combine the data into a matrix
+    plot_data <- rbind(avg_dist, curr_dist, user_dist)
+    
+    # Create the plot
+    barplot(
+      height = plot_data,
+      beside = TRUE,
+      col = c("grey", "#F56C37", "lightblue"),
+      names.arg = note_names,
+      legend.text = c("Average", "Current Song", "Your Preference"),
+      main = "Note Distribution",
+      xlab = "Notes",
+      ylab = "Frequency"
     )
   })
-  
-  # Expose analysis state to the UI
-  output$hasAnalysis <- reactive({
-    !is.null(recommended_songs())
+
+  # Initialize pitch sliders with average values when a song is selected
+  observe({
+    avg_dist <- average_pitch()
+    if (!is.null(avg_dist)) {
+      # Update each slider with the corresponding average value
+      for (i in 0:11) {
+        updateSliderInput(session,
+          inputId = paste0("pitch_", i),
+          value = avg_dist[i + 1]  # Add 1 because R is 1-indexed
+        )
+      }
+    }
   })
-  outputOptions(output, "hasAnalysis", suspendWhenHidden = FALSE)
+
+  # Handle find similar songs based on pitch distribution
+  observeEvent(input$findSimilarPitch, {
+    # Get user preferences and ensure they're numeric
+    user_pitch <- as.numeric(c(
+      input$pitch_0, input$pitch_1, input$pitch_2,
+      input$pitch_3, input$pitch_4, input$pitch_5,
+      input$pitch_6, input$pitch_7, input$pitch_8,
+      input$pitch_9, input$pitch_10, input$pitch_11
+    ))
+    
+    # Normalize if sum is greater than 0
+    if (sum(user_pitch) > 0) {
+      user_pitch <- user_pitch / sum(user_pitch)
+    }
+    
+    # Get average features
+    avg_features <- average_features_data()
+    if (is.null(avg_features)) {
+      showNotification("No feature data available", type = "error")
+      return()
+    }
+    
+    # Create a copy of the feature vector and ensure it's numeric
+    feature_vector <- avg_features$feature_vector
+    if (!is.numeric(feature_vector)) {
+      feature_vector <- as.numeric(unlist(strsplit(gsub("\\[|\\]", "", feature_vector), ",")))
+    }
+    
+    # Update pitch class histogram portion (positions 0-11 in the feature vector)
+    feature_vector[1:12] <- user_pitch
+    
+    # Prepare the API request for similar songs
+    url <- "https://dvplamwokfwyvuaskgyk.supabase.co/rest/v1/rpc/find_similar_songs_by_vector"
+    
+    # Use the service role key for this operation
+    supabase_key <- Sys.getenv("SUPABASE_SERVICE_KEY")
+    if (supabase_key == "") {
+      showNotification("Supabase SERVICE API key is not set", type = "error")
+      return()
+    }
+    
+    headers <- c(
+      "Content-Type" = "application/json",
+      "apikey" = supabase_key,
+      "Authorization" = paste("Bearer", supabase_key)
+    )
+    
+    body <- list(
+      input_vector = jsonlite::toJSON(feature_vector, auto_unbox = TRUE),
+      top_n = 5
+    )
+    
+    # Make the API request
+    tryCatch({
+      response <- httr::POST(
+        url = url,
+        httr::add_headers(.headers = headers),
+        body = jsonlite::toJSON(body, auto_unbox = TRUE),
+        encode = "json"
+      )
+      
+      if (httr::status_code(response) == 200) {
+        # Parse the response
+        results <- httr::content(response, "parsed")
+        
+        if (length(results) > 0) {
+          # Get the complete song data
+          similar_songs_data <- find_similar_songs(sapply(results, function(x) x$title), top_n = length(results))
+          
+          if (!is.null(similar_songs_data) && nrow(similar_songs_data) > 0) {
+            recommended_songs(similar_songs_data)
+            # Switch to overview tab to show results
+            nerd_mode_tab("overview")
+            showNotification("Found songs with similar note patterns!", type = "message")
+          } else {
+            showNotification("Error getting complete song data", type = "error")
+          }
+        } else {
+          showNotification("No similar songs found", type = "warning")
+        }
+      } else {
+        showNotification("Error fetching similar songs", type = "error")
+      }
+    }, error = function(e) {
+      showNotification(paste("Error finding similar songs:", e$message), type = "error")
+    })
+  })
 
   # Calculate average interval distribution
   average_intervals <- reactive({
@@ -1134,6 +1286,20 @@ server <- function(input, output, session) {
       xlab = "Interval (semitones)",
       ylab = "Frequency"
     )
+  })
+
+  # Initialize interval sliders with average values when a song is selected
+  observe({
+    avg_dist <- average_intervals()
+    if (!is.null(avg_dist)) {
+      # Update each slider with the corresponding average value
+      for (i in 0:11) {
+        updateSliderInput(session,
+          inputId = paste0("interval_", i),
+          value = avg_dist[i + 1]  # Add 1 because R is 1-indexed
+        )
+      }
+    }
   })
 
   # Handle find similar songs based on intervals
@@ -1224,17 +1390,61 @@ server <- function(input, output, session) {
     })
   })
 
-  # Initialize sliders with average values when a song is selected
-  observe({
-    avg_dist <- average_intervals()
-    if (!is.null(avg_dist)) {
-      # Update each slider with the corresponding average value
-      for (i in 0:11) {
-        updateSliderInput(session,
-          inputId = paste0("interval_", i),
-          value = avg_dist[i + 1]  # Add 1 because R is 1-indexed
-        )
-      }
+  # Render search results as a dropdown
+  output$searchResults <- renderUI({
+    if (!show_search_results()) return(NULL)
+    
+    results <- search_results()
+    if (nrow(results) == 0) {
+      return(NULL)
     }
+    
+    tags$div(
+      class = "search-results-dropdown",
+      lapply(seq_len(nrow(results)), function(i) {
+        song_title <- results$title[i]
+        tags$div(
+          class = "search-result-item",
+          `data-value` = song_title,
+          div(
+            class = "search-result-content",
+            tags$span(class = "song-title-text", song_title),
+            tags$span(class = "add-text", "Click to add")
+          )
+        )
+      }),
+      tags$style(HTML("
+        .search-result-content {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          width: 100%;
+          padding: 8px 12px;
+        }
+        .add-text {
+          color: #F56C37;
+          font-size: 14px;
+          font-weight: 500;
+          opacity: 0;
+          transition: opacity 0.2s ease;
+          margin-left: 12px;
+        }
+        .search-result-item:hover .add-text {
+          opacity: 1;
+        }
+        .song-title-text {
+          flex: 1;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+        }
+      "))
+    )
   })
+  
+  # Expose analysis state to the UI
+  output$hasAnalysis <- reactive({
+    !is.null(recommended_songs())
+  })
+  outputOptions(output, "hasAnalysis", suspendWhenHidden = FALSE)
 }

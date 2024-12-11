@@ -1686,3 +1686,38 @@
   border-radius: 6px;
   border: 1px solid #e9ecef;
 }
+
+/* Pitch section styling */
+.pitch-chart {
+  background-color: #f8f9fa;
+  padding: 16px;
+  border-radius: 6px;
+  border: 1px solid #e9ecef;
+  margin-bottom: 20px;
+}
+
+.pitch-sliders {
+  margin-top: 20px;
+}
+
+.pitch-sliders .form-group {
+  margin-bottom: 15px;
+}
+
+.pitch-sliders .control-label {
+  color: #2C3E50;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.pitch-sliders .irs-bar {
+  background-color: #F56C37;
+}
+
+.pitch-sliders .irs-bar-edge {
+  background-color: #F56C37;
+}
+
+.pitch-sliders .irs-single {
+  background-color: #F56C37;
+}
