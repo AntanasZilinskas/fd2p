@@ -853,10 +853,13 @@
   }
 
   .center-icon .your-mdna-icon {
-    width: 57px;
-    height: 57px;
+    width: 40px;
+    height: 40px;
   }
 
+  #nerdModeContent .your-mdna-icon {
+    margin-top: 30px;
+  }
   /* Suggested Song Icons */
   .suggested-song {
     position: absolute;
