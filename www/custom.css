@@ -2177,3 +2177,105 @@
 .legend-dot.orange {
     background-color: #F56C37;
 }
+
+/* Chart wrapper and container */
+.chart-wrapper {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+    padding: 20px;
+}
+
+.chart-tooltip-icons {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+}
+
+/* Basic tooltip icon styling */
+.tooltip-icon {
+    position: absolute;
+    width: 16px;
+    height: 16px;
+    border: 1px solid #666;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+    font-style: italic;
+    color: #666;
+    cursor: help;
+    background: white;
+    pointer-events: auto;
+    z-index: 1000;
+}
+
+/* Icon positions */
+.tooltip-icon.top { top: 10%; left: 50%; transform: translateX(-50%); }
+.tooltip-icon.top-right { top: 25%; right: 15%; }
+.tooltip-icon.right { top: 50%; right: 15%; }
+.tooltip-icon.bottom-right { bottom: 25%; right: 15%; }
+.tooltip-icon.bottom-left { bottom: 25%; left: 15%; }
+.tooltip-icon.top-left { top: 25%; left: 15%; }
+
+/* Tooltip content */
+.tooltip-content {
+    visibility: hidden;
+    position: absolute;
+    background: rgba(35, 35, 35, 0.9);
+    color: white;
+    padding: 8px 12px;
+    border-radius: 4px;
+    font-size: 12px;
+    width: 180px;
+    opacity: 0;
+    z-index: 1001;
+    transition: visibility 0s, opacity 0.2s;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+/* Tooltip positions */
+.tooltip-icon.top .tooltip-content {
+    bottom: 130%;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.tooltip-icon.top-right .tooltip-content,
+.tooltip-icon.right .tooltip-content {
+    top: 50%;
+    right: 130%;
+    transform: translateY(-50%);
+}
+
+.tooltip-icon.bottom-right .tooltip-content,
+.tooltip-icon.bottom-left .tooltip-content {
+    top: 130%;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.tooltip-icon.top-left .tooltip-content {
+    top: 50%;
+    left: 130%;
+    transform: translateY(-50%);
+}
+
+/* Show tooltip on hover */
+.tooltip-icon:hover .tooltip-content {
+    visibility: visible;
+    opacity: 1;
+}
+
+/* Container adjustment */
+.song-chart-container {
+    overflow: visible !important;
+    position: relative;
+    z-index: 1;
+    margin: 20px;
+}

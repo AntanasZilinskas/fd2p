@@ -671,9 +671,53 @@ server <- function(input, output, session) {
         },
         div(
             class = "song-chart-container",
-            plotOutput("songChart", 
-                       height = "300px",     
-                       width = "400%"
+            # Chart wrapper to allow positioning of tooltips
+            div(
+              class = "chart-wrapper",
+              # Tooltip icons positioned around the chart
+              tags$div(
+                class = "chart-tooltip-icons",
+                # Tempo tooltip (top)
+                tags$span(
+                  class = "tooltip-icon top",
+                  "i",
+                  tags$span(class = "tooltip-content", "Speed of the music measured in beats per minute (BPM)")
+                ),
+                # Measures tooltip (top right)
+                tags$span(
+                  class = "tooltip-icon top-right",
+                  "i",
+                  tags$span(class = "tooltip-content", "Number of musical bars in the piece")
+                ),
+                # Melodic Contour tooltip (right)
+                tags$span(
+                  class = "tooltip-icon right",
+                  "i",
+                  tags$span(class = "tooltip-content", "How the melody moves - whether it tends to go up, down, or stay level")
+                ),
+                # Duration tooltip (bottom right)
+                tags$span(
+                  class = "tooltip-icon bottom-right",
+                  "i",
+                  tags$span(class = "tooltip-content", "Average length of notes in milliseconds")
+                ),
+                # Intervals tooltip (bottom left)
+                tags$span(
+                  class = "tooltip-icon bottom-left",
+                  "i",
+                  tags$span(class = "tooltip-content", "The musical distance between consecutive notes")
+                ),
+                # Complexity tooltip (top left)
+                tags$span(
+                  class = "tooltip-icon top-left",
+                  "i",
+                  tags$span(class = "tooltip-content", "Overall musical complexity based on various factors")
+                )
+              ),
+              plotOutput("songChart", 
+                height = "250px",     
+                width = "350%"
+              )
             )
         )
     )
@@ -705,8 +749,8 @@ server <- function(input, output, session) {
       return(NULL)
     })
   }, 
-  height = function() 300,  # Reduced height
-  width = function() 400,   # Reduced width
+  height = function() 250,  # Further reduced height
+  width = function() 350,   # Further reduced width
   res = 96 * 2,            # Double the resolution for sharper rendering
   execOnResize = FALSE)    # Prevent resizing on window changes
   

@@ -246,7 +246,33 @@ spider_chart_compare_with_average <- function(song_title, song_list) {
     axislabcol = "black",  # Axis label color
     caxislabels = seq(0, 1, length.out = 5),  # Axis labels for normalized range
     calcex = 0.5,
-    vlcex = 0.5  # Variable label size
+    vlcex = 0.5,  # Variable label size
+    custom.labels = list(  # Add custom labels with tooltips
+      "Tempo" = list(
+        label = "Tempo",
+        tooltip = "Speed of the music measured in beats per minute (BPM)"
+      ),
+      "Measures" = list(
+        label = "Measures",
+        tooltip = "Number of musical bars in the piece"
+      ),
+      "Melodic Contour" = list(
+        label = "Melodic Contour",
+        tooltip = "How the melody moves - whether it tends to go up, down, or stay level"
+      ),
+      "Duration" = list(
+        label = "Duration",
+        tooltip = "Average length of notes in milliseconds"
+      ),
+      "Intervals" = list(
+        label = "Intervals",
+        tooltip = "The musical distance between consecutive notes"
+      ),
+      "Complexity" = list(
+        label = "Complexity",
+        tooltip = "Overall musical complexity based on various factors"
+      )
+    )
   )
   
   # Reset margins to previous values
