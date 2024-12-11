@@ -6,6 +6,7 @@
   --neutral: #CFCFCF;
   --orange: #F56C37;
   --dark: #232323;
+  --navbar-height: 50px;  /* Added navbar height variable */
 }
 
   /* General styling */
@@ -24,6 +25,7 @@
     left: 50px;
     top: 50px;
     bottom: 50px;
+    height: calc(100vh - 100px);  /* Ensure consistent height */
     background-color: var(--primary-dark) !important;
     border-bottom: none !important;
     padding: 0;
@@ -248,8 +250,25 @@
     padding: 30px;
     background-color: #f8f9fa;
     border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    text-align: center;
+  }
+
+  /* MDNA page specific welcome box */
+  .welcome-box.mdna-page {
+    position: relative;
+    width: 100%;
+    height: calc(100vh - 100px);
+    background: white;
+    padding: 20px;
+    box-sizing: border-box;
+    border-radius: 10px;
+    overflow-y: auto;
+    margin: 0;
+    display: block;
+  }
+
+  /* Ensure the navbar maintains consistent height */
+  .navbar {
+    height: calc(100vh - 100px);
   }
 
   /* Title styling */
@@ -911,8 +930,8 @@
 
   /* Main container holding both visualization and song details */
   .mdna-main-container {
+    height: 540px;
     display: flex;
-    flex-direction: row;
     align-items: flex-start;
     gap: 5px;
     margin: 0;
@@ -1095,16 +1114,42 @@
 
   /* Adjust the left container in Nerd mode */
   .mdna-visualization-container-nerd {
-    width: 456px;
-    height: 391px;
-    flex-shrink: 0;
-    border-radius: 10px;
-    background: var(--White-White, #FFF);
-    box-shadow: 0px 4px 12px 0px rgba(13, 10, 44, 0.06);
-    position: relative;
-    overflow: hidden;
-    margin: 0;
-    padding: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 90vw;  /* Increased from previous value */
+    max-width: 1400px;  /* Increased max-width */
+    margin: 0 auto;
+    padding: 20px;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+
+  .mdna-visualization-container-nerd .mdna-visualization {
+    width: 100%;
+    height: 70vh;  /* Increased height */
+    min-height: 600px;  /* Increased minimum height */
+    margin: 20px 0;
+  }
+
+  .mdna-visualization-container-nerd .controls-container {
+    width: 100%;
+    max-width: 1200px;  /* Increased max-width for controls */
+    margin: 20px auto;
+  }
+
+  /* Ensure the visualization scales properly */
+  .mdna-visualization-container-nerd svg {
+    width: 100%;
+    height: 100%;
+  }
+
+  /* Adjust spacing for controls in nerd mode */
+  .mdna-visualization-container-nerd .slider-container {
+    margin: 15px 0;
+    width: 100%;
   }
 
   /* Tabs at the top, positioned above the containers */
@@ -1210,6 +1255,7 @@
   /* Adjust mdna-main-container to accommodate tabs */
   .mdna-main-container {
     display: flex;
+    height: 540px;
     flex-wrap: wrap;
     justify-content: space-between;
     align-items: flex-start;
@@ -1242,6 +1288,7 @@
     margin: 0;
     padding: 0;
     width: 654px; /* Set desired width */
+    height: 540px;
     max-width: 100%; /* Ensure responsiveness */
   }
 
@@ -1277,6 +1324,7 @@
     flex-wrap: nowrap; /* Prevent wrapping */
     width: auto; /* Remove fixed width to allow flexibility */
     max-width: 100%;
+    height: 540px;
     margin: 0 auto; /* Center the container if needed */
     padding: 0;
     gap: 10px; /* Adjust the space between containers */
@@ -1292,7 +1340,7 @@
   /* Right-side song details container styling */
   .mdna-main-container .song-details-container-custom {
     width: 188px;
-    height: 440px;
+    height: 540px;
     padding: 20px 12px; /* top-bottom, left-right */
     display: flex;
     flex-direction: column;
@@ -1720,4 +1768,32 @@
 
 .pitch-sliders .irs-single {
   background-color: #F56C37;
+}
+
+.mdna-visualization-container-nerd {
+  width: 550px;  /* Slightly reduced from 600px */
+  height: 450px;  /* Reduced to match navbar height better */
+  flex-shrink: 0;
+  border-radius: 10px;
+  background: var(--White-White, #FFF);
+  box-shadow: 0px 4px 12px 0px rgba(13, 10, 44, 0.06);
+  position: relative;
+  overflow: hidden;
+  margin: 0;
+  padding: 0;
+}
+
+/* Welcome box styling */
+.welcome-box.mdna-page {
+  position: fixed;
+  top: 50px;  /* Match navbar top */
+  right: 50px;
+  height: calc(100vh - 100px);  /* Match navbar height */
+  width: calc(100vw - 360px);
+  background: white;
+  padding: 20px;
+  box-sizing: border-box;
+  z-index: 100;
+  border-radius: 10px;
+  overflow-y: auto;  /* Allow scrolling if content is too long */
 }
